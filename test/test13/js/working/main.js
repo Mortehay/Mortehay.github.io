@@ -68,7 +68,7 @@ var testPoints = new ol.layer.Vector({
   loadend: function() { console.log(testPoints.getSource().getFeatures());}
 });*/
 
-var vectorSource = testPoints.getSource();
+/*var vectorSource = testPoints.getSource();
 var listenerKey = vectorSource.on('change', function(e) {
   if (vectorSource.getState() == 'ready') {
     var featureCount = vectorSource.getFeatures().length;
@@ -76,15 +76,38 @@ var listenerKey = vectorSource.on('change', function(e) {
     console.log(featureCount);
     
     console.log(vectorSource.getFeatures());
+    console.log(vectorSource.getExtent());
+    console.log(vectorSource.getExtent());
     ol.Observable.unByKey(listenerKey);
     // use vectorSource.unByKey(listenerKey) instead
     // if you do use the "master" branch of ol3
   }
-});
+});*/
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+var url = 'https://api.myjson.com/bins/20na7';
+var r = new XMLHttpRequest();
+r.open("GET", url, true);
+r.onreadystatechange = function () {
+    if (r.readyState != 4 || r.status != 200) {
+      obj = JSON.parse(r.responseText);
+        return obj ;
+    }
+    console.log(r.responseText);
+};
+r.send();
 
 
+console.log(obj);
 
-
+var features = obj.features;
+for (var i = 0, len = features.length; i < len; i++) {
+    var feat = features[i].properties;
+    feat['type'] = features[i].geometry.type;
+    feat['coordinates'] = features[i].geometry.coordinates;
+    features_data_array.push(feat);
+}
+console.log(features_data_array);
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var selectInteraction = new ol.interaction.Select({
         condition: ol.events.condition.singleClick,
         toggleCondition: ol.events.condition.singleClick,//shiftKeyOnly
@@ -177,10 +200,10 @@ map.on('pointermove', function(evt) {
   displayFeatureInfo(pixel);
 });
 
-map.on('click', function(evt) {
+/*map.on('click', function(evt) {
   displayFeatureInfo(evt.pixel);
 });
-
+*/
 
 
 
