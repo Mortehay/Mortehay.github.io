@@ -1,5 +1,5 @@
 
-
+var layerId;
 //center point of map
 var centerPoint=[
   {
@@ -75,14 +75,19 @@ var listenerKey = vectorSource.on('change', function(e) {
     // ...
     console.log(featureCount);
     
+<<<<<<< HEAD
     console.log(vectorSource.getFeatures());
     console.log(vectorSource.getExtent());
     console.log(vectorSource.getExtent());
+=======
+    console.log(vectorSource.getFeatures()[0]);
+>>>>>>> origin/master
     ol.Observable.unByKey(listenerKey);
     // use vectorSource.unByKey(listenerKey) instead
     // if you do use the "master" branch of ol3
   }
 });*/
+<<<<<<< HEAD
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var url = 'https://api.myjson.com/bins/20na7';
 var r = new XMLHttpRequest();
@@ -95,6 +100,9 @@ r.onreadystatechange = function () {
     console.log(r.responseText);
 };
 r.send();
+=======
+
+>>>>>>> origin/master
 
 
 console.log(obj);
@@ -113,8 +121,8 @@ var selectInteraction = new ol.interaction.Select({
         toggleCondition: ol.events.condition.singleClick,//shiftKeyOnly
         layers: [
           (function (layer) {
-
-            return layer.get('id') == 'srm';
+            layerId = layer.get('id');
+            return layerId == 'srm';
           })],
         style: newPointClickStyle
       });
@@ -202,8 +210,13 @@ map.on('pointermove', function(evt) {
 
 /*map.on('click', function(evt) {
   displayFeatureInfo(evt.pixel);
+<<<<<<< HEAD
 });
 */
+=======
+});*/
+
+>>>>>>> origin/master
 
 
 

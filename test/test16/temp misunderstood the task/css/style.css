@@ -1,0 +1,34 @@
+*{
+	margin:0;
+	padding:0;
+}
+h5{
+	text-align: center;
+	margin: 20px 0;
+}
+input{
+	width:200px;
+	display:block;
+	margin:0 auto;
+}
+button{
+	display:block;
+	margin:20px auto;
+	background-color:#E9967A;
+}
+ul{
+	list-style-type:none;
+	width:150px;
+	margin: 10px auto;
+	background-color: #ADD8E6;
+	-webkit-box-shadow: 4px 4px 18px 3px rgba(0, 0, 0,0.4); -moz-box-shadow: 4px 4px 18px 3px rgba(0, 0, 0,0.4); box-shadow: 4px 4px 18px 3px rgba(0, 0, 0,0.4);
+}
+.container{
+	padding:10px;
+}
+.wraper{
+	width:300px;
+	margin: 50px auto;
+	background-color:#F5F5DC;
+	padding:20px;
+}
