@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>test17</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    
+    <!-- Tims styles on top of blueprint -->
+    <link rel="stylesheet" href="css/style.css" type="text/css" > 
+    <!-- jquery -->
+    <script   src="https://code.jquery.com/jquery-1.12.4.min.js"   integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="   crossorigin="anonymous"></script>
+   
+   
+  </head>
+  <body>
+
+     <div class="header">
+       <div class="wraper">
+         <div class="selectBox">
+           <div class="seletBox__left">
+            <div>
+              <img src="images/bag.png" alt="#">
+            </div>
+            <div>
+              <input type="text" placeholder="CV title or preferred company">
+            </div>
+           </div>
+           <div class="selectBox__middle">
+            <div>
+              <img src="images/list.png" alt="#">
+            </div>
+            <div>
+              <a href="#" class="category">Category</a>
+              
+            </div>
+            <div>
+              <img src="images/gap.png" alt="#">
+            </div>
+            <ul class="category__list">
+                <li><a href="#">All</a></li>
+                <li><a href="#">Agriculture</a></li>
+                <li><a href="#">Art</a></li>
+                <li><a href="#">Customer Service, insurance</a></li>
+                <li><a href="#">Information Technology, Telecommunications</a></li>
+            </ul>
+           </div>
+           
+           <div class="selectBox_right">
+            <div>
+              <img src="images/pointer.png" alt="#">
+            </div>
+            <div>
+              <input type="text" placeholder="City">
+            </div>
+            <div>
+              <img src="images/gap.png" alt="#">
+            </div>
+           </div>
+         </div>
+       </div>
+     </div>
+     <div class="middle clear">
+       <div class="wraper">
+         <div class="selectionBar">
+           <div class="selectionBar__clear selectionBar-item__clear">
+            <p>Clear filter <span>X</span></p> 
+           </div>
+           <div class="selectionBar__other selectionBar-item">
+            <p>Other<span>X</span></p>
+             <ul>
+               <li class="clear checkbox"><input type="checkbox" id="otherCheck_1"><label class="checkboxLabel" for="otherCheck_1">Expats</label></li>
+               <li class="clear checkbox"><input type="checkbox" id="otherCheck_2"><label class="checkboxLabel" for="otherCheck_2">Foreign degree</label></li>
+             </ul>
+           </div>
+           <div class="selectionBar__filter-by selectionBar-item">
+             <p>Filter by</p>
+             <ul>
+               <li class="clear radio"><input type="radio" id="filter-byRadio_1" name="filter-byRadio" checked="checked"><label class="radioLabel" for="filter-byRadio_1">All</label></li>
+               <li class="clear radio"><input type="radio" id="filter-byRadio_2" name="filter-byRadio"><label class="radioLabel" for="filter-byRadio_2">All last three days</label></li>
+             </ul>
+           </div>
+           <div class="selectionBar_work-experience selectionBar-item">
+             <p>Work experience</p>
+              <ul>
+               <li class="clear radio"><input type="radio" id="work-experienceRadio_1" name="work-experienceRadio" checked="checked"><label class="radioLabel" for="work-experienceRadio_1">All</label></li>
+               <li class="clear radio"><input type="radio" id="work-experienceRadio_2" name="work-experienceRadio"><label class="radioLabel" for="work-experienceRadio_2">Up to 1 year</label></li>
+               <li class="clear radio"><input type="radio" id="work-experienceRadio_3" name="work-experienceRadio"><label class="radioLabel" for="work-experienceRadio_3">1 to 3 years</label></li>
+               <li class="clear radio"><input type="radio" id="work-experienceRadio_4" name="work-experienceRadio"><label class="radioLabel" for="work-experienceRadio_4">3 to 6 years</label></li>
+               <li class="clear radio"><input type="radio" id="work-experienceRadio_5" name="work-experienceRadio"><label class="radioLabel" for="work-experienceRadio_5">6+</label></li>
+             </ul>
+           </div>
+           <div class="selectionBar__eduacation selectionBar-item">
+             <p>Education</p>
+             <ul>
+               <li class="clear checkbox"><input type="checkbox" id="educationCheck_1"><label class="checkboxLabel" for="educationCheck_1">Bachelors</label></li>
+               <li class="clear checkbox"><input type="checkbox" id="educationCheck_2"><label class="checkboxLabel" for="educationCheck_2">Masters</label></li>
+               <li class="clear checkbox"><input type="checkbox" id="educationCheck_3"><label class="checkboxLabel" for="educationCheck_3">PhD</label></li>
+             </ul>
+           </div>
+         </div>
+         <div class="selectedList"></div>
+         <div class="selectedCv-view"></div>
+       </div>
+     </div>
+     <div class="footer clear">
+       <div class="wraper"></div>
+     </div>
+    
+    
+
+  <!-- main js -->
+  <script type="text/javascript" src="js/main.js"></script>
+
+    
+  </body>
+</html>

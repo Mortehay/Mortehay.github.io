@@ -1,0 +1,240 @@
+[
+	{	
+		"id":1,
+		"date":"09/04/2015",
+		"phone":"+7 10 74034708",
+		"city": "Astana",
+		"mail":"1_mail@mail.com",
+		"status":"Expat",
+		"knowledge":"Foreign degree",
+		"avatar":"images/avata_1.png",
+		"job":"Production Engineering & Business Development Manager",
+		"name":"Frank Sinatra",
+		"salary": "400,000 KZT",
+		"workTime" :66,
+		"degree": "Bachelors",
+		"language": "EN, DE, FR, KZ",
+		"experience":[
+			{
+				"position": "English Language Teacher",
+				"company": "Karaganada National University",
+				"workingTime":"01.2013-01.2014",
+				"responsibilities":"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit nobis quo, tempora repellat? Voluptates iure architecto assumenda, "
+			},
+			{
+				"position": "Front Desc-Service Manager",
+				"company": "ТОО Институт Градиент Проект...",
+				"workingTime":"01.2013-01.2014",
+				"responsibilities":"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit nobis quo, tempora repellat? Voluptates iure architecto assumenda, "
+			}
+		],
+		"cvLink":"https://www.google.com.ua/"
+	},
+	{	
+		"id":2,
+		"date":"09/04/2015",
+		"phone":"+7 10 74034708",
+		"city": "Astana",
+		"mail":"1_mail@mail.com",
+		"status":"Expat",
+		"knowledge":"Foreign degree",
+		"avatar":"",
+		"job":"Business Development Manager",
+		"name":"Janar Ibisheva",
+		"salary": "500,000 KZT",
+		"workTime" :184,
+		"degree": "PhD",
+		"language": "RU, KZ, EN",
+		"experience":[
+			{
+				"position": "Business Development Manager",
+				"company": "International SOS (SOS Kazahstan LLC)",
+				"workingTime":"01.2013-01.2014",
+				"responsibilities":"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit nobis quo, tempora repellat? Voluptates iure architecto assumenda, "
+			},
+			{
+				"position": "Executive Assistant (EA) to General Director",
+				"company": "Platinum Train Services...",
+				"workingTime":"01.2013-01.2014",
+				"responsibilities":"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit nobis quo, tempora repellat? Voluptates iure architecto assumenda, "
+			}
+		],
+		"cvLink":"https://www.google.com.ua/"
+	},
+	{	
+		"id":3,
+		"date":"09/04/2015",
+		"phone":"+7 10 74034708",
+		"city": "Astana",
+		"mail":"1_mail@mail.com",
+		"status":"Expat",
+		"knowledge":"Foreign degree",
+		"avatar":"images/avata_3.png",
+		"job":"Best cook in the whole Universe",
+		"name":"Frank Sinatra",
+		"salary": "400,000 KZT",
+		"workTime" :36,
+		"degree": "Masters",
+		"language": "EN, DE, FR, KZ, CH",
+		"experience":[
+			{
+				"position": "Chef",
+				"company": "Restaurant - Coventry",
+				"workingTime":"01.2013-01.2014",
+				"responsibilities":"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit nobis quo, tempora repellat? Voluptates iure architecto assumenda, "
+			}
+		],
+		"cvLink":"https://www.google.com.ua/"
+	},
+	{	
+		"id":4,
+		"date":"09/04/2015",
+		"phone":"+7 10 74034708",
+		"city": "Astana",
+		"mail":"1_mail@mail.com",
+		"status":"Expat",
+		"knowledge":"Foreign degree",
+		"avatar":"images/avata_4.png",
+		"job":"Petroleum Engineering Technologist",
+		"name":"Bolat Tilek",
+		"salary": "",
+		"workTime" : 66,
+		"degree": "Bachelors",
+		"language": "EN, DE, FR, KZ, CH",
+		"experience":[
+			{
+				"position": "English Language Teacher",
+				"company": "Karaganada National University",
+				"workingTime":"01.2013-01.2014",
+				"responsibilities":"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit nobis quo, tempora repellat? Voluptates iure architecto assumenda, "
+			},
+			{
+				"position": "Front Desc-Service Manager",
+				"company": "ТОО Институт Градиент Проект...",
+				"workingTime":"01.2013-01.2014",
+				"responsibilities":"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit nobis quo, tempora repellat? Voluptates iure architecto assumenda, "
+			}
+		],
+		"cvLink":"https://www.google.com.ua/"
+	},
+	{
+
+		"id":5,
+		"date":"09/04/2015",
+		"phone":"+7 10 74034708",
+		"city": "Astana",
+		"mail":"1_mail@mail.com",
+		"status":"Expat",
+		"knowledge":"Foreign degree",
+		"avatar":"images/avata_1.png",
+		"job":"Production Engineering & Business Development Manager",
+		"name":"Frank Sinatra",
+		"salary": "400,000 KZT",
+		"workTime" :66,
+		"degree": "Bachelors",
+		"language": "EN, DE, FR, KZ",
+		"experience":[
+			{
+				"position": "English Language Teacher",
+				"company": "Karaganada National University",
+				"workingTime":"01.2013-01.2014",
+				"responsibilities":"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit nobis quo, tempora repellat? Voluptates iure architecto assumenda, "
+			},
+			{
+				"position": "Front Desc-Service Manager",
+				"company": "ТОО Институт Градиент Проект...",
+				"workingTime":"01.2013-01.2014",
+				"responsibilities":"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit nobis quo, tempora repellat? Voluptates iure architecto assumenda, "
+			}
+		],
+		"cvLink":"https://www.google.com.ua/"
+	},
+	{	
+		"id":6,
+		"date":"09/04/2015",
+		"phone":"+7 10 74034708",
+		"city": "Astana",
+		"mail":"1_mail@mail.com",
+		"status":"Expat",
+		"knowledge":"Foreign degree",
+		"avatar":"",
+		"job":"Business Development Manager",
+		"name":"Janar Ibisheva",
+		"salary": "500,000 KZT",
+		"workTime" :184,
+		"degree": "PhD",
+		"language": "RU, KZ, EN",
+		"experience":[
+			{
+				"position": "Business Development Manager",
+				"company": "International SOS (SOS Kazahstan LLC)",
+				"workingTime":"01.2013-01.2014",
+				"responsibilities":"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit nobis quo, tempora repellat? Voluptates iure architecto assumenda, "
+			},
+			{
+				"position": "Executive Assistant (EA) to General Director",
+				"company": "Platinum Train Services...",
+				"workingTime":"01.2013-01.2014",
+				"responsibilities":"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit nobis quo, tempora repellat? Voluptates iure architecto assumenda, "
+			}
+		],
+		"cvLink":"https://www.google.com.ua/"
+	},
+	{	
+		"id":7,
+		"date":"09/04/2015",
+		"phone":"+7 10 74034708",
+		"city": "Astana",
+		"mail":"1_mail@mail.com",
+		"status":"Expat",
+		"knowledge":"Foreign degree",
+		"avatar":"images/avata_3.png",
+		"job":"Best cook in the whole Universe",
+		"name":"Frank Sinatra",
+		"salary": "400,000 KZT",
+		"workTime" :36,
+		"degree": "Masters",
+		"language": "EN, DE, FR, KZ, CH",
+		"experience":[
+			{
+				"position": "Chef",
+				"company": "Restaurant - Coventry",
+				"workingTime":"01.2013-01.2014",
+				"responsibilities":"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit nobis quo, tempora repellat? Voluptates iure architecto assumenda, "
+			}
+		],
+		"cvLink":"https://www.google.com.ua/"
+	},
+	{	
+		"id":8,
+		"date":"09/04/2015",
+		"phone":"+7 10 74034708",
+		"city": "Astana",
+		"mail":"1_mail@mail.com",
+		"status":"Expat",
+		"knowledge":"Foreign degree",
+		"avatar":"images/avata_4.png",
+		"job":"Petroleum Engineering Technologist",
+		"name":"Bolat Tilek",
+		"salary": "",
+		"workTime" : 66,
+		"degree": "Bachelors",
+		"language": "EN, DE, FR, KZ, CH",
+		"experience":[
+			{
+				"position": "English Language Teacher",
+				"company": "Karaganada National University",
+				"workingTime":"01.2013-01.2014",
+				"responsibilities":"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit nobis quo, tempora repellat? Voluptates iure architecto assumenda, "
+			},
+			{
+				"position": "Front Desc-Service Manager",
+				"company": "ТОО Институт Градиент Проект...",
+				"workingTime":"01.2013-01.2014",
+				"responsibilities":"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit nobis quo, tempora repellat? Voluptates iure architecto assumenda, "
+			}
+		],
+		"cvLink":"https://www.google.com.ua/"
+	}
+	
+]
