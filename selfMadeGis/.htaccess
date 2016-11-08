@@ -1,0 +1,4 @@
+AuthName "pass"
+AuthType Basic
+AuthUserFile /etc/httpd/pass/pass
+require user ohusachenko yshpylovyi testuser

@@ -1,0 +1,45 @@
+/* this file contains styles for the landing page showing listing the different projects */
+*{
+	margin:0;
+	padding:0;
+}
+body {background: #fff url(../img/bg.png) top center repeat-y;}
+body {
+  background: url(../img/Map.svg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover; }
+div.container {
+	margin-top:30px;
+}
+ul{
+	list-style-type: none;
+}
+.container h1, .container h2{ 
+color:	 #006400}
+li.list-header { 
+  font-weight: bold;
+  list-style: none; 
+  margin-left:0px;  }
+.supply{
+	width:100%;
+	
+
+}
+.conteyner{
+	width:1000px;
+}
+.supply>ul{
+	margin-top: 25px;
+	float:right;
+	width:200px;
+	list-style-type:none;
+	text-align: right;
+}
+.supply li{
+	color:#000080;
+}
+.supply li span {
+	color: #380B61;
+}
