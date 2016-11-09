@@ -67,12 +67,7 @@ $tools ='';
 			foreach ($city_array as $key => $value) {
 			    $option .='<option value="'.$city_array[$key].'">'.$city_array[$key].'</option>';
 			}
-			 $tools .= '<div class="tools" id="tools">'.'<div class="tools__visible">'.'</div>'.'<div class ="tools__hidden clear">'.'<ul>';
-             if ($restriction=="full"){
-             	$tools .= '<li class="fullAccess"><h1>full access</h1></li>'.'<li class="fullAccess">'.'<button class="myToolButton" id="textexchange">host chasnge</button>'.'</li>'.'<li class="fullAccess">'.'<button class="myToolButton" id="userLoginView">user Login View</button>'.'</li>'.'<li class="fullAccess">'.'<select id="cable_channel_cable_data_city_eng">'.$option.'</select>'.'<button class="myToolButton" id="cableChannelCabelDataUpdate">cable Channel Cabel Data Update</button>'.'</li>'.'<li>'.'<select id="cable_channel_channel_data_city_eng">'.$option.'</select>'.'<button class="myToolButton" id="cableChannelChannelDataUpdate">cable Channel Channel Data Update</button>'.'</li>';
-
-            }
-            $tools .='<li>'.'<select id="city_building_data_eng">'.$option.'</select>'.'<button class="myToolButton" id="cityBuildingDataUpdate">city Building Data Update</button>'.'</li>'.'<li>'.'<select id="ctv_city_eng">'.$option.'</select>'.'<button class="myToolButton" id="ctvTopologyUpdate">ctv Topology Update</button>'.'.</li>'.'<li>'.'<select id="ether_city_eng">'.$option.'.</select>'.'<button class="myToolButton" id="etherTopologyUpdate">ether Topology Update</button>'.'. </li>'.'<li>'.'<select id="cable_channel_city_eng">'.$option.'.</select>'.'<button class="myToolButton" id="cableChannelTopologyUpdate">Cable channels topology update</button>'.'</li>'.'<li>'.'<select id="cable_channel_cable_dataView_city_eng">'.$option.'</select>'.'<button class="myToolButton" id="cableChannelCableDataView">cable Channel Cable Data View</button>'.'</li>'.'</ul>'.'</div>'.'</div>';
+	
 
           } 
           
@@ -124,6 +119,14 @@ $tools ='';
 					array('etherTopologyUpdate'),
 					array('Оновлення топології Ethernet'),
 					array('ether_city_eng')
+			)
+			
+		),
+		array('networkSupply', 'Підтримка мережі',
+			array(
+				array('toCoverageUpdate','usoCoverageUpdate'),
+				array('Оновлення зони покриття дільниць ТО','Оновлення зони покриття дільниць СО'),
+				array('city_supply_to_eng','city_supply_uso_eng')
 			)
 		)
 	);

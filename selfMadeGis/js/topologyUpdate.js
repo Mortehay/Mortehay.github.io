@@ -1,4 +1,5 @@
 
+
 //----------compare function---compare array of objects-----------------
 function compare(a,b) {
   if (a.table_id < b.table_id)
@@ -148,6 +149,12 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
                for (let i = 0; i < list.length; i++) {
                	let row ='<tr>';
                	let rowData = list[i];
+               	//console.log('rowData',rowData);
+               	
+               	if(vocabulary.findIndex(x => x == '№')>-1){
+               		rowData['1'] = i+1;
+               	}
+               	//console.log('rowData', rowData);
                	for (let key in rowData) {
                		row +='<td>'+rowData[key]+'</td>';
                	}
@@ -215,13 +222,23 @@ let params = {
 		id:'cable_air_cable_dataView_city_eng',
 		type:'POST'
 	},
+	toCoverageUpdate:{
+		phpFile:'toCoverageUpdate',
+		id:'city_supply_to_eng',
+		type:'POST'
+	},
+	usoCoverageUpdate:{
+		phpFile:'usoCoverageUpdate',
+		id:'city_supply_uso_eng',
+		type:'POST'
+	}
 
 }
 //----------vocabulars----------------------------------------------------------------------------------------------------------------------
 let vocabulary ={
-	CCcablesList:['Технічні умови','Договір', 'Даткова угода','Акт прийомки','Затверджена картограма','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС'],
-	missedBuildings:['Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
-	AIRcablesList:['id кабеля', 'Посилання на архів','Дата монтажа кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення','Опис маршруту', 'Довжина, км']
+	CCcablesList:['№','Технічні умови','Договір', 'Даткова угода','Акт прийомки','Затверджена картограма','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС'],
+	missedBuildings:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
+	AIRcablesList:['№','id кабеля', 'Посилання на архів','Дата монтажа кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення','Опис маршруту', 'Довжина, км']
 };
 
 //------document ready-------------------------------------------------------------------------------------------------------------------
@@ -246,6 +263,9 @@ $(document).ready(function(){
 	$('#cableAirCableDataView').phpRequest(params.cableAirCableDataView);
 	//-----------------------------------------------------------------------------------------------------------------------------------
 	$('.toolsListLabel').visibility('newTools');
+	//-----------------------------------------------------------------TO///SO----------------------------------------------------------
+	$('#toCoverageUpdate').phpRequest(params.toCoverageUpdate);
+	$('#usoCoverageUpdate').phpRequest(params.usoCoverageUpdate);
 });
 //--------ajax error-------------------------------------------------------------------------------------------------------------------
 $( document ).ajaxError(function( event, request, settings ) {
@@ -311,33 +331,7 @@ $.fn.phpRequest = function(params) {
 };
 
 //--------------troll tools display----------------------------------------------------------------------------
-/*$.fn.toolsDisplay = function(params, selfTagClass, selfTagId){
-	let listAll = params.toolsList;
-	let listId=[]
-	$(this).next().after('<div class="'+selfTagClass+' clear" id="'+selfTagId+'"></div>');
-	$('#'+selfTagId).append('<ul class= labelsList></ul>');
-	
-	for (let i = 0; i < listAll.length; i++) {
-		$('.labelsList').append('<li class="toolsListLabel" id="'+listAll[i].id+'">'+'<h2>'+listAll[i].name+'</h2>'+'</li>');
-		$('#'+selfTagId).append('<div id="'+listAll[i].id+'_holder" class="invisible"><ul></ul></div>');
-		let buttonListing = listAll[i].inner[0];
-		//console.log(listAll[i].id);
-		listId.push(listAll[i].id);
 
-		//console.log('buttonListing',buttonListing);
-		for (let j = 0; j < buttonListing.id.length; j++) {
-			let innerSelect ='';
-			if (buttonListing.select[j] !=='NULL') {
-				let phpInjection = "<?php echo '<h2>'.$option.'</h2>'; ?>";
-				innerSelect = '<select id="'+buttonListing.select[j]+'">'+phpInjection+'<select>';
-			}
-			$('#'+listAll[i].id+'_holder').find('ul').append('<li class="clear">'+innerSelect+'<button id="'+buttonListing.id[j]+'" class="myToolButton">'+buttonListing.name[j]+'<button>'+'</li>');
-		}
-		
-	}
-	
-
-}*/
 $.fn.visibility = function(selfTagId) {
 	$(this).on('click', function(){
 		let tempId = $(this).attr('id') ;
