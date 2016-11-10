@@ -109,9 +109,9 @@ $tools ='';
 		),
 		array('ctv','КТВ',
 			array(
-					array('ctvTopologyUpdate'),
-					array('Оновлення топології КТВ'),
-					array('ctv_city_eng')
+					array('ctvTopologyUpdate', 'ctvNodCoverageUpdate'),
+					array('Оновлення топології КТВ', 'Оновлення покриття оптичних вузлів'),
+					array('ctv_city_eng', 'ctv_city_nod_eng')
 					)
 				),
 		array('internet','Інтернет',

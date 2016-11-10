@@ -231,6 +231,11 @@ let params = {
 		phpFile:'usoCoverageUpdate',
 		id:'city_supply_uso_eng',
 		type:'POST'
+	},
+	ctvNodCoverageUpdate:{
+		phpFile:'ctvNodCoverageUpdate',
+		id:'ctv_city_nod_eng',
+		type:'POST'
 	}
 
 }
@@ -266,6 +271,8 @@ $(document).ready(function(){
 	//-----------------------------------------------------------------TO///SO----------------------------------------------------------
 	$('#toCoverageUpdate').phpRequest(params.toCoverageUpdate);
 	$('#usoCoverageUpdate').phpRequest(params.usoCoverageUpdate);
+	//-----------------------------ctv nod coverage update -----------------------------------------------------------------------
+	$('#ctvNodCoverageUpdate').phpRequest(params.ctvNodCoverageUpdate);
 });
 //--------ajax error-------------------------------------------------------------------------------------------------------------------
 $( document ).ajaxError(function( event, request, settings ) {
