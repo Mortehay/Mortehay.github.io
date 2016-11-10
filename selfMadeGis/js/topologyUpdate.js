@@ -149,22 +149,12 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
                for (let i = 0; i < list.length; i++) {
                	let row ='<tr>';
                	let rowData = list[i];
-<<<<<<< HEAD
-               	console.log('rowData',rowData);
-               	
-               	if(vocabulary.findIndex(x => x == '№')>-1){
-               		rowData['1'] = i+1;
-               		
-               	}
-               	console.log('rowData', rowData);
-=======
                	//console.log('rowData',rowData);
                	
                	if(vocabulary.findIndex(x => x == '№')>-1){
                		rowData['1'] = i+1;
                	}
                	//console.log('rowData', rowData);
->>>>>>> origin/master
                	for (let key in rowData) {
                		row +='<td>'+rowData[key]+'</td>';
                	}
