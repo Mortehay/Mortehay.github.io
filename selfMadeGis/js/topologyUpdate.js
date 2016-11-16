@@ -236,6 +236,11 @@ let params = {
 		phpFile:'ctvNodCoverageUpdate',
 		id:'ctv_city_nod_eng',
 		type:'POST'
+	},
+	cityBuildingDublicatesFinder:{
+		phpFile:'cityBuildingDublicatesFinder',
+		id:'city_building_dublicates_finder_eng',
+		type:'POST'
 	}
 
 }
@@ -243,7 +248,8 @@ let params = {
 let vocabulary ={
 	CCcablesList:['№','Технічні умови','Договір', 'Даткова угода','Акт прийомки','Затверджена картограма','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС'],
 	missedBuildings:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
-	AIRcablesList:['№','id кабеля', 'Посилання на архів','Дата монтажа кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення','Опис маршруту', 'Довжина, км']
+	AIRcablesList:['№','id кабеля', 'Посилання на архів','Дата монтажа кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення','Опис маршруту', 'Довжина, км'],
+	dublicateBuildings:['№','Вулиця OSM', '№будинку OSM', 'Вулиця CUBIC', '№будинку CUBIC', '"Кубік" HOUSE_ID']
 };
 
 //------document ready-------------------------------------------------------------------------------------------------------------------
@@ -259,7 +265,9 @@ $(document).ready(function(){
 	$('#cableChannelCabelDataUpdate').phpRequest(params.cableChannelCabelDataUpdate);
 	$('#textexchange').phpRequest(params.textexchange);
 	$('#userLoginView').phpRequest(params.userLoginView);
+	//--------------------------------------------------------------------------------------------------------------------------------------
 	$('#cityBuildingDataUpdate').phpRequest(params.cityBuildingDataUpdate);
+	$('#cityBuildingDublicatesFinder').phpRequest(params.cityBuildingDublicatesFinder);
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	$('#cableChannelChannelDataUpdate').phpRequest(params.cableChannelChannelDataUpdate);
 	$('#cableChannelCableDataView').phpRequest(params.cableChannelCableDataView);
@@ -295,12 +303,17 @@ $.fn.phpRequest = function(params) {
 		let attributId = $(this).attr('id');
 		let loginSwitcher = false;
 		if(attributId== 'userLoginView'){  loginSwitcher = true }
+		//-------------------------------------------------------------------------------------	
 		let buildingDataSwitcher = false;
 		if(attributId == 'cityBuildingDataUpdate'){  buildingDataSwitcher = true }
+		let buildingDublicateSwitcher = false;
+		if(attributId == 'cityBuildingDublicatesFinder'){  buildingDublicateSwitcher = true }	
+		//-------------------------------------------------------------------------------------
 		let cableChannelCableDataViewSwitcher = false;
 		if(attributId == 'cableChannelCableDataView'){  cableChannelCableDataViewSwitcher = true }
 		let cableAirCableDataViewSwitcher  = false;
 		if(attributId == 'cableAirCableDataView'){  cableAirCableDataViewSwitcher = true }
+		//-------------------------------------------------------------------------------------
 		console.log($(this).attr('id'));
 		request[params.id] = $('#'+params.id).val();
 		$.ajax({
@@ -315,17 +328,18 @@ $.fn.phpRequest = function(params) {
 					closeSpan('visualization' );
 				}
 				if (buildingDataSwitcher) {
-					//missedBuildings(data);
 					displayTableData('missed_buildings', 'container', data, vocabulary.missedBuildings);
 					closeSpan('missed_buildings' );
 				}
+				if (buildingDublicateSwitcher) {
+					displayTableData('duplicate_buildings', 'container', data, vocabulary.dublicateBuildings);
+					closeSpan('duplicate_buildings' );
+				}
 				if (cableChannelCableDataViewSwitcher) {
-					//displayDrawnCCcables(data);
 					displayTableData('drawnCCcables', 'container', data, vocabulary.CCcablesList);
 					closeSpan('drawnCCcables' );
 				}
 				if (cableAirCableDataViewSwitcher) {
-					//displayDrawnCCcables(data);
 					displayTableData('drawnAIRcables', 'container', data, vocabulary.AIRcablesList);
 					closeSpan('drawnAIRcables' );
 				}

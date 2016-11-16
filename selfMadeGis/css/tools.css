@@ -29,7 +29,7 @@ div.tools__visible{
 }
 
 
-.missed_buildings{
+.missed_buildings, .duplicate_buildings{
 	width: 600px;
 	margin: 0 auto;
 	background-color: #FFDAB9;

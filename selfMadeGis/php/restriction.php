@@ -95,30 +95,30 @@ $tools ='';
 		),
 		array('cableAirCables','ПКП - кабелі',
 			array(
-					array('cableAirCableDataUpdate', 'cableAirCableDataView'),
-					array('Оновлення даних ПКП - кабелі', 'Вивести таблицю ПКП - кабелі'),
-					array('cable_air_cable_data_city_eng', 'cable_air_cable_dataView_city_eng')
+				array('cableAirCableDataUpdate', 'cableAirCableDataView'),
+				array('Оновлення даних ПКП - кабелі', 'Вивести таблицю ПКП - кабелі'),
+				array('cable_air_cable_data_city_eng', 'cable_air_cable_dataView_city_eng')
 			)
 		),
 		array('buildings','Будинки',
 			array(
-					array('cityBuildingDataUpdate'),
-					array('Оновлення даних про будинки'),
-					array('city_building_data_eng')
+				array('cityBuildingDataUpdate', 'cityBuildingDublicatesFinder'),
+				array('Оновлення даних про будинки', 'Відобразити дублікати будинків'),
+				array('city_building_data_eng', 'city_building_dublicates_finder_eng')
 			)
 		),
 		array('ctv','КТВ',
 			array(
-					array('ctvTopologyUpdate', 'ctvNodCoverageUpdate'),
-					array('Оновлення топології КТВ', 'Оновлення покриття оптичних вузлів'),
-					array('ctv_city_eng', 'ctv_city_nod_eng')
-					)
-				),
+				array('ctvTopologyUpdate', 'ctvNodCoverageUpdate'),
+				array('Оновлення топології КТВ', 'Оновлення покриття оптичних вузлів'),
+				array('ctv_city_eng', 'ctv_city_nod_eng')
+			)
+		),
 		array('internet','Інтернет',
 			array(
-					array('etherTopologyUpdate'),
-					array('Оновлення топології Ethernet'),
-					array('ether_city_eng')
+				array('etherTopologyUpdate'),
+				array('Оновлення топології Ethernet'),
+				array('ether_city_eng')
 			)
 			
 		),
