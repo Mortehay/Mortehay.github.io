@@ -204,13 +204,24 @@ let params = {
 		phpFile:'cableChannelCableDataView',
 		id:'cable_channel_cable_dataView_city_eng',
 		type:'POST'
-	}
+	},
+	cableAirCableDataUpdate:{
+		phpFile:'cableAirCableDataUpdate',
+		id:'cable_air_cable_data_city_eng',
+		type:'POST'
+	},
+	cableAirCableDataView:{
+		phpFile:'cableAirCableDataView',
+		id:'cable_air_cable_dataView_city_eng',
+		type:'POST'
+	},
 
 }
 //----------vocabulars----------------------------------------------------------------------------------------------------------------------
 let vocabulary ={
-	cablesList:['Технічні умови','Договір', 'Даткова угода','Акт прийомки','Затверджена картограма','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС'],
-	missedBuildings:['Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир']
+	CCcablesList:['Технічні умови','Договір', 'Даткова угода','Акт прийомки','Затверджена картограма','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС'],
+	missedBuildings:['Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
+	AIRcablesList:['id кабеля', 'Посилання на архів','Дата монтажа кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення','Опис маршруту', 'Довжина, км']
 };
 
 //------document ready-------------------------------------------------------------------------------------------------------------------
@@ -227,8 +238,12 @@ $(document).ready(function(){
 	$('#textexchange').phpRequest(params.textexchange);
 	$('#userLoginView').phpRequest(params.userLoginView);
 	$('#cityBuildingDataUpdate').phpRequest(params.cityBuildingDataUpdate);
+	//--------------------------------------------------------------------------------------------------------------------------------------
 	$('#cableChannelChannelDataUpdate').phpRequest(params.cableChannelChannelDataUpdate);
 	$('#cableChannelCableDataView').phpRequest(params.cableChannelCableDataView);
+	//-------------------------------------------------------------------------------------------------------------------------------------
+	$('#cableAirCableDataUpdate').phpRequest(params.cableAirCableDataUpdate);
+	$('#cableAirCableDataView').phpRequest(params.cableAirCableDataView);
 	//-----------------------------------------------------------------------------------------------------------------------------------
 	$('.toolsListLabel').visibility('newTools');
 });
@@ -248,7 +263,7 @@ $( document ).ajaxComplete(function( event,request, settings ) {
 
 $.fn.phpRequest = function(params) {
 	$(this).on('click', function(){
-		//console.log(params.phpFile,$('#'+params.id).val() );
+		console.log(params.phpFile,$('#'+params.id).val() );
 		let request = {};
 		let attributId = $(this).attr('id');
 		let loginSwitcher = false;
@@ -257,7 +272,9 @@ $.fn.phpRequest = function(params) {
 		if(attributId == 'cityBuildingDataUpdate'){  buildingDataSwitcher = true }
 		let cableChannelCableDataViewSwitcher = false;
 		if(attributId == 'cableChannelCableDataView'){  cableChannelCableDataViewSwitcher = true }
-		//console.log($(this).attr('id'));
+		let cableAirCableDataViewSwitcher  = false;
+		if(attributId == 'cableAirCableDataView'){  cableAirCableDataViewSwitcher = true }
+		console.log($(this).attr('id'));
 		request[params.id] = $('#'+params.id).val();
 		$.ajax({
 			url: params.phpFile+'.php', //This is the current doc
@@ -265,7 +282,7 @@ $.fn.phpRequest = function(params) {
 			data: (request),
 			success: function(data){
 				// with the result from the ajax call
-				//console.log('data', data);
+				console.log('data', data);
 				if (loginSwitcher) {
 					statistcsDraw(data);
 					closeSpan('visualization' );
@@ -277,8 +294,13 @@ $.fn.phpRequest = function(params) {
 				}
 				if (cableChannelCableDataViewSwitcher) {
 					//displayDrawnCCcables(data);
-					displayTableData('drawnCCcables', 'container', data, vocabulary.cablesList);
+					displayTableData('drawnCCcables', 'container', data, vocabulary.CCcablesList);
 					closeSpan('drawnCCcables' );
+				}
+				if (cableAirCableDataViewSwitcher) {
+					//displayDrawnCCcables(data);
+					displayTableData('drawnAIRcables', 'container', data, vocabulary.AIRcablesList);
+					closeSpan('drawnAIRcables' );
 				}
 				
 
