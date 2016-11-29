@@ -2,6 +2,7 @@
 
 //ini_set('display_errors', 1);
 include('restriction.php');
+include('rotatingArrows.php');
 
 ?>
 
@@ -72,7 +73,9 @@ include('restriction.php');
           </ul>
         </div> 
       </div>
-      
+      <?php
+      echo $rotatingArrows;
+      ?>
 
     <script type="text/javascript" src="../js/accordion.js"></script>
     <script type="text/javascript" src="../js/whois.js"></script>

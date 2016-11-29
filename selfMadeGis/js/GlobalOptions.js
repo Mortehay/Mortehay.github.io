@@ -168,7 +168,7 @@ var simpleWmsSearch = {
 //  highlightLabel: 'name',
   selectionLayer: 'buildings',
   selectionZoom: 0,
-  doZoomToExtent: true
+  doZoomToExtent: true//true
 };
 
 var urlRewriteSearch = {

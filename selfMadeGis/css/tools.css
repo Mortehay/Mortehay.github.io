@@ -30,7 +30,8 @@ div.tools__visible{
 
 
 .missed_buildings, .duplicate_buildings{
-	width: 600px;
+	min-width: 650px;
+	max-width:700px;
 	margin: 0 auto;
 	background-color: #FFDAB9;
 	position:relative;
@@ -184,4 +185,22 @@ div.tools__visible{
 	-moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
 	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
 }
+.phpScripStatus{
+	display:none;
+	opacity:0.5;
+	background-color:#ccc;
+	position:fixed;
+	width:100%;
+	height:100%;
+	top:0px;
+	left:0px;
+	z-index:999999;
+}
 
+.phpScripStatus svg{
+	position:relative;
+	display: block;
+	top:45%;
+    	margin-left: auto;
+    	margin-right: auto;
+}

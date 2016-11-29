@@ -241,6 +241,16 @@ let params = {
 		phpFile:'cityBuildingDublicatesFinder',
 		id:'city_building_dublicates_finder_eng',
 		type:'POST'
+	},
+	cityStateSwitches:{
+		phpFile:'cityStateSwitches',
+		id:'switches_state_city_eng',
+		type:'POST'
+	},
+	simpleuserRestrictionUpdate:{
+		phpFile:'simpleuserRestrictionUpdate',
+		id:'simpleuserRestrictionUpdate',
+		type:'POST'
 	}
 
 }
@@ -249,7 +259,7 @@ let vocabulary ={
 	CCcablesList:['№','Технічні умови','Договір', 'Даткова угода','Акт прийомки','Затверджена картограма','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС'],
 	missedBuildings:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
 	AIRcablesList:['№','id кабеля', 'Посилання на архів','Дата монтажа кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення','Опис маршруту', 'Довжина, км'],
-	dublicateBuildings:['№','Вулиця OSM', '№будинку OSM', 'Вулиця CUBIC', '№будинку CUBIC', '"Кубік" HOUSE_ID']
+	dublicateBuildings:['№','Вулиця OSM', '№будинку OSM', 'Вулиця CUBIC', '№будинку CUBIC', '"Кубік" HOUSE_ID', 'Тип мережі', 'Координата будинку']
 };
 
 //------document ready-------------------------------------------------------------------------------------------------------------------
@@ -265,6 +275,7 @@ $(document).ready(function(){
 	$('#cableChannelCabelDataUpdate').phpRequest(params.cableChannelCabelDataUpdate);
 	$('#textexchange').phpRequest(params.textexchange);
 	$('#userLoginView').phpRequest(params.userLoginView);
+	$('#simpleuserRestrictionUpdate').phpRequest(params.simpleuserRestrictionUpdate);
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	$('#cityBuildingDataUpdate').phpRequest(params.cityBuildingDataUpdate);
 	$('#cityBuildingDublicatesFinder').phpRequest(params.cityBuildingDublicatesFinder);
@@ -281,6 +292,8 @@ $(document).ready(function(){
 	$('#usoCoverageUpdate').phpRequest(params.usoCoverageUpdate);
 	//-----------------------------ctv nod coverage update -----------------------------------------------------------------------
 	$('#ctvNodCoverageUpdate').phpRequest(params.ctvNodCoverageUpdate);
+	//-----------------------------switches state update------------------------------------------------------------------------
+	$('#cityStateSwitches').phpRequest(params.cityStateSwitches);
 });
 //--------ajax error-------------------------------------------------------------------------------------------------------------------
 $( document ).ajaxError(function( event, request, settings ) {
@@ -316,11 +329,13 @@ $.fn.phpRequest = function(params) {
 		//-------------------------------------------------------------------------------------
 		console.log($(this).attr('id'));
 		request[params.id] = $('#'+params.id).val();
+		$('.phpScripStatus').show();
 		$.ajax({
 			url: params.phpFile+'.php', //This is the current doc
 			type: params.type,
 			data: (request),
 			success: function(data){
+				$('.phpScripStatus').hide();
 				// with the result from the ajax call
 				console.log('data', data);
 				if (loginSwitcher) {

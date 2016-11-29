@@ -17,7 +17,7 @@
 	}
 
  
-                 $sql = "SELECT openstreet_addr_street, openstreet_addr_housenumber, cubic_street, cubic_house, cubic_house_id, ST_AsLatLonText(ST_Transform(building_geom_firstpoint, 4326) ) FROM ".$selectedCity.".".$selectedCity."_buildings WHERE cubic_house_id IN (SELECT cubic_house_id FROM  (SELECT openstreet_addr_street, openstreet_addr_housenumber,cubic_house_id, count(*) AS count FROM ".$selectedCity.".".$selectedCity."_buildings  WHERE cubic_house_id IS NOT NULL GROUP BY 1, openstreet_addr_street, openstreet_addr_housenumber,cubic_house_id  ORDER BY count) count WHERE count >1) ORDER BY cubic_house_id, openstreet_addr_street, openstreet_addr_housenumber";
+                 $sql = "SELECT openstreet_addr_street, openstreet_addr_housenumber, cubic_street, cubic_house, cubic_house_id, cubic_network_type, ST_AsLatLonText(ST_Transform(building_geom_firstpoint, 4326) ) FROM ".$selectedCity.".".$selectedCity."_buildings WHERE cubic_house_id IN (SELECT cubic_house_id FROM  (SELECT openstreet_addr_street, openstreet_addr_housenumber,cubic_house_id, count(*) AS count FROM ".$selectedCity.".".$selectedCity."_buildings  WHERE cubic_house_id IS NOT NULL GROUP BY 1, openstreet_addr_street, openstreet_addr_housenumber,cubic_house_id  ORDER BY count) count WHERE count >1) ORDER BY cubic_house_id, openstreet_addr_street, openstreet_addr_housenumber";
                   $ret = pg_query($db, $sql);
                   $arr_response = array('response' => array());
                   if($ret) {
@@ -30,7 +30,8 @@
                               'cubic_street' => $row[2],
                               'cubic_house' => $row[3],
                               'cubic_house_id' => $row[4],
-                              'building_geom_firstpoint' => $row[5]
+                              'cubic_network_type' => $row[5],
+                              'building_geom_firstpoint' => $row[6]
                             );
                           //print_r( $arr);
                           array_push($arr_response['response'], $arr );

@@ -1,5 +1,5 @@
 <?php
-//ini_set('display_errors', 1);
+//('display_errors', 1);
 function postgres_to_php_array($postgresArray) {
 
    $postgresStr = trim($postgresArray,"{}");
@@ -15,6 +15,7 @@ $option = '';
 $accordion='';
 $tools ='';
  $restriction = $_GET["restriction"];
+ //echo $restriction;
   if ($restriction != NULL) {
   $restriction=json_encode($restriction);
   print "<script type='text/javascript'>console.log(".$restriction.");</script>";
@@ -34,18 +35,25 @@ $tools ='';
               if ($restriction != NULL) {
               
               //echo $restriction;
-              if ($restriction=="full") {
+              
+              //echo $sql;
+              if ($restriction =="full" || $restriction =="admin") {
                 $sql = "SELECT id, city, links, links_description, city_eng   FROM public.links WHERE links IS NOT NULL ORDER BY city";
+
               }
+                           
 
               if ($restriction == "central" || $restriction =="eastern" || $restriction == "western") {
                 $sql = "SELECT id, city, links, links_description, city_eng, region   FROM public.links WHERE links IS NOT NULL AND region = '$restriction' ORDER BY city";
               }
 
-              if ($restriction!=="full" && $restriction !== "central" && $restriction !=="eastern" && $restriction !== "western") {
+              if ($restriction!=="full" && $restriction !== "central" && $restriction !=="eastern" && $restriction !== "western"&& $restriction !== "admin") {
                 $sql = "SELECT id, city, links, links_description, city_eng, prime_city   FROM public.links WHERE links IS NOT NULL AND prime_city = '$restriction' ORDER BY city";
               }
               $ret = pg_query($db, $sql);
+              $rows = pg_num_rows($ret);
+
+				//echo $rows . " row(s) returned.\n";
               
               if(!$ret){
                   echo pg_last_error($db);
@@ -64,6 +72,7 @@ $tools ='';
                       $city_array[] = $row[4];
                 }
              }
+             //print_r($city_array);
 			foreach ($city_array as $key => $value) {
 			    $option .='<option value="'.$city_array[$key].'">'.$city_array[$key].'</option>';
 			}
@@ -74,9 +83,9 @@ $tools ='';
 	$toolsList = array(
 		array('fullAccess', 'Повний доступ', 
 			array( 
-				array('userLoginView', 'textexchange'), 
-				array('Графік відвідувань', 'Заміна host в qgis файлі'), 
-				array('NULL','NULL') 
+				array('userLoginView', 'textexchange','simpleuserRestrictionUpdate','cityTablesCreate'), 
+				array('Графік відвідувань', 'Заміна host в qgis файлі','Апдейт дозволу доступу simpleuser до схем Postgresql','Додавання комплекту таблиць до міста'), 
+				array('NULL','NULL','NULL','tables_create_city_eng') 
 			) 
 		),
 		array('cableChannelChannels', 'КК - канали',
@@ -116,9 +125,9 @@ $tools ='';
 		),
 		array('internet','Інтернет',
 			array(
-				array('etherTopologyUpdate'),
-				array('Оновлення топології Ethernet'),
-				array('ether_city_eng')
+				array('etherTopologyUpdate','cityStateSwitches'),
+				array('Оновлення топології Ethernet','Оновити стан комутаторів'),
+				array('ether_city_eng','switches_state_city_eng')
 			)
 			
 		),
@@ -134,30 +143,38 @@ $tools ='';
 	$buttons='';
 	$newTools = '<div class="tools" id="tools"><div class="tools__visible"></div><div class ="tools__hidden clear">';
 	$toolListToString .='<ul class="labelsList">';
-	foreach( $toolsList as $key =>$tool){
+	foreach( $toolsList as $key1 =>$tool){
 		if (is_array($tool)) {
-			foreach ($tool as $key => $toolDescription) {
+			foreach ($tool as $key2 => $toolDescription) {
 				
 					if (is_array($toolDescription) ) {
 						$buttons .='<div id="'.$tool[0].'_holder" class="clear invisible _holder"><ul>';
-						foreach ($toolDescription as $key => $button) {
-							if ($toolDescription[1][$key] !== NULL and $toolDescription[1][$key] !=='NULL') {
-								$buttons .='<li>';	
+						foreach ($toolDescription as $key3 => $button) {
+							
+							if (is_array($button) ) {
+
+								foreach ($button as $key4 => $value) {
+									if ($key3 == 0) {
+										$buttons.= '<li>';
+										if ($toolDescription[2][$key4] !=='NULL' and $toolDescription [2][$key4] !==NULL) {
+											$buttons .= '<select id="'.$toolDescription[2][$key4].'">'.$option.'</select>'; 
+										}
+										if ($toolDescription[$key3][$key4] !=='NULL' and $toolDescription [$key3][$key4] !==NULL) {
+											$buttons.= '<button id="'.$toolDescription[0][$key4].'" class="myToolButton">'.$toolDescription[1][$key4].'</button></li>'; 
+										}	
+									}
+									
+
+	
+								}
+
 							}
-							if ($toolDescription[2][$key] !== NULL and $toolDescription[2][$key] !== 'NULL') {
-								$buttons .= '<select id="'.$toolDescription[2][$key].'">'.$option.'</select>'; 
-							}
-							if ($toolDescription[0][$key] !== NULL and $toolDescription[0][$key] !=='NULL') {
-								$buttons.= '<button id="'.$toolDescription[0][$key].'" class="myToolButton">'.$toolDescription[1][$key].'</button>';	
-							}
-							if ($toolDescription[1][$key] !== NULL and $toolDescription[1][$key] !=='NULL') {
-								$buttons .='</li>';	
-							}
+							
 						}
 						$buttons .='</ul></div>';
 				}
 			}
-			if ($restriction =='full') {
+			if ($restriction =='admin') {
 				$toolListToString .= '<li id="'.$tool[0].'" class="toolsListLabel"><h2>'.$tool[1].'</h2></li>';
 			} else {
 				if ($tool[0] !== 'fullAccess') {
