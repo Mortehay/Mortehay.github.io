@@ -330,6 +330,7 @@ $.fn.phpRequest = function(params) {
 		console.log($(this).attr('id'));
 		request[params.id] = $('#'+params.id).val();
 		$('.phpScripStatus').show();
+		console.log('request',request);
 		$.ajax({
 			url: params.phpFile+'.php', //This is the current doc
 			type: params.type,

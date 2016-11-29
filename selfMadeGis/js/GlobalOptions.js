@@ -156,8 +156,9 @@ var simpleWmsSearch = {
       name: 'cubic_street',
       fieldLabel: "Name",
       allowBlank: false,
-      blankText: "Please enter a name (e.g. 'africa')",
-      filterOp: "="
+      blankText: "Будьласка, введіть вулицю",
+      filterOp: "=",
+      list:'street_list'
     }
   ],
   gridColumns: [
