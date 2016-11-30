@@ -22,14 +22,13 @@ $(document).ready(function(){
 		//console.log('cityName', cityName);
 		searchParams.streetSearch['id'] = cityName;
 	}
-	//console.log('searchParams', searchParams);
-	//let test = $('#SearchTabPanel').contents();
-	//console.log('test',test);
-	
-	//$( "input[name*='cubic_street']" ).attr('list','street_list');
+
 	//---------------------------street search ajax request---------------------------------------------------------------------------
-	//$(document).find('#SearchTabPanel input').data('list', 'street_list');
+	//$(".x-form-element").children().attr("list","street_list");
 	$(document).phpRequest(searchParams.streetSearch);
+
+	//$(document.body).append('<script type="text/javascript">$(document).ready(function(){ $(".x-form-element").children().attr("list","street_list"); });</script>');
+	//$('.x-form-element').children().attr('list','street_list');
 });
 
 //--------------ajax/php request----------------------------------------------------------------------------
@@ -47,14 +46,6 @@ $.fn.phpRequest = function(params) {
 			type: params.type,
 			data: (request),
 			success: function(data){
-				//$("input[name$='cubic_street']" ).attr('list','street_list');
-				//$("input[name$='cubic_street']" ).prop('list','street_list');
-				//$('#SearchTabPanel').children().children().attr('list','street_list');
-				$('#ext-gen324').attr('list','street_list');
-				//$('div.x-form-element').children().attr('list','street_list');
-				//$('form.x-panel-body.x-panel-body-noheader.x-panel-body-noborder.x-form').css('background-color','red');
-				//$('.x-form-element').children().attr('list','street_list');
-				// with the result from the ajax call
 				//console.log('data', data);
 				resp = JSON.parse(data);
 				//console.log('resp',resp);
@@ -69,7 +60,12 @@ $.fn.phpRequest = function(params) {
 			               	$('#street_list').append('<option>' + streets[i].cubic_street + '</option>')
 		               	}
 			}
-		});  	
+
+		});
+			$(document).on('click', function(){
+				console.log('click');
+				$(".x-form-element").children().attr("list","street_list"); 
+			})  	
 };
 
 })(jQuery);
