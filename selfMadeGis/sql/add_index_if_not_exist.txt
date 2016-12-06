@@ -1,0 +1,20 @@
+CREATE OR REPLACE FUNCTION create_index(schema_name text, table_name text,  column_name text, index_name text, index_type text default NULL) RETURNS void AS $$ 
+declare 
+   l_count integer;
+BEGIN
+  SELECT count(*)
+     into l_count
+  FROM pg_indexes
+  WHERE schemaname = schema_name
+    AND tablename = lower(table_name)
+    AND indexname = lower(index_name);
+
+  IF l_count = 0 AND index_type = 'gist' THEN 
+     execute 'create index ' || index_name || ' on ' ||schema_name||'.'|| table_name || '  using gist(' || column_name || ')';
+  ELSIF l_count = 0 AND index_type = 'btree' THEN 
+     execute 'create unique index ' || index_name || ' on ' ||schema_name||'.'|| table_name || '  using btree(' || column_name || ')';
+  ELSIF l_count = 0 AND index_type is NULL THEN
+     execute 'create index ' || index_name || ' on ' ||schema_name||'.'|| table_name || ' (' || column_name || ')';
+  END if;
+END;
+$$ LANGUAGE plpgsql;

@@ -251,6 +251,16 @@ let params = {
 		phpFile:'simpleuserRestrictionUpdate',
 		id:'simpleuserRestrictionUpdate',
 		type:'POST'
+	},
+	cityEntranceDataUpdate:{
+		phpFile:'cityEntranceDataUpdate',
+		id:'building_entrance_data_update_city_eng',
+		type:'POST'
+	},
+	cityTablesCreate:{
+		phpFile:'cityTablesCreate',
+		id:'tables_create_city_eng',
+		type:'POST'
 	}
 
 }
@@ -279,6 +289,7 @@ $(document).ready(function(){
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	$('#cityBuildingDataUpdate').phpRequest(params.cityBuildingDataUpdate);
 	$('#cityBuildingDublicatesFinder').phpRequest(params.cityBuildingDublicatesFinder);
+	$('#cityEntranceDataUpdate').phpRequest(params.cityEntranceDataUpdate);
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	$('#cableChannelChannelDataUpdate').phpRequest(params.cableChannelChannelDataUpdate);
 	$('#cableChannelCableDataView').phpRequest(params.cableChannelCableDataView);
@@ -294,6 +305,8 @@ $(document).ready(function(){
 	$('#ctvNodCoverageUpdate').phpRequest(params.ctvNodCoverageUpdate);
 	//-----------------------------switches state update------------------------------------------------------------------------
 	$('#cityStateSwitches').phpRequest(params.cityStateSwitches);
+	//-----------------------------add tables update------------------------------------------------------------------------
+	$('#cityTablesCreate').phpRequest(params.cityTablesCreate);
 });
 //--------ajax error-------------------------------------------------------------------------------------------------------------------
 $( document ).ajaxError(function( event, request, settings ) {

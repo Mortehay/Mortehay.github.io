@@ -111,9 +111,9 @@ $tools ='';
 		),
 		array('buildings','Будинки',
 			array(
-				array('cityBuildingDataUpdate', 'cityBuildingDublicatesFinder'),
-				array('Оновлення даних про будинки', 'Відобразити дублікати будинків'),
-				array('city_building_data_eng', 'city_building_dublicates_finder_eng')
+				array('cityBuildingDataUpdate', 'cityBuildingDublicatesFinder','cityEntranceDataUpdate'),
+				array('Оновлення даних про будинки', 'Відобразити дублікати будинків','Прив"язка під"їздів до будинку'),
+				array('city_building_data_eng', 'city_building_dublicates_finder_eng','building_entrance_data_update_city_eng')
 			)
 		),
 		array('ctv','КТВ',
