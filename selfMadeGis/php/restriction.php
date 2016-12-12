@@ -24,7 +24,8 @@ $tools ='';
            $port        = "port=5432";
            $dbname      = "dbname=postgres";
            $credentials = "user=simpleuser password=simplepassword";
-           $city_array = array();
+           $city_array = array(); 
+          
            $db = pg_connect( "$host $port $dbname $credentials"  );
              if(!$db){
                 echo "Error : Unable to open database\n";
@@ -73,10 +74,13 @@ $tools ='';
                 }
              }
              //print_r($city_array);
-			foreach ($city_array as $key => $value) {
-			    $option .='<option value="'.$city_array[$key].'">'.$city_array[$key].'</option>';
-			}
-	
+             	 if ( count($city_array) > 1) {
+	           	array_unshift($city_array, 'вибери місто');
+	           }
+		foreach ($city_array as $key => $value) {
+		    $option .='<option value="'.$city_array[$key].'">'.$city_array[$key].'</option>';
+		}
+
 
           } 
           
@@ -111,9 +115,9 @@ $tools ='';
 		),
 		array('buildings','Будинки',
 			array(
-				array('cityBuildingDataUpdate', 'cityBuildingDublicatesFinder','cityEntranceDataUpdate'),
-				array('Оновлення даних про будинки', 'Відобразити дублікати будинків','Прив"язка під"їздів до будинку'),
-				array('city_building_data_eng', 'city_building_dublicates_finder_eng','building_entrance_data_update_city_eng')
+				array('cityBuildingDataUpdate', 'cityBuildingDublicatesFinder','cityEntranceDataUpdateOSM', 'cityEntranceDataUpdateCUBIC'),
+				array('Оновлення даних про будинки', 'Відобразити дублікати будинків','Прив"язка OSM під"їздів до будинку', 'Прив"язка CUBIC під"їздів до будинку'),
+				array('city_building_data_eng', 'city_building_dublicates_finder_eng','building_entrance_OSM_data_update_city_eng', 'building_entrance_CUBIC_data_update_city_eng')
 			)
 		),
 		array('ctv','КТВ',

@@ -27265,7 +27265,7 @@ return /******/ (function(modules) { // webpackBootstrap
   GraphGroup.prototype.update = function (group) {
     this.group = group;
     this.content = group.content || 'graph';
-    this.className = group.className || this.className || 'vis-graph-group' + this.groupsUsingDefaultStyles[0] % 22;
+    this.className = group.className || this.className || 'vis-graph-group' + this.groupsUsingDefaultStyles[0] % 31;
     this.visible = group.visible === undefined ? true : group.visible;
     this.style = group.style;
     this.setOptions(group.options);

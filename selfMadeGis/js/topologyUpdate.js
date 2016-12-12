@@ -252,14 +252,19 @@ let params = {
 		id:'simpleuserRestrictionUpdate',
 		type:'POST'
 	},
-	cityEntranceDataUpdate:{
-		phpFile:'cityEntranceDataUpdate',
-		id:'building_entrance_data_update_city_eng',
+	cityEntranceDataUpdateOSM:{
+		phpFile:'cityEntranceDataUpdateOSM',
+		id:'building_entrance_OSM_data_update_city_eng',
 		type:'POST'
 	},
 	cityTablesCreate:{
 		phpFile:'cityTablesCreate',
 		id:'tables_create_city_eng',
+		type:'POST'
+	},
+	cityEntranceDataUpdateCUBIC:{
+		phpFile:'cityEntranceDataUpdateCUBIC',
+		id:'building_entrance_CUBIC_data_update_city_eng',
 		type:'POST'
 	}
 
@@ -289,7 +294,8 @@ $(document).ready(function(){
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	$('#cityBuildingDataUpdate').phpRequest(params.cityBuildingDataUpdate);
 	$('#cityBuildingDublicatesFinder').phpRequest(params.cityBuildingDublicatesFinder);
-	$('#cityEntranceDataUpdate').phpRequest(params.cityEntranceDataUpdate);
+	$('#cityEntranceDataUpdateOSM').phpRequest(params.cityEntranceDataUpdateOSM);
+	$('#cityEntranceDataUpdateCUBIC').phpRequest(params.cityEntranceDataUpdateCUBIC);
 	//--------------------------------------------------------------------------------------------------------------------------------------
 	$('#cableChannelChannelDataUpdate').phpRequest(params.cableChannelChannelDataUpdate);
 	$('#cableChannelCableDataView').phpRequest(params.cableChannelCableDataView);

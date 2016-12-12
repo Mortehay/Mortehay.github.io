@@ -210,8 +210,8 @@ function loadWMSConfig(topicName) {
 		url: wmsURI,
 		useGetProjectSettings: useGetProjectSettings,
 		layerOptions: {
-			buffer: 0,
-			singleTile: true,
+			buffer: 20,
+			singleTile: false,
 			ratio: 1
 		},
 		layerParams: {

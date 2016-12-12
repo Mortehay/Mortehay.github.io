@@ -801,6 +801,8 @@ input.vis-configuration.vis-config-range:focus::-ms-fill-upper {
   padding: 5px;
   border: 1px solid #b3b3b3;
   box-shadow: 2px 2px 10px rgba(154, 154, 154, 0.55);
+  height:400px;
+  overflow-y:scroll
 }
 
 .vis-legend-text {
@@ -948,6 +950,61 @@ input.vis-configuration.vis-config-range:focus::-ms-fill-upper {
     fill-opacity:0;
     stroke-width:2px;
     stroke: #FFDAB9 ;
+}
+/* ----new add */
+.vis-graph-group22 {
+    fill: #FAEBD7 ;
+    fill-opacity:0;
+    stroke-width:2px;
+    stroke: #FAEBD7 ;
+}
+.vis-graph-group23 {
+    fill: #7FFFD4 ;
+    fill-opacity:0;
+    stroke-width:2px;
+    stroke: #7FFFD4 ;
+}
+.vis-graph-group24 {
+    fill: #A52A2A ;
+    fill-opacity:0;
+    stroke-width:2px;
+    stroke: #A52A2A ;
+}
+.vis-graph-group25 {
+    fill: #5F9EA0 ;
+    fill-opacity:0;
+    stroke-width:2px;
+    stroke: #5F9EA0 ;
+}
+.vis-graph-group26 {
+    fill:   #5F9EA0 ;
+    fill-opacity:0;
+    stroke-width:2px;
+    stroke:   #5F9EA0 ;
+}
+.vis-graph-group27 {
+    fill: #D2691E ;
+    fill-opacity:0;
+    stroke-width:2px;
+    stroke: #D2691E ;
+}
+.vis-graph-group28 {
+    fill: #DC143C ;
+    fill-opacity:0;
+    stroke-width:2px;
+    stroke: #DC143C ;
+}
+.vis-graph-group29 {
+    fill: #FF8C00 ;
+    fill-opacity:0;
+    stroke-width:2px;
+    stroke: #FF8C00 ;
+}
+.vis-graph-group30 {
+    fill: #008000 ;
+    fill-opacity:0;
+    stroke-width:2px;
+    stroke: #008000 ;
 }
 
 .vis-timeline .vis-fill {
