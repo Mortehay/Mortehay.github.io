@@ -4,6 +4,7 @@
 include('restriction.php');
 include('rotatingArrows.php');
 
+
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -76,6 +77,7 @@ include('rotatingArrows.php');
       <?php
       echo $rotatingArrows;
       ?>
+
 
     <script type="text/javascript" src="../js/accordion.js"></script>
     <script type="text/javascript" src="../js/whois.js"></script>

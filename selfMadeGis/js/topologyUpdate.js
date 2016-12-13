@@ -269,6 +269,19 @@ let params = {
 	}
 
 }
+//-------------------file upload params-------------------------------------------------------------------------------------------------
+let fileUploadParams = {
+	csvUpload:{
+		phpFile:'csvUpload',
+		fileId:'csv_file_upload',
+		formId:'csvUploadForm',
+		fileName:'csv_file_upload',
+		formValueUpload:'Завантажити CSV',
+		method:'POST',
+		enctype:'multipart/form-data',
+		submitName:'csvSubmit'
+	}
+}
 //----------vocabulars----------------------------------------------------------------------------------------------------------------------
 let vocabulary ={
 	CCcablesList:['№','Технічні умови','Договір', 'Даткова угода','Акт прийомки','Затверджена картограма','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС'],
@@ -313,6 +326,9 @@ $(document).ready(function(){
 	$('#cityStateSwitches').phpRequest(params.cityStateSwitches);
 	//-----------------------------add tables update------------------------------------------------------------------------
 	$('#cityTablesCreate').phpRequest(params.cityTablesCreate);
+
+	//----------------------------------file upload------------------------------------------------------------------------------
+	$('#fullAccess_holder').fileUploadToTmp(fileUploadParams.csvUpload,'#fullAccess_holder');
 });
 //--------ajax error-------------------------------------------------------------------------------------------------------------------
 $( document ).ajaxError(function( event, request, settings ) {
@@ -395,6 +411,16 @@ $.fn.visibility = function(selfTagId) {
 		$('#'+tempId+'_holder').addClass('visible');
 		//console.log(tempId);
 	})
+}
+
+//-------------add file upload box---------------------------------------------------------------------------
+$.fn.fileUploadToTmp = function(params, target){
+	console.log('target', target);
+	$(target).append('<form id="'+params.formId+'" action="'+params.phpFile+'.php'+'" method="'+params.method+'" enctype="'+params.enctype+'"></form>');
+	$('#'+params.formId).append(/*'<label>виберіть файл CSV</label>'*/
+		'<input type="file" name="'+params.fileName+'" id="'+params.fileId+'" class="myToolButton">'+
+		'<input type="submit" value="'+params.formValueUpload+'"name="'+params.submitName+'" class="myToolButton">');
+
 }
 	
 })(jQuery);

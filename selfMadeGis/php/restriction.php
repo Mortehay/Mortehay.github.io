@@ -196,7 +196,7 @@ $tools ='';
 	$newTools .= '<div class="newTools clear">'.$toolListToString.$buttons.'</div>'.'</div></div>';
 	//echo $toolListToString;
 	//echo $buttons;
-	echo $newTools;
+	//echo $newTools;
 
 	//$toolsNew .= '<div class="toolsNew" id="toolsNew">'.'<div class="tools__visible">'.'</div>'.'<div class ="tools__hidden clear">'.'<ul>'; 
           //print_r($city_array);

@@ -1,0 +1,6 @@
+AuthName "pass"
+AuthType Basic
+AuthUserFile /etc/httpd/pass/pass
+require user ohusachenko yshpylovyi testuser
+RewriteEngine On    # Turn on the rewriting engine
+RewriteRule    ^pet-care/?$    main_page.php?restriction=$1     [NC,L]    # Handle requests for "pet-care"
