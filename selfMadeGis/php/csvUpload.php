@@ -10,7 +10,7 @@ $fileType = pathinfo($target_file,PATHINFO_EXTENSION);
 $csvUploadReturnRespond ='';
 //echo $fileType;
 // Check if image file is a actual image or fake image
-$mimes = array('application/vnd.ms-excel','text/plain','text/csv','text/tsv','csv');
+/*$mimes = array('application/vnd.ms-excel','text/plain','text/csv','text/tsv','application/csv','text/comma-separated-values','application/vnd.msexcel','text/anytext','application/excel','text/plain');
 if(in_array($_FILES["csv_file_upload"]["type"],$mimes) ){
     $csvUploadReturnRespond .= "File is an CSV ";
     echo $csvUploadReturnRespond;
@@ -21,9 +21,9 @@ if(in_array($_FILES["csv_file_upload"]["type"],$mimes) ){
     echo $csvUploadReturnRespond;
         $uploadOk = 0;
 }
-
+*/
 // Check file size
-if ($_FILES["csv_file_upload"]["size"] > 50000000) {
+if ($_FILES["csv_file_upload"]["size"] > 512000000) {
     $csvUploadReturnRespond .= "Sorry, your file is too large.";
     echo $csvUploadReturnRespond;
     $uploadOk = 0;

@@ -266,6 +266,16 @@ let params = {
 		phpFile:'cityEntranceDataUpdateCUBIC',
 		id:'building_entrance_CUBIC_data_update_city_eng',
 		type:'POST'
+	},
+	cityBuildingDataUpdateOSM:{
+		phpFile:'cityBuildingDataUpdateOSM',
+		id:'city_building_OSM_data_eng',
+		type:'POST'
+	},
+	cityRoadsDataUpdateOSM:{
+		phpFile:'cityRoadsDataUpdateOSM',
+		id:'city_roads_OSM_data_eng',
+		type:'POST'
 	}
 
 }
@@ -305,6 +315,9 @@ $(document).ready(function(){
 	$('#userLoginView').phpRequest(params.userLoginView);
 	$('#simpleuserRestrictionUpdate').phpRequest(params.simpleuserRestrictionUpdate);
 	//--------------------------------------------------------------------------------------------------------------------------------------
+	$('#cityBuildingDataUpdateOSM').phpRequest(params.cityBuildingDataUpdateOSM);
+	$('#cityRoadsDataUpdateOSM').phpRequest(params.cityRoadsDataUpdateOSM);
+
 	$('#cityBuildingDataUpdate').phpRequest(params.cityBuildingDataUpdate);
 	$('#cityBuildingDublicatesFinder').phpRequest(params.cityBuildingDublicatesFinder);
 	$('#cityEntranceDataUpdateOSM').phpRequest(params.cityEntranceDataUpdateOSM);

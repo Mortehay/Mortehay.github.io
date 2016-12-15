@@ -115,9 +115,9 @@ $tools ='';
 		),
 		array('buildings','Будинки',
 			array(
-				array('cityBuildingDataUpdate', 'cityBuildingDublicatesFinder','cityEntranceDataUpdateOSM', 'cityEntranceDataUpdateCUBIC'),
-				array('Оновлення даних про будинки', 'Відобразити дублікати будинків','Прив"язка OSM під"їздів до будинку', 'Прив"язка CUBIC під"їздів до будинку'),
-				array('city_building_data_eng', 'city_building_dublicates_finder_eng','building_entrance_OSM_data_update_city_eng', 'building_entrance_CUBIC_data_update_city_eng')
+				array('cityBuildingDataUpdateOSM','cityRoadsDataUpdateOSM','cityBuildingDataUpdate', 'cityBuildingDublicatesFinder','cityEntranceDataUpdateOSM', 'cityEntranceDataUpdateCUBIC'),
+				array('Оновлення даних про будинки OSM','Оновлення даних про дороги OSM','Оновлення даних про будинки CUBIC', 'Відобразити дублікати будинків','Прив"язка OSM під"їздів до будинку', 'Прив"язка CUBIC під"їздів до будинку'),
+				array('city_building_OSM_data_eng','city_roads_OSM_data_eng','city_building_data_eng', 'city_building_dublicates_finder_eng','building_entrance_OSM_data_update_city_eng', 'building_entrance_CUBIC_data_update_city_eng')
 			)
 		),
 		array('ctv','КТВ',

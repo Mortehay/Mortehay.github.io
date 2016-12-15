@@ -26,7 +26,9 @@ include('login.php');
 
             $tables = array();
             $index_id = array();
-            $index_geom =array ();
+            $index_geom = array();
+            $schema_function = array();
+            $schema_trigger = array();
 //------------------create city schema -------------------------------------------------------------------------------
                $tables[0] = 'CREATE SCHEMA IF NOT EXISTS '.$selectedCity.';';
               //------------------------------------------------------------------------------------------------------------------------------
@@ -144,28 +146,38 @@ include('login.php');
               //-----------------------------------------------------------------------------------------------------------------------------
               $index_id[19] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_channels_channels'".","."'id'".","."'".$selectedCity."_cable_channels_channels_id'".", 'btree');";
               $index_geom[19] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_channels_channels'".","."'pit_1_geom'".","."'".$selectedCity."_pit_1_geom_gist'".", 'gist');"."SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_channels_channels'".","."'pit_2_geom'".","."'".$selectedCity."_pit_2_geom_gist'".", 'gist');"."SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_channels_channels'".","."'channel_geom'".","."'".$selectedCity."_channel_geom_gist'".", 'gist');"; 
-
+//-------FUNCTIONS--------------//////////////////////////////////////////////////////////////////////////////////////
+//------------------------FUNCTION --------geom cable channels relocation------------------------------
+              $schema_function[0] ='CREATE OR REPLACE FUNCTION '.$selectedCity.'_cable_channel_cable_geom_update() RETURNS TRIGGER AS  $BODY$ BEGIN IF  TG_OP = "INSERT" THEN  UPDATE '.$selectedCity.'.'.$selectedCity.'_cable_channels SET  geom_cable =NEW.geom WHERE '.$selectedCity.'_cable_channels.table_id = NEW.table_id; RETURN NEW; ELSIF TG_OP = "UPDATE" THEN UPDATE '.$selectedCity.'.'.$selectedCity.'_cable_channels SET  geom_cable =NEW.geom  WHERE '.$selectedCity.'_cable_channels.table_id = NEW.table_id; RETURN NEW; ELSIF TG_OP = "DELETE" THEN UPDATE '.$selectedCity.'.'.$selectedCity.'_cable_channels SET  geom_cable =NULL WHERE '.$selectedCity.'_cable_channels.table_id = OLD.table_id; RETURN OLD; END IF; END; $BODY$  LANGUAGE plpgsql VOLATILE  COST 100;';
+              $schema_trigger[0] ='DROP TRIGGER IF EXISTS '.$selectedCity.'_cable_channels_geom_update ON '.$selectedCity.'.'.$selectedCity.'_cable_channels_cable_geom;'.' CREATE TRIGGER '.$selectedCity.'_cable_channels_geom_update AFTER INSERT OR DELETE OR UPDATE ON '.$selectedCity.'.'.$selectedCity.'_cable_channels_cable_geom FOR EACH ROW EXECUTE PROCEDURE '.$selectedCity.'_cable_channel_cable_geom_update();';
+//------------------------FUNCTION --------geom cable air relocation---------------------------------------
+              $schema_function[1] ='CREATE OR REPLACE FUNCTION '.$selectedCity.'_cable_air_cable_geom_update() RETURNS TRIGGER AS  $BODY$ BEGIN IF  TG_OP = "INSERT" THEN  UPDATE '.$selectedCity.'.'.$selectedCity.'_cable_air SET  geom_cable =NEW.geom WHERE '.$selectedCity.'_cable_air.table_id = NEW.table_id; RETURN NEW; ELSIF TG_OP = "UPDATE" THEN UPDATE '.$selectedCity.'.'.$selectedCity.'_cable_air SET  geom_cable =NEW.geom  WHERE '.$selectedCity.'_cable_air.table_id = NEW.table_id; RETURN NEW; ELSIF TG_OP = "DELETE" THEN UPDATE '.$selectedCity.'.'.$selectedCity.'_cable_air SET  geom_cable =NULL WHERE '.$selectedCity.'_cable_air.table_id = OLD.table_id; RETURN OLD; END IF; END; $BODY$  LANGUAGE plpgsql VOLATILE  COST 100;';
+              $schema_trigger[1] ='DROP TRIGGER IF EXISTS '.$selectedCity.'_cable_air_geom_update ON '.$selectedCity.'.'.$selectedCity.'_cable_air_cable_geom;'.' CREATE TRIGGER '.$selectedCity.'_cable_air_geom_update AFTER INSERT OR DELETE OR UPDATE ON '.$selectedCity.'.'.$selectedCity.'_cable_air_cable_geom FOR EACH ROW EXECUTE PROCEDURE '.$selectedCity.'_cable_air_cable_geom_update();';
+//-----------------------------------------------------------------------------------------------------------------------------
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
               //echo $restriction;
               $length = count($tables);
-               $tables_query = '';
+              $function_count =count($schema_function);
+              $tables_query = '';
+              $function_query = '';
               for ($i=0; $i < $length; $i++) { 
                 $tables_query .=$tables[$i].' '.$index_id[$i].' '.$index_geom[$i];
+              }
+              for ($k=0; $k < $function_count; $k++) { 
+                $function_query  .=$schema_function[$k].' '.$schema_trigger[$k].' ';
               }
 
               
               //echo $sql;
-              
-              
-              
-
-           
-
+             
              $ret = pg_query($db, $tables_query);
+             $fun = pg_query($db , $function_query);
               
           }
 
      pg_close($db); // Closing Connection     
      print($tables_query);
+     print($function_query);
 
          
 ?>
