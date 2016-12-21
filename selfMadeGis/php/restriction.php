@@ -87,59 +87,185 @@ $tools ='';
 	$toolsList = array(
 		array('fullAccess', 'Повний доступ', 
 			array( 
-				array('userLoginView', 'textexchange','simpleuserRestrictionUpdate','cityTablesCreate'), 
-				array('Графік відвідувань', 'Заміна host в qgis файлі','Апдейт дозволу доступу simpleuser до схем Postgresql','Додавання комплекту таблиць до міста'), 
-				array('NULL','NULL','NULL','tables_create_city_eng') 
+				array(/*id  for buttons*/
+					'userLoginView', 
+					'textexchange',
+					'simpleuserRestrictionUpdate',
+					'cityTablesCreate'
+				), 
+				array(/*buttons names*/
+					'Графік відвідувань', 
+					'Заміна host в qgis файлі',
+					'Апдейт дозволу доступу simpleuser до схем Postgresql',
+					'Додавання комплекту таблиць до міста'
+				), 
+				array(/*seletors ids*/
+					'NULL',
+					'NULL',
+					'NULL',
+					'tables_create_city_eng'
+				),
+				array(/*titles for buttons*/
+					'Відображає статистику відвідуваньт вебклієнту',
+					'Нажати після заміни QGIS файлу на сервері'/*Замінює адресу в QGIS файлі на localhost, в іншому разі файл не буде читатись сервером*/,
+					'Нажати після додавання нових таблиць'/*Потрібно запускати після зтворення кожної нової таблички root-користувачем, щоб нею міг користуватись - simpleuser*/,
+					'Додає шаблонний комплет таблиць, фунцій та тригерів до нового міста')
 			) 
 		),
 		array('cableChannelChannels', 'КК - канали',
 			array( 
-				array('cableChannelChannelDataUpdate','cableChannelTopologyUpdate'), 
-				array('Оновлення даних КК - канали','Оновлення топології КК- канали'), 
-				array('cable_channel_channel_data_city_eng','cable_channel_city_eng') 
+				array(/*id  for buttons*/
+					'cableChannelChannelDataUpdate',
+					'cableChannelTopologyUpdate'
+				), 
+				array(/*buttons names*/
+					'Оновлення даних КК - канали',
+					'Оновлення топології КК- канали'
+				), 
+				array(/*seletors ids*/
+					'cable_channel_channel_data_city_eng',
+					'cable_channel_city_eng'
+				),
+				array(/*titles for buttons*/
+					'Оновлює данні про кабельні канали, з завантаженої CSV(city_cable_channels_channels.csv)',
+					'Оновлює лінії каналів кабельних каналів на картіб нажати після /Оновлення даних КК - канали/'
+				)
 			) 
 		),
 		array('cableChannelCables','КК - кабелі',
 			array( 
-				array('cableChannelCabelDataUpdate','cableChannelCableDataView'), 
-				array('Оновлення даних КК - кабелі','Вивести таблицю КК - кабелі'),
-				array('cable_channel_cable_data_city_eng','cable_channel_cable_dataView_city_eng')
+				array(/*id  for buttons*/
+					'cableChannelCabelDataUpdate',
+					'cableChannelCableDataView'
+				), 
+				array(/*buttons names*/
+					'Оновлення даних КК - кабелі',
+					'Вивести таблицю КК - кабелі'
+				),
+				array(/*seletors ids*/
+					'cable_channel_cable_data_city_eng',
+					'cable_channel_cable_dataView_city_eng'
+				),
+				array(/*titles for buttons*/
+					'Оновлює данні в таблиці про кабельні прокладки в кабельній каналізації з завантаженого файлу CSV(city_cable_channels.csv, шаблон_реєстру_ВОЛЗ КК)',
+					'Виводить на екрані кабелі КК, які вже мають геометрію та данні в таблиці'
+				)
 			)
 		),
 		array('cableAirCables','ПКП - кабелі',
 			array(
-				array('cableAirCableDataUpdate', 'cableAirCableDataView'),
-				array('Оновлення даних ПКП - кабелі', 'Вивести таблицю ПКП - кабелі'),
-				array('cable_air_cable_data_city_eng', 'cable_air_cable_dataView_city_eng')
+				array(/*id  for buttons*/
+					'cableAirCableDataUpdate', 
+					'cableAirCableDataView'
+				),
+				array(/*buttons names*/
+					'Оновлення даних ПКП - кабелі', 
+					'Вивести таблицю ПКП - кабелі'
+				),
+				array(/*seletors ids*/
+					'cable_air_cable_data_city_eng', 
+					'cable_air_cable_dataView_city_eng'
+				),
+				array(/*titles for buttons*/
+					'Оновлює данні в таблиці про кабельні прокладки ПКП(повітряно кабельнв переходи) з завантаженого файлу CSV(city_cable_air.csv, шаблон_реєстру_ВОЛЗ ПКП)',
+					'Виводить на екран кабел ПКП, які вже мають геометрію та данні в таблиці'
+				)
 			)
 		),
 		array('buildings','Будинки',
 			array(
-				array('cityBuildingDataUpdateOSM','cityRoadsDataUpdateOSM','cityBuildingDataUpdate', 'cityBuildingDublicatesFinder','cityEntranceDataUpdateOSM', 'cityEntranceDataUpdateCUBIC'),
-				array('Оновлення даних про будинки OSM','Оновлення даних про дороги OSM','Оновлення даних про будинки CUBIC', 'Відобразити дублікати будинків','Прив"язка OSM під"їздів до будинку', 'Прив"язка CUBIC під"їздів до будинку'),
-				array('city_building_OSM_data_eng','city_roads_OSM_data_eng','city_building_data_eng', 'city_building_dublicates_finder_eng','building_entrance_OSM_data_update_city_eng', 'building_entrance_CUBIC_data_update_city_eng')
+				array(/*id  for buttons*/
+					'cityBuildingDataUpdateOSM',
+					'cityRoadsDataUpdateOSM',
+					'cityBuildingDataUpdate', 
+					'cityBuildingDublicatesFinder',
+					'cityEntranceDataUpdateOSM', 
+					'cityEntranceDataUpdateCUBIC'
+				),
+				array(/*buttons names*/
+					'Оновлення даних про будинки OSM',
+					'Оновлення даних про дороги OSM',
+					'Оновлення даних про будинки CUBIC', 
+					'Відобразити дублікати будинків',
+					'Прив"язка OSM під"їздів до будинку', 
+					'Прив"язка CUBIC під"їздів до будинку'
+				),
+				array(/*seletors ids*/
+					'city_building_OSM_data_eng',
+					'city_roads_OSM_data_eng',
+					'city_building_data_eng', 
+					'city_building_dublicates_finder_eng',
+					'building_entrance_OSM_data_update_city_eng', 
+					'building_entrance_CUBIC_data_update_city_eng'
+				),
+				array(/*titles for buttons*/
+					'Оновлення даних про будинки з завантаненої CSV(city_buildings_osm.csv), яка зформована з даних вивантажених з overpass-turbo',
+					'Оновлення даних про дороги з завантаненої CSV(city_roads_osm.csv), яка зформована з даних вивантажених з overpass-turbo',
+					'Оновлення даних про будинки з завантаненої CSV(city_buildings.csv), яка зформована з даних вивантажених з КУБІКУ(Дислокация по районам и типам сетей (дополненный))',
+					'Відображає перелік будинків з однаковою адресою та різною геометрією',
+					'Додає entrance_id до підїздів(підїзди мають знаходитись в межах будинків, інакше дані не підтягнуться) і додає підїзди з файлу, які відсутні в таблиці CSV(city_entrances_osm.csv) УВАГА, МОЖЕ ЗАЙНЯТИ БАГАТО ЧАСУ',
+					'Додає підїзди в будинки(де немає підїздів з id) з геометрією підїзду першої точки будинку, та назнача entrance_id CSV(city_entrances_cubic.csv) КУБІК(Количество абонентов поподъездно)')
 			)
 		),
 		array('ctv','КТВ',
 			array(
-				array('ctvTopologyUpdate', 'ctvNodCoverageUpdate'),
-				array('Оновлення топології КТВ', 'Оновлення покриття оптичних вузлів'),
-				array('ctv_city_eng', 'ctv_city_nod_eng')
+				array(/*id  for buttons*/
+					'ctvTopologyUpdate', 
+					'ctvNodCoverageUpdate'
+				),
+				array(/*buttons names*/
+					'Оновлення топології КТВ', 
+					'Оновлення покриття оптичних вузлів'
+				),
+				array(/*seletors ids*/
+					'ctv_city_eng', 
+					'ctv_city_nod_eng'
+				),
+				array(/*titles for buttons*/
+					'Оновлює топлогію з файлу CSV(city_ctv_topology.csv поки не реалізовано), КУБІК(Реестр введенных узлов  без КУ)',
+					'Нажати після оновлення даних в КУБІКУ(для великих міст може заняти багато часу)'
+				)
 			)
 		),
 		array('internet','Інтернет',
 			array(
-				array('etherTopologyUpdate','cityStateSwitches'),
-				array('Оновлення топології Ethernet','Оновити стан комутаторів'),
-				array('ether_city_eng','switches_state_city_eng')
+				array(/*id  for buttons*/
+					'etherTopologyUpdate',
+					'cityStateSwitches'
+				),
+				array(/*buttons names*/
+					'Оновлення топології Ethernet',
+					'Оновити стан комутаторів'
+				),
+				array(/*seletors ids*/
+					'ether_city_eng',
+					'switches_state_city_eng'
+				),
+				array(/*titles for buttons*/
+					'Оновлює топлогію з файлу CSV(city_ethernet_topology.csv поки не реалізовано), КУБІК(Топологія мережі Ethernet)',
+					'Нажати для термінового оновлення стану комутаторів'
+				)
 			)
 			
 		),
 		array('networkSupply', 'Підтримка мережі',
 			array(
-				array('toCoverageUpdate','usoCoverageUpdate'),
-				array('Оновлення зони покриття дільниць ТО','Оновлення зони покриття дільниць СО'),
-				array('city_supply_to_eng','city_supply_uso_eng')
+				array(/*id  for buttons*/
+					'toCoverageUpdate',
+					'usoCoverageUpdate'
+				),
+				array(/*buttons names*/
+					'Оновлення зони покриття дільниць ТО',
+					'Оновлення зони покриття дільниць СО'
+				),
+				array(/*seletors ids*/
+					'city_supply_to_eng',
+					'city_supply_uso_eng'
+					),
+				array(/*titles for buttons*/
+					'Нажати для термінового оновлення покриття дільниць ТО',
+					'Нажати для термінового оновлення покриття дільниць CО'
+				)
 			)
 		)
 	);
@@ -164,7 +290,7 @@ $tools ='';
 											$buttons .= '<select id="'.$toolDescription[2][$key4].'">'.$option.'</select>'; 
 										}
 										if ($toolDescription[$key3][$key4] !=='NULL' and $toolDescription [$key3][$key4] !==NULL) {
-											$buttons.= '<button id="'.$toolDescription[0][$key4].'" class="myToolButton">'.$toolDescription[1][$key4].'</button></li>'; 
+											$buttons.= '<button id="'.$toolDescription[0][$key4].'" class="myToolButton" title="'.$toolDescription[3][$key4].'">'.$toolDescription[1][$key4].'</button></li>'; 
 										}	
 									}
 									

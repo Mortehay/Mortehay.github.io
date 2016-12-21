@@ -48,7 +48,7 @@ $user='simpleuser';
                       $city_array[] = $row[4];
                 }
              }
-             $sql_new='REVOKE ALL ON DATABASE postgres FROM public; GRANT CONNECT ON DATABASE postgres TO '.$user.'; GRANT USAGE ON SCHEMA public TO '.$user.';GRANT ALL ON ALL TABLES IN SCHEMA public TO '.$user.'; GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO '.$user.'; ALTER DEFAULT PRIVILEGES FOR ROLE '.$user.' IN SCHEMA public GRANT ALL ON TABLES TO '.$user.'; ALTER DEFAULT PRIVILEGES FOR ROLE '.$user.' IN SCHEMA public GRANT ALL ON SEQUENCES TO '.$user.'; ';
+             $sql_new='REVOKE ALL ON DATABASE postgres FROM public; GRANT CONNECT ON DATABASE postgres TO '.$user.'; GRANT TEMPORARY ON DATABASE postgres TO '.$user.';GRANT CONNECT ON DATABASE template1 TO '.$user.';GRANT USAGE ON SCHEMA public TO '.$user.';GRANT TEMPORARY ON DATABASE template1 TO '.$user.' GRANT ALL ON ALL TABLES IN SCHEMA public TO '.$user.'; GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO '.$user.'; ALTER DEFAULT PRIVILEGES FOR ROLE '.$user.' IN SCHEMA public GRANT ALL ON TABLES TO '.$user.'; ALTER DEFAULT PRIVILEGES FOR ROLE '.$user.' IN SCHEMA public GRANT ALL ON SEQUENCES TO '.$user.'; ';
              print_r($city_array);
 			foreach ($city_array as $key => $value) {
 			    $sql_new .='GRANT USAGE ON SCHEMA '.$city_array[$key].' to '.$user.'; GRANT ALL ON ALL TABLES IN SCHEMA '.$city_array[$key].' TO '.$user.'; GRANT ALL ON ALL SEQUENCES IN SCHEMA '.$city_array[$key].' TO '.$user.'; ALTER DEFAULT PRIVILEGES FOR ROLE '.$user.' IN SCHEMA '.$city_array[$key].' GRANT ALL ON TABLES TO '.$user.'; ALTER DEFAULT PRIVILEGES FOR ROLE '.$user.' IN SCHEMA '.$city_array[$key].' GRANT ALL ON SEQUENCES TO '.$user.';  ';

@@ -170,57 +170,79 @@ let params = {
 	cableChannelTopologyUpdate:{
 		phpFile: 'cableChannelTopologyUpdate',
 		id:'cable_channel_city_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: false,
+		displayStyle:'none'
 	},
 	ctvTopologyUpdate:{
 		phpFile:'ctvTopologyUpdate',
 		id:'ctv_city_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: true,
+		displayStyle:'table'
 	},
 	etherTopologyUpdate:{
 		phpFile:'etherTopologyUpdate',
 		id:'ether_city_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: true,
+		displayStyle:'table'
 	},
 	cableChannelCabelDataUpdate:{
 		phpFile:'cableChannelCabelDataUpdate',
 		id:'cable_channel_cable_data_city_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: true,
+		displayStyle:'table'
 	},
 	cableChannelChannelDataUpdate:{
 		phpFile:'cableChannelChannelDataUpdate',
 		id:'cable_channel_channel_data_city_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: false,
+		displayStyle:'none'
 	},
 	textexchange:{
 		phpFile:'textexchange',
 		id:'textexchange',
-		type:'GET'
+		type:'GET',
+		displayResult: false,
+		displayStyle:'none'
 	},
 	userLoginView:{
 		phpFile:'userLoginView',
 		id:'userLoginView',
-		type:'GET'
+		type:'GET',
+		displayResult: true,
+		displayStyle:'graph'
 	},
 	cityBuildingDataUpdate:{
 		phpFile:'cityBuildingDataUpdate',
 		id:'city_building_data_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: true,
+		displayStyle:'table'
 	},
 	cableChannelCableDataView:{
 		phpFile:'cableChannelCableDataView',
 		id:'cable_channel_cable_dataView_city_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: true,
+		displayStyle:'table'
 	},
 	cableAirCableDataUpdate:{
 		phpFile:'cableAirCableDataUpdate',
 		id:'cable_air_cable_data_city_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: false,
+		displayStyle:'none'
 	},
 	cableAirCableDataView:{
 		phpFile:'cableAirCableDataView',
 		id:'cable_air_cable_dataView_city_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: true,
+		displayStyle:'table'
 	},
 	toCoverageUpdate:{
 		phpFile:'toCoverageUpdate',
@@ -230,52 +252,72 @@ let params = {
 	usoCoverageUpdate:{
 		phpFile:'usoCoverageUpdate',
 		id:'city_supply_uso_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: false,
+		displayStyle:'none'
 	},
 	ctvNodCoverageUpdate:{
 		phpFile:'ctvNodCoverageUpdate',
 		id:'ctv_city_nod_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: false,
+		displayStyle:'none'
 	},
 	cityBuildingDublicatesFinder:{
 		phpFile:'cityBuildingDublicatesFinder',
 		id:'city_building_dublicates_finder_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: true,
+		displayStyle:'table'
 	},
 	cityStateSwitches:{
 		phpFile:'cityStateSwitches',
 		id:'switches_state_city_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: true,
+		displayStyle:'table'
 	},
 	simpleuserRestrictionUpdate:{
 		phpFile:'simpleuserRestrictionUpdate',
 		id:'simpleuserRestrictionUpdate',
-		type:'POST'
+		type:'POST',
+		displayResult: false,
+		displayStyle:'none'
 	},
 	cityEntranceDataUpdateOSM:{
 		phpFile:'cityEntranceDataUpdateOSM',
 		id:'building_entrance_OSM_data_update_city_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: false,
+		displayStyle:'none'
 	},
 	cityTablesCreate:{
 		phpFile:'cityTablesCreate',
 		id:'tables_create_city_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: false,
+		displayStyle:'none'
 	},
 	cityEntranceDataUpdateCUBIC:{
 		phpFile:'cityEntranceDataUpdateCUBIC',
 		id:'building_entrance_CUBIC_data_update_city_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: false,
+		displayStyle:'none'
 	},
 	cityBuildingDataUpdateOSM:{
 		phpFile:'cityBuildingDataUpdateOSM',
 		id:'city_building_OSM_data_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: false,
+		displayStyle:'none'
 	},
 	cityRoadsDataUpdateOSM:{
 		phpFile:'cityRoadsDataUpdateOSM',
 		id:'city_roads_OSM_data_eng',
-		type:'POST'
+		type:'POST',
+		displayResult: false,
+		displayStyle:'none'
 	}
 
 }
@@ -294,10 +336,12 @@ let fileUploadParams = {
 }
 //----------vocabulars----------------------------------------------------------------------------------------------------------------------
 let vocabulary ={
-	CCcablesList:['№','Технічні умови','Договір', 'Даткова угода','Акт прийомки','Затверджена картограма','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС'],
-	missedBuildings:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
-	AIRcablesList:['№','id кабеля', 'Посилання на архів','Дата монтажа кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення','Опис маршруту', 'Довжина, км'],
-	dublicateBuildings:['№','Вулиця OSM', '№будинку OSM', 'Вулиця CUBIC', '№будинку CUBIC', '"Кубік" HOUSE_ID', 'Тип мережі', 'Координата будинку']
+	cableChannelCableDataView:['№','Технічні умови','Договір', 'Даткова угода','Акт прийомки','Затверджена картограма','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС'],
+	cityBuildingDataUpdate:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
+	cableAirCableDataView:['№','id кабеля', 'Посилання на архів','Дата монтажа кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення','Опис маршруту', 'Довжина, км'],
+	cityBuildingDublicatesFinder:['№','Вулиця OSM', '№будинку OSM', 'Вулиця CUBIC', '№будинку CUBIC', '"Кубік" HOUSE_ID', 'Тип мережі', 'Координата будинку'],
+	ctvTopologyUpdate:['№', 'Місто', 'Вулиця', '№будинку', 'Квартира', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID'],
+	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під"їзду', '№Поверху', 'Розташування', 'house_id', 'mac_address', 'ip_address', 'serial_numbe', 'hostname', 'sw_model', 'house_id',   'sw_inv_state', 'дата установки', 'дата зміни']
 };
 
 //------document ready-------------------------------------------------------------------------------------------------------------------
@@ -362,55 +406,38 @@ $.fn.phpRequest = function(params) {
 		console.log(params.phpFile,$('#'+params.id).val() );
 		let request = {};
 		let attributId = $(this).attr('id');
-		let loginSwitcher = false;
-		if(attributId== 'userLoginView'){  loginSwitcher = true }
-		//-------------------------------------------------------------------------------------	
-		let buildingDataSwitcher = false;
-		if(attributId == 'cityBuildingDataUpdate'){  buildingDataSwitcher = true }
-		let buildingDublicateSwitcher = false;
-		if(attributId == 'cityBuildingDublicatesFinder'){  buildingDublicateSwitcher = true }	
+		
 		//-------------------------------------------------------------------------------------
-		let cableChannelCableDataViewSwitcher = false;
-		if(attributId == 'cableChannelCableDataView'){  cableChannelCableDataViewSwitcher = true }
-		let cableAirCableDataViewSwitcher  = false;
-		if(attributId == 'cableAirCableDataView'){  cableAirCableDataViewSwitcher = true }
 		//-------------------------------------------------------------------------------------
 		console.log($(this).attr('id'));
 		request[params.id] = $('#'+params.id).val();
-		$('.phpScripStatus').show();
-		console.log('request',request);
-		$.ajax({
-			url: params.phpFile+'.php', //This is the current doc
-			type: params.type,
-			data: (request),
-			success: function(data){
-				$('.phpScripStatus').hide();
-				// with the result from the ajax call
-				console.log('data', data);
-				if (loginSwitcher) {
-					statistcsDraw(data);
-					closeSpan('visualization' );
+		if ($('#'+params.id).val() !=='вибери місто') {
+			$('.phpScripStatus').show();
+			console.log('request',request);
+			$.ajax({
+				url: params.phpFile+'.php', //This is the current doc
+				type: params.type,
+				data: (request),
+				success: function(data){
+					
+					if( ( params.displayResult == true) && (params.displayStyle == 'table')){
+						displayTableData('displayResult'+attributId, 'container', data, vocabulary[attributId]);
+						closeSpan('displayResult'+attributId);
+					}
+					if( ( params.displayResult == true) && (params.displayStyle == 'graph')){
+						statistcsDraw(data);
+						closeSpan('visualization' );
+					}
+					// with the result from the ajax call
+					console.log('data', data);
+					
+					$('.phpScripStatus').hide();
 				}
-				if (buildingDataSwitcher) {
-					displayTableData('missed_buildings', 'container', data, vocabulary.missedBuildings);
-					closeSpan('missed_buildings' );
-				}
-				if (buildingDublicateSwitcher) {
-					displayTableData('duplicate_buildings', 'container', data, vocabulary.dublicateBuildings);
-					closeSpan('duplicate_buildings' );
-				}
-				if (cableChannelCableDataViewSwitcher) {
-					displayTableData('drawnCCcables', 'container', data, vocabulary.CCcablesList);
-					closeSpan('drawnCCcables' );
-				}
-				if (cableAirCableDataViewSwitcher) {
-					displayTableData('drawnAIRcables', 'container', data, vocabulary.AIRcablesList);
-					closeSpan('drawnAIRcables' );
-				}
-				
-
-			}
-		});      
+			});      
+		} else {
+			alert('Будь ласка виберіть місто')
+		}
+		
 	})
   	
 };

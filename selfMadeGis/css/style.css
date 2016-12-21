@@ -16,7 +16,7 @@ div.container {
 ul{
 	list-style-type: none;
 }
-.container h1, .container h2{ 
+.container>div> h1, .container>div> h2{ 
 color:	 #006400}
 li.list-header { 
   font-weight: bold;

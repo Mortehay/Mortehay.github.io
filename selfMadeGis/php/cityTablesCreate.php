@@ -66,7 +66,7 @@ include('login.php');
                $index_geom[5] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_channels_cable_geom'".","."'geom'".","."'".$selectedCity."_cable_channels_cable_geom_gist'".", 'gist');";
               //-----------------------------------------------------------------------------------------------------------------------------
 //-----------------create  cable channel pits table---------------------------------------------------------------
-              $tables[6] = 'CREATE TABLE IF NOT EXISTS '.$selectedCity.'.'.$selectedCity.'_cable_channel_pits(geom geometry,table_id character varying(100),pit_number character varying(100),pit_short_description character varying(300),id serial);';
+              $tables[6] = 'CREATE TABLE IF NOT EXISTS '.$selectedCity.'.'.$selectedCity.'_cable_channel_pits(geom geometry,table_id character varying(100),pit_number character varying(100),pit_short_description character varying(300), pit_district character varying(100), pit_coupler character varying(100), microdistrict character varying(100), district character varying(100), id serial);';
               //-----------------------------------------------------------------------------------------------------------------------------
                $index_id[6] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_channel_pits'".","."'id'".","."'".$selectedCity."_cable_channel_pits_id'".", 'btree');";
                $index_geom[6] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_channel_pits'".","."'geom'".","."'".$selectedCity."_cable_channel_pits_gist'".", 'gist');";
