@@ -52,8 +52,12 @@
                           array_push($arr_response['response'], $arr );
                           //array_push($arr_response, $arr);
                         }
-                      print json_encode($arr_response);
-                      } else {  echo 'no new ctv equipment';  }
+                      
+                      } else {  
+                        $arr[0] =  'no new ethernet equipment';
+                        array_push($arr_response['response'], $arr );
+                      }
+                        //echo 'no new ctv equipment'; 
                        
                       }
                   }
@@ -63,10 +67,10 @@
             $equipment_geom_update ="UPDATE ".$selectedCity.".".$selectedCity."_switches SET switches_geom = ".$selectedCity.".".$selectedCity."_buildings.building_geom_thirdpoint FROM ".$selectedCity.".".$selectedCity."_buildings WHERE  ".$selectedCity.".".$selectedCity."_switches.switches_geom IS NULL AND ".$selectedCity.".".$selectedCity."_switches.cubic_house_id = ".$selectedCity.".".$selectedCity."_buildings.cubic_house_id;";
                 $equipment_geometry_update_query =pg_query($db, $equipment_geom_update);
 
-              $sql = "CREATE TEMP TABLE tmp AS SELECT cubic_parent_mac_address, switches_geom FROM ".$selectedCity.".".$selectedCity."_switches where cubic_mac_address IN (SELECT cubic_parent_mac_address FROM ".$selectedCity.".".$selectedCity."_switches WHERE cubic_parent_mac_address IS NOT NULL); UPDATE ".$selectedCity.".".$selectedCity."_switches SET parent_switches_geom = tmp.switches_geom FROM tmp WHERE ".$selectedCity."_switches.cubic_parent_mac_address = tmp.cubic_parent_mac_address; DROP TABLE tmp;   UPDATE ".$selectedCity.".".$selectedCity."_switches SET topology_line_geom = ST_MakeLine(parent_switches_geom, switches_geom) WHERE ".$selectedCity."_switches.parent_switches_geom IS NOT null AND ".$selectedCity."_switches.switches_geom IS NOT NULL;";
+              $sql = "CREATE TEMP TABLE tmp AS SELECT cubic_mac_address, cubic_switch_role, cubic_switch_model,  switches_geom FROM ".$selectedCity.".".$selectedCity."_switches where cubic_mac_address IN (SELECT cubic_mac_address FROM ".$selectedCity.".".$selectedCity."_switches WHERE cubic_mac_address IS NOT NULL); UPDATE ".$selectedCity.".".$selectedCity."_switches SET parent_switches_geom = tmp.switches_geom, cubic_parent_switch_role = tmp.cubic_switch_role, cubic_parent_switch_model = tmp.cubic_switch_model FROM tmp WHERE ".$selectedCity."_switches.cubic_parent_mac_address = tmp.cubic_mac_address; DROP TABLE tmp;   UPDATE ".$selectedCity.".".$selectedCity."_switches SET topology_line_geom = ST_MakeLine(parent_switches_geom, switches_geom) WHERE ".$selectedCity."_switches.parent_switches_geom IS NOT null AND ".$selectedCity."_switches.switches_geom IS NOT NULL;";
               $ret = pg_query($db, $sql);
 	}
-      
+      print json_encode($arr_response);
 	pg_close($db); // Closing Connection
 	//print( $sql);
 ?>

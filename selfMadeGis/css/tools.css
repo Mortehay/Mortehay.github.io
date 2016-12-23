@@ -31,7 +31,8 @@ div.tools__visible{
 
 .displayResultcableChannelCableDataView, .displayResultcityBuildingDataUpdate, .displayResultcableAirCableDataView, .displayResultcityBuildingDublicatesFinder, .displayResultctvTopologyUpdate, .displayResultetherTopologyUpdate{
 	min-width: 650px;
-	max-width:1260px;
+	max-width:1360px;
+	width:100%;
 	margin: 0 auto;
 	background-color: #FFDAB9;
 	position:relative;

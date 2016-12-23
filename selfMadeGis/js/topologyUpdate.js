@@ -129,38 +129,39 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 	resp = JSON.parse(data);
 	console.log('resp',resp);
 	$('.'+mainTagClass).remove();
-               $('.'+joinedToTgClass).next().after('<div class="'+mainTagClass+' clear"><table></table></div>');
-               let header = '';
-               if (vocabulary !==  'noVocabulary') {
-               	header +='<tr>'
-               	for (let i = 0; i < vocabulary.length; i++) {
-               		header +='<th>'+vocabulary[i]+'</th>';
-               	}
-               	header +='</tr>';
-               	$('.'+mainTagClass).find('table').append(header);
-               } else {
-               	console.log('noVocabulary for table header')
-               }
+	
+		$('.'+joinedToTgClass).next().after('<div class="'+mainTagClass+' clear"><table style="width:inherit;"></table></div>');
+		 let header = '';
+	               if (vocabulary !==  'noVocabulary') {
+	               	header +='<tr>'
+	               	for (let i = 0; i < vocabulary.length; i++) {
+	               		header +='<th>'+vocabulary[i]+'</th>';
+	               	}
+	               	header +='</tr>';
+	               	$('.'+mainTagClass).find('table').append(header);
+	               } else {
+	               	console.log('noVocabulary for table header')
+	               }
 
-               //let unsortedList = resp.response;
-               let list = resp.response;
-               //let list =unsortedCableList.sort(compare);
+	               //let unsortedList = resp.response;
+	               let list = resp.response;
+	               //let list =unsortedCableList.sort(compare);
 
-               for (let i = 0; i < list.length; i++) {
-               	let row ='<tr>';
-               	let rowData = list[i];
-               	//console.log('rowData',rowData);
-               	
-               	if(vocabulary.findIndex(x => x == '№')>-1){
-               		rowData['1'] = i+1;
-               	}
-               	//console.log('rowData', rowData);
-               	for (let key in rowData) {
-               		row +='<td>'+rowData[key]+'</td>';
-               	}
-               	row += '</tr>';
-               	$('.'+mainTagClass).find('table').append(row);	
-               }
+	               for (let i = 0; i < list.length; i++) {
+	               	let row ='<tr>';
+	               	let rowData = list[i];
+	               	//console.log('rowData',rowData);
+	               	
+	               	if(vocabulary.findIndex(x => x == '№')>-1){
+	               		rowData['1'] = i+1;
+	               	}
+	               	//console.log('rowData', rowData);
+	               	for (let key in rowData) {
+	               		row +='<td>'+rowData[key]+'</td>';
+	               	}
+	               	row += '</tr>';
+	               	$('.'+mainTagClass).find('table').append(row);	
+	               }
 
 }
 //-------------------------------------------------------------------------------------------------------------------
@@ -340,8 +341,8 @@ let vocabulary ={
 	cityBuildingDataUpdate:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
 	cableAirCableDataView:['№','id кабеля', 'Посилання на архів','Дата монтажа кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення','Опис маршруту', 'Довжина, км'],
 	cityBuildingDublicatesFinder:['№','Вулиця OSM', '№будинку OSM', 'Вулиця CUBIC', '№будинку CUBIC', '"Кубік" HOUSE_ID', 'Тип мережі', 'Координата будинку'],
-	ctvTopologyUpdate:['№', 'Місто', 'Вулиця', '№будинку', 'Квартира', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID'],
-	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під"їзду', '№Поверху', 'Розташування', 'house_id', 'mac_address', 'ip_address', 'serial_numbe', 'hostname', 'sw_model', 'house_id',   'sw_inv_state', 'дата установки', 'дата зміни']
+	ctvTopologyUpdate:['№', 'Місто', 'Вулиця', '№будинку', 'Квартира', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID'],
+	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під"їзду', '№Поверху', 'Розташування', 'house_id', 'mac_address', 'ip_address', 'serial_numbe', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни']
 };
 
 //------document ready-------------------------------------------------------------------------------------------------------------------
@@ -419,21 +420,33 @@ $.fn.phpRequest = function(params) {
 				type: params.type,
 				data: (request),
 				success: function(data){
-					
-					if( ( params.displayResult == true) && (params.displayStyle == 'table')){
-						displayTableData('displayResult'+attributId, 'container', data, vocabulary[attributId]);
-						closeSpan('displayResult'+attributId);
+					if(  (data) && (params.displayResult == true) ) {
+						let test =  JSON.parse(data);
+						if( (test == null) || ( test.response == null)){
+							alert('Відсутні нові елементи');
+							$('.phpScripStatus').hide();
+						} else {
+							if( params.displayStyle == 'table' ) {
+								displayTableData('displayResult'+attributId, 'container', data, vocabulary[attributId]);
+								closeSpan('displayResult'+attributId);
+							}
+							if( params.displayStyle == 'graph'){
+								statistcsDraw(data);
+								closeSpan('visualization' );
+							}
+							// with the result from the ajax call
+							console.log('data', data);
+							$('.phpScripStatus').hide();
+							
+						}
+					} else {
+						$('.phpScripStatus').hide();
 					}
-					if( ( params.displayResult == true) && (params.displayStyle == 'graph')){
-						statistcsDraw(data);
-						closeSpan('visualization' );
-					}
-					// with the result from the ajax call
-					console.log('data', data);
-					
-					$('.phpScripStatus').hide();
+				//	
 				}
-			});      
+				
+			}); 
+
 		} else {
 			alert('Будь ласка виберіть місто')
 		}
