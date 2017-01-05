@@ -1,0 +1,17 @@
+CREATE OR REPLACE FUNCTION conditional_update(schema_name_input text, table_name_input text, column_name_input text, column_name_temp text) RETURNS VOID AS $$
+BEGIN
+  PERFORM column_name FROM information_schema.columns WHERE table_name= table_name_input and column_name = column_name_input;
+  IF FOUND THEN
+  execute  'UPDATE '||schema_name_input||'.'||table_name_input||' SET  '||column_name_input  ||' = NULL';
+  execute  'UPDATE '||schema_name_input||'.'||table_name_input||' SET  '||column_name_input  ||' = tmp.'||column_name_temp||' FROM tmp WHERE '||table_name_input||'.cubic_mac_address = tmp.mac';
+  END IF;
+END;
+$$ language plpgsql;
+
+
+select conditional_update('ukrainka', 'tech_status', 'val1');
+
+create temp table tmp(id serial, val1 varchar(100), mac varchar(100));
+insert into tmp(val1,mac) values ('key','001346665198');
+select conditional_update('ukrainka','ukrainka_switches', 'tech_status', 'val1');
+select tech_status from ukrainka.ukrainka_switches where cubic_mac_address = '001346665198';

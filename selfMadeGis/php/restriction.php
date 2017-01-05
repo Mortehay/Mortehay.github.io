@@ -83,7 +83,7 @@ $tools ='';
 
 
           } 
-          
+          // tools lbutton list description-----------------------------------------------------------------------------------------------------------------
 	$toolsList = array(
 		array('fullAccess', 'Повний доступ', 
 			array( 
@@ -116,19 +116,23 @@ $tools ='';
 			array( 
 				array(/*id  for buttons*/
 					'cableChannelChannelDataUpdate',
-					'cableChannelTopologyUpdate'
+					'cableChannelTopologyUpdate',
+					'cableChannelPitsDataUpdate'
 				), 
 				array(/*buttons names*/
 					'Оновлення даних КК - канали',
-					'Оновлення топології КК- канали'
+					'Оновлення топології КК- канали',
+					'Оновлення привязки колодязів КК'
 				), 
 				array(/*seletors ids*/
 					'cable_channel_channel_data_city_eng',
-					'cable_channel_city_eng'
+					'cable_channel_city_eng',
+					'cable_channel_pits_city_eng'
 				),
 				array(/*titles for buttons*/
 					'Оновлює данні про кабельні канали, з завантаженої CSV(city_cable_channels_channels.csv)',
-					'Оновлює лінії каналів кабельних каналів на картіб нажати після /Оновлення даних КК - канали/'
+					'Оновлює лінії каналів кабельних каналів на картіб нажати після /Оновлення даних КК - канали/',
+					'Привязує колодязі КК до мікрорайону/району/зони покриття ПГС'
 				)
 			) 
 		),
@@ -172,6 +176,22 @@ $tools ='';
 				)
 			)
 		),
+		array('opticalCouplers','Оптичні муфти',
+			array(
+				array(/*id  for buttons*/
+					'opticalCouplersUpdate'
+				),
+				array(/*buttons names*/
+					'Оновлення привязки оптичних муфт'
+				),
+				array(/*seletors ids*/
+					'city_optical_couplers_data_update_eng'
+				),
+				array(/*titles for buttons*/
+					'Привязує оптичні муфти до мікрорайону/району/зони покриття ПГС'
+				)
+			)
+		),		
 		array('buildings','Будинки',
 			array(
 				array(/*id  for buttons*/
@@ -269,6 +289,8 @@ $tools ='';
 			)
 		)
 	);
+	//------------------------------------------------------------------------------------------------------------
+	//tools button list generator--------------------------------------------------------------------------
 	$toolListToString ='';
 	$buttons='';
 	$newTools = '<div class="tools" id="tools"><div class="tools__visible"></div><div class ="tools__hidden clear">';
@@ -320,6 +342,58 @@ $tools ='';
 	}
 	$toolListToString .='</ul>';
 	$newTools .= '<div class="newTools clear">'.$toolListToString.$buttons.'</div>'.'</div></div>';
+	//------------------------------------------------------------------------------------------------------------
+	//----------------------------city array--------------------------------------------------------------------
+	$cities = array(
+	array('volia.vn','vinnitsa'),
+	array('volia.kh','kharkiv'),
+	array('volia.sevastopol','sevastopol'),
+	array('volia.kr','kropyvnytskyi'),
+	array('volia.ck','cherkassy'),
+	array('volia.pl','poltava'),
+	array('volia.km','khmelnitsky'),
+	array('volia.simferopol','simferopol'),
+	array('volia.sumy','sumy'),
+	array('volia.dn','donetsk'),
+	array('volia.dp','dnipro'),
+	array('volia.zp','zaporizhia'),
+	array('volia.kiev','kiev'),
+	array('volia.al','alchevsk'),
+	array('volia.cv','chernivtsi'),
+	array('volia.kherson','kherson'),
+	array('volia.krm','kramatorsk'),
+	array('volia.rv','rivne'),
+	array('volia.lviv','lviv'),
+	array('volia.kryvyirih','kryvyi_rih'),
+	array('volia.putyvl','putyvl'),
+	array('volia.kremenec','kremenets'),
+	array('volia.lutsk','lutsk'),
+	array('volia.terebovlia','terebovlya'),
+	array('volia.ternopil','ternopil'),
+	array('volia.chortkiv.chortkiv','chortkiv'),
+	array('volia.illichivsk','Chornomorsk'),
+	array('volia.ovidiopol','ovidiopol'),
+	array('volia.karlivka','karlivka'),
+	array('volia.fas','fastiv'),
+	array('volia.makiyivka','makiyivka'),
+	array('volia.volochysk','volochisk'),
+	array('volia.solonitsevka','solonitsevka'),
+	array('volia.brovary','brovary'),
+	array('volia.zhytomyr','zhitomir'),
+	array('volia.melitopol','melitopol'),
+	array('volia.stebnyk','stebnyk'),
+	array('volia.odessa','odesa'),
+	array('volia.berdychiv','berdychiv'),
+	array('volia.ukrainka','ukrainka'),
+	array('volia.dobrotvir','dobrotvir'),
+	array('volia.truskavets','truskavets'),
+	array('volia.kamianets-podilskyi','kamianets-podilskyi'),
+	array('volia.obukhiv','obukhiv'),
+	array('volia.bila-tserkva','bila_tserkva'),
+	array('volia.nvm','novomoskovsk') 
+	);
+	//------------------------------------------------------------------------------------------------------------
+
 	//echo $toolListToString;
 	//echo $buttons;
 	//echo $newTools;

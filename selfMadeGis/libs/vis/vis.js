@@ -28034,7 +28034,8 @@ return /******/ (function(modules) { // webpackBootstrap
     this.svg.style.position = 'absolute';
     this.svg.style.top = 0 + 'px';
     this.svg.style.width = this.options.iconSize + 5 + 'px';
-    this.svg.style.height = '100%';
+    //this.svg.style.height = '100%';
+    this.svg.style.height = '500px';
 
     this.dom.frame.appendChild(this.svg);
     this.dom.frame.appendChild(this.dom.textArea);

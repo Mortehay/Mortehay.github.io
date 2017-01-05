@@ -1,5 +1,4 @@
 
-
 //----------compare function---compare array of objects-----------------
 function compare(a,b) {
   if (a.table_id < b.table_id)
@@ -127,7 +126,7 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
                // console.log('data', resp.response.length);
                //console.log('click');
 	resp = JSON.parse(data);
-	console.log('resp',resp);
+	//console.log('resp',resp);
 	$('.'+mainTagClass).remove();
 	
 		$('.'+joinedToTgClass).next().after('<div class="'+mainTagClass+' clear"><table style="width:inherit;"></table></div>');
@@ -155,9 +154,25 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 	               	if(vocabulary.findIndex(x => x == '№')>-1){
 	               		rowData['1'] = i+1;
 	               	}
+	               	let pathIndex;
+	               	if(vocabulary.findIndex(y => y =='Опис маршруту') >-1){
+	               		pathIndexCC = 'summ_route_description';
+	               	}
+	               	if(vocabulary.findIndex(y => y =='Опис маршруту') >-1){
+	               		pathIndexPKP = 'rote_description';
+	               	}
 	               	//console.log('rowData', rowData);
 	               	for (let key in rowData) {
-	               		row +='<td>'+rowData[key]+'</td>';
+	               		//console.log('vocabulary.indexOf(key)',vocabulary.indexOf(key) );
+	               		if (key == pathIndexCC ) {
+	               			row +='<td>'+'<button id="'+rowData['table_id']+'" class="mapWindow" data-cable="cc">'+rowData[key]+'</button>'+'</td>';
+	               		} else if (key ==pathIndexPKP) {
+	               			row +='<td>'+'<button id="'+rowData['table_id']+'" class="mapWindow" data-cable="pkp">'+rowData[key]+'</button>'+'</td>';
+	               		}
+	               		else {
+	               			row +='<td>'+rowData[key]+'</td>';	
+	               		}
+	               		//row +='<td>'+rowData[key]+'</td>';
 	               	}
 	               	row += '</tr>';
 	               	$('.'+mainTagClass).find('table').append(row);	
@@ -186,15 +201,15 @@ let params = {
 		phpFile:'etherTopologyUpdate',
 		id:'ether_city_eng',
 		type:'POST',
-		displayResult: true,
+		displayResult: false,
 		displayStyle:'table'
 	},
 	cableChannelCabelDataUpdate:{
 		phpFile:'cableChannelCabelDataUpdate',
 		id:'cable_channel_cable_data_city_eng',
 		type:'POST',
-		displayResult: true,
-		displayStyle:'table'
+		displayResult: false,
+		displayStyle:'none'
 	},
 	cableChannelChannelDataUpdate:{
 		phpFile:'cableChannelChannelDataUpdate',
@@ -319,6 +334,20 @@ let params = {
 		type:'POST',
 		displayResult: false,
 		displayStyle:'none'
+	},
+	cableChannelPitsDataUpdate:{
+		phpFile:'cableChannelPitsDataUpdate',
+		id:'cable_channel_pits_city_eng',
+		type:'POST',
+		displayResult: false,
+		displayStyle:'none'
+	},
+	opticalCouplersUpdate:{
+		phpFile:'opticalCouplersUpdate',
+		id:'city_optical_couplers_data_update_eng',
+		type:'POST',
+		displayResult: false,
+		displayStyle:'none'
 	}
 
 }
@@ -359,7 +388,7 @@ $(document).ready(function(){
 	$('#textexchange').phpRequest(params.textexchange);
 	$('#userLoginView').phpRequest(params.userLoginView);
 	$('#simpleuserRestrictionUpdate').phpRequest(params.simpleuserRestrictionUpdate);
-	//--------------------------------------------------------------------------------------------------------------------------------------
+	//------------------------Buildings----------------------------------------------------------------------------------------------------
 	$('#cityBuildingDataUpdateOSM').phpRequest(params.cityBuildingDataUpdateOSM);
 	$('#cityRoadsDataUpdateOSM').phpRequest(params.cityRoadsDataUpdateOSM);
 
@@ -367,10 +396,15 @@ $(document).ready(function(){
 	$('#cityBuildingDublicatesFinder').phpRequest(params.cityBuildingDublicatesFinder);
 	$('#cityEntranceDataUpdateOSM').phpRequest(params.cityEntranceDataUpdateOSM);
 	$('#cityEntranceDataUpdateCUBIC').phpRequest(params.cityEntranceDataUpdateCUBIC);
-	//--------------------------------------------------------------------------------------------------------------------------------------
+	//---------------Cable channels---------------------------------------------------------------------------------------------------
 	$('#cableChannelChannelDataUpdate').phpRequest(params.cableChannelChannelDataUpdate);
 	$('#cableChannelCableDataView').phpRequest(params.cableChannelCableDataView);
+
+	$('#cableChannelPitsDataUpdate').phpRequest(params.cableChannelPitsDataUpdate);
+	//----------------------optical couplers------------------------------------------------------------------------------------------
+	$('#opticalCouplersUpdate').phpRequest(params.opticalCouplersUpdate);
 	//-------------------------------------------------------------------------------------------------------------------------------------
+
 	$('#cableAirCableDataUpdate').phpRequest(params.cableAirCableDataUpdate);
 	$('#cableAirCableDataView').phpRequest(params.cableAirCableDataView);
 	//-----------------------------------------------------------------------------------------------------------------------------------
@@ -387,6 +421,10 @@ $(document).ready(function(){
 
 	//----------------------------------file upload------------------------------------------------------------------------------
 	$('#fullAccess_holder').fileUploadToTmp(fileUploadParams.csvUpload,'#fullAccess_holder');
+	//---new Map WINDOW open-------------------------------------------------------------------------------------------------------
+	//$('button.mapWindow').openNewMapWindow();
+
+
 });
 //--------ajax error-------------------------------------------------------------------------------------------------------------------
 $( document ).ajaxError(function( event, request, settings ) {
@@ -414,12 +452,13 @@ $.fn.phpRequest = function(params) {
 		request[params.id] = $('#'+params.id).val();
 		if ($('#'+params.id).val() !=='вибери місто') {
 			$('.phpScripStatus').show();
-			console.log('request',request);
+			//console.log('request',request);
 			$.ajax({
 				url: params.phpFile+'.php', //This is the current doc
 				type: params.type,
 				data: (request),
 				success: function(data){
+					//console.log(data);
 					if(  (data) && (params.displayResult == true) ) {
 						let test =  JSON.parse(data);
 						if( (test == null) || ( test.response == null)){
@@ -429,13 +468,14 @@ $.fn.phpRequest = function(params) {
 							if( params.displayStyle == 'table' ) {
 								displayTableData('displayResult'+attributId, 'container', data, vocabulary[attributId]);
 								closeSpan('displayResult'+attributId);
+								$('button.mapWindow').openNewMapWindow(params);
 							}
 							if( params.displayStyle == 'graph'){
 								statistcsDraw(data);
 								closeSpan('visualization' );
 							}
 							// with the result from the ajax call
-							console.log('data', data);
+							//console.log('data', data);
 							$('.phpScripStatus').hide();
 							
 						}
@@ -475,5 +515,54 @@ $.fn.fileUploadToTmp = function(params, target){
 		'<input type="submit" value="'+params.formValueUpload+'"name="'+params.submitName+'" class="myToolButton">');
 
 }
-	
+
+//-------open link in new window-----------------------------------------------------------------------
+$.fn.openNewMapWindow = function(params) {
+	$(this).on('click', function(){
+		let tempId = $(this).attr('id') ;
+		let cityId = $('#'+params.id).val();
+		let cableType = $(this).data('cable');
+		let insideText = $(this).text();
+		//console.log('tempId', tempId);
+		//console.log('cityId', cityId);
+		console.log( $( this ).text() );
+		let geomRequest ={
+			tempId:tempId,
+			cityId:cityId,
+			cableType: cableType
+		};
+		let url = 'cableGeomGenerate.php';
+		console.log('geomRequest ',geomRequest );
+		let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=300,left=200,width=800,height=600");
+		$.ajax({
+			url: url, //This is the current doc
+			type: 'POST',
+			data: (geomRequest),
+			success: function(data){
+				//console.log(data);
+				let test =  JSON.parse(data);
+				console.log(test.features[0].geometry.coordinates[0]);
+				
+				let centerPoint = {
+					point:[test.features[0].geometry.coordinates[0], test.features[0].geometry.coordinates[1]],
+					zoom: 18
+				}
+				
+				newWindow.document.write(' <script   src="https://code.jquery.com/jquery-1.12.4.min.js"   integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="   crossorigin="anonymous"></script>');
+				newWindow.document.write('<style>.map { height: 600px;width: 800px;}</style>');
+				newWindow.document.write('<script src="https://openlayers.org/en/v3.20.1/build/ol.js"></script>');
+				newWindow.document.write('<h4>'+insideText+'</h4>');
+				newWindow.document.write('<div id="map" class="map"></div><script type="text/javascript" >'+
+					"let centerPoint = {point:["+centerPoint.point[0]+","+centerPoint.point[1]+"],zoom:"+centerPoint.zoom+"};"+
+					"let raster = new ol.layer.Tile({source: new ol.source.OSM({})});"+
+					"let cableStyle = new ol.style.Style({image: new ol.style.Circle({radius: 4, stroke: new ol.style.Stroke({ color: 'blue', width: 2 }), fill: new ol.style.Fill({ color: 'rgba(255,0,0,0.2)' })}), stroke: new ol.style.Stroke({color: 'red', width: 2})});"+
+					"let vector = new ol.layer.Vector({source: new ol.source.Vector({features: (new ol.format.GeoJSON()).readFeatures("+data+", {featureProjection: ol.proj.get('EPSG:4326')})}),style: cableStyle});"+
+					"let map = new ol.Map({target: 'map', renderer: 'canvas', layers: [raster, vector], view: new ol.View({center: ["+centerPoint.point+"],zoom:"+ centerPoint.zoom+"})});"+
+					'</script>');
+					
+			}
+				
+		}); 
+	})
+}	
 })(jQuery);

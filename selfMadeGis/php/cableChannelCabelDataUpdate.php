@@ -35,11 +35,6 @@
 
         }
 
-      
-     
-
-	
-	
 	pg_close($db); // Closing Connection
 	print( $sql);
 ?>
