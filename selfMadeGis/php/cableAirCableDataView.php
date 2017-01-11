@@ -17,7 +17,7 @@
 	}
 
  
-                 $sql = "SELECT table_id , cable_progect_link , cable_mount_date ,  cable_type , cable_short_type_description , cable_description ,  progect_number ,  cable_purpose , cubic_start_street , cubic_start_house_num,  cubic_start_house_entrance_num ,    cubic_end_street , cubic_end_house_num ,  cubic_end_house_entrance_num , total_cable_length   FROM ".$selectedCity.".".$selectedCity."_cable_air WHERE cable_type IS NOT NULL AND cable_short_type_description IS NOT NULL AND geom_cable IS NOT NULL AND  progect_number  IS NOT NULL ORDER BY id;  ";
+                 $sql = "SELECT table_id , cable_progect_link , cable_mount_date ,  cable_type , cable_short_type_description , cable_description ,  progect_number ,  cable_purpose , cubic_start_street , cubic_start_house_num,  cubic_start_house_entrance_num ,    cubic_end_street , cubic_end_house_num ,  cubic_end_house_entrance_num , total_cable_length   FROM ".$selectedCity.".".$selectedCity."_cable_air WHERE cable_type IS NOT NULL AND cable_short_type_description IS NOT NULL AND geom_cable IS NOT NULL AND  progect_number  IS NOT NULL ORDER BY trim(leading 't_' from table_id)::int;  ";
                   $ret = pg_query($db, $sql);
                   $arr_response = array('response' => array());
                   if($ret) {

@@ -17,7 +17,7 @@
 	}
 
  
-                 $sql = "SELECT summ_tu, summ_contract_sum , summ_sub_contract, summ_acceptance_act, summ_approval_cartogram, summ_route_description, summ_cable_type, summ_archive_link, table_id,  notes2 , rezerve1 , rezerve2 , rezerve3   FROM ".$selectedCity.".".$selectedCity."_cable_channels WHERE summ_tu IS NOT NULL AND summ_cable_type IS NOT NULL AND geom_cable IS NOT NULL ORDER BY id;  ";
+                 $sql = "SELECT summ_tu, summ_contract_sum , summ_sub_contract, summ_acceptance_act, summ_approval_cartogram, summ_route_description, summ_cable_type, summ_archive_link, table_id,  notes2 , rezerve1 , rezerve2 , rezerve3   FROM ".$selectedCity.".".$selectedCity."_cable_channels WHERE summ_tu IS NOT NULL AND summ_cable_type IS NOT NULL AND geom_cable IS NOT NULL ORDER BY trim(leading 'ПГС-' from rezerve3)::int, trim(leading 't_' from table_id)::int ;  ";
                   $ret = pg_query($db, $sql);
                   $arr_response = array('response' => array());
                   if($ret) {
