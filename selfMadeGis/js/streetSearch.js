@@ -6,6 +6,7 @@ let searchParams = {
 }
 
 $(document).ready(function(){
+	
 	//----------------street-search---------------------------------------------------------------------------------------------------
 	let link = $(document).contents().find('#panel_header_title').context.URL;
 	//console.log('cityName', link);
@@ -64,7 +65,13 @@ $.fn.phpRequest = function(params) {
 		});
 			$(document).on('click', function(){
 				console.log('click');
-				$(".x-form-element").children().attr("list","street_list"); 
+				let restriction = localStorage.getItem("tempRestriction");
+				$(".x-form-element").children().attr("list","street_list");
+				if ($('#returnArrow').length == 0) {
+
+					$('#panel_header').prepend('<a href="http://77.121.192.25/qgis-ck/php/main_page.php?restriction='+restriction+'" style="display:inline-block;float:left"><div id="returnArrow" style="cursor:pointer;height:22px;width:22px;"><img src="../img/returnArrow.png" style="height:100%;width:100%;""></div></a>');
+				} 
+				
 			})  	
 };
 

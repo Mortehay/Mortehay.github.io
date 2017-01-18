@@ -155,6 +155,8 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 	               		rowData['1'] = i+1;
 	               	}
 	               	let pathIndex;
+	               	let pathIndexPKP;
+	               	let pathIndexCC;
 	               	if(vocabulary.findIndex(y => y =='Опис маршруту') >-1){
 	               		pathIndexCC = 'summ_route_description';
 	               	}
@@ -166,10 +168,9 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 	               		//console.log('vocabulary.indexOf(key)',vocabulary.indexOf(key) );
 	               		if (key == pathIndexCC ) {
 	               			row +='<td>'+'<button id="'+rowData['table_id']+'" class="mapWindow" data-cable="cc">'+rowData[key]+'</button>'+'</td>';
-	               		} else if (key ==pathIndexPKP) {
+	               		} else if (key == pathIndexPKP) {
 	               			row +='<td>'+'<button id="'+rowData['table_id']+'" class="mapWindow" data-cable="pkp">'+rowData[key]+'</button>'+'</td>';
-	               		}
-	               		else {
+	               		} else {
 	               			row +='<td>'+rowData[key]+'</td>';	
 	               		}
 	               		//row +='<td>'+rowData[key]+'</td>';
@@ -179,6 +180,8 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 	               }
 
 }
+//-------------------------------------------------------------------------------------------------------------------
+		
 //-------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -348,6 +351,15 @@ let params = {
 		type:'POST',
 		displayResult: false,
 		displayStyle:'none'
+	},
+	ctvTopologyDataView:{
+		phpFile:'ctvTopologyDataView',
+		id:'ctv_topology_dataView_city_eng',
+		type:'POST',
+		displayResult: true,
+		displayStyle:'window',
+		displayCss: '../css/ctvTopologyDataView.css',
+		displayCode:'../js/ctvTopologyDataView.js'
 	}
 
 }
@@ -414,6 +426,9 @@ $(document).ready(function(){
 	$('#usoCoverageUpdate').phpRequest(params.usoCoverageUpdate);
 	//-----------------------------ctv nod coverage update -----------------------------------------------------------------------
 	$('#ctvNodCoverageUpdate').phpRequest(params.ctvNodCoverageUpdate);
+
+	$('#ctvTopologyDataView').phpRequest(params.ctvTopologyDataView);
+
 	//-----------------------------switches state update------------------------------------------------------------------------
 	$('#cityStateSwitches').phpRequest(params.cityStateSwitches);
 	//-----------------------------add tables update------------------------------------------------------------------------
@@ -442,17 +457,21 @@ $( document ).ajaxComplete(function( event,request, settings ) {
 
 $.fn.phpRequest = function(params) {
 	$(this).on('click', function(){
-		console.log(params.phpFile,$('#'+params.id).val() );
+		//console.log($('#'+params.id).val() );
 		let request = {};
 		let attributId = $(this).attr('id');
-		
+		/*if((params.id.displayResult) && ( params.id.displayStyle == 'window')){
+			let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=300,left=200,width=800,height=600");	
+		}
+*/
 		//-------------------------------------------------------------------------------------
 		//-------------------------------------------------------------------------------------
-		console.log($(this).attr('id'));
+		console.log('phpFile',$(this).attr('id'));
 		request[params.id] = $('#'+params.id).val();
 		if ($('#'+params.id).val() !=='вибери місто') {
+
 			$('.phpScripStatus').show();
-			//console.log('request',request);
+			console.log('request',request);
 			$.ajax({
 				url: params.phpFile+'.php', //This is the current doc
 				type: params.type,
@@ -461,7 +480,8 @@ $.fn.phpRequest = function(params) {
 					//console.log(data);
 					if(  (data) && (params.displayResult == true) ) {
 						let test =  JSON.parse(data);
-						if( (test == null) || ( test.response == null)){
+						console.log('test', test);
+						if( (test == null) && ( test.response == null)){
 							alert('Відсутні нові елементи');
 							$('.phpScripStatus').hide();
 						} else {
@@ -474,6 +494,9 @@ $.fn.phpRequest = function(params) {
 								statistcsDraw(data);
 								closeSpan('visualization' );
 							}
+							if( params.displayStyle == 'window'){
+								$(this).openNewWindow(data, params, request);
+							}								
 							// with the result from the ajax call
 							//console.log('data', data);
 							$('.phpScripStatus').hide();
@@ -564,5 +587,24 @@ $.fn.openNewMapWindow = function(params) {
 				
 		}); 
 	})
-}	
+}
+//-------------------------------open ctv new topology window-----------------------------	
+$.fn.openNewWindow = function(data,params,request){
+		let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=300,left=200,width=800,height=600");
+		//localStorage.clear();	
+		localStorage.setItem("tempTopologyArray", data);
+		let obj = JSON.parse(data);
+		let objLength =0; 
+		if (obj.nodes.length <100) {objLength = 20*(obj.nodes.length) } 
+		else if ((obj.nodes.length >=100) && (obj.nodes.length < 800)) { objLength = 10*(obj.nodes.length)  }
+		else if((obj.nodes.length >=800) && (obj.nodes.length < 2000)) { objLength = 5*(obj.nodes.length)  }
+		else  { objLength = 3*(obj.nodes.length)  }	;
+		newWindow.document.write('<script   src="https://code.jquery.com/jquery-1.12.4.min.js"   integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="   crossorigin="anonymous"></script>');
+		newWindow.document.write('<link rel="stylesheet" href="'+params.displayCss+'" type="text/css">');
+		newWindow.document.write('<script src="https://d3js.org/d3.v4.min.js"></script>');
+		newWindow.document.write('<h4>'+request[params.id]+'</h4>');
+		newWindow.document.write('<svg width="'+objLength+'" height="'+objLength+'"></svg>');
+		newWindow.document.write('<script type="text/javascript" src="'+params.displayCode+'"></script>');
+					
+}
 })(jQuery);
