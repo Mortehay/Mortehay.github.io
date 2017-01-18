@@ -591,6 +591,7 @@ $.fn.openNewMapWindow = function(params) {
 //-------------------------------open ctv new topology window-----------------------------	
 $.fn.openNewWindow = function(data,params,request){
 		let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=300,left=200,width=800,height=600");
+<<<<<<< HEAD
 		//localStorage.clear();	
 		localStorage.setItem("tempTopologyArray", data);
 		let obj = JSON.parse(data);
@@ -599,6 +600,16 @@ $.fn.openNewWindow = function(data,params,request){
 		else if ((obj.nodes.length >=100) && (obj.nodes.length < 800)) { objLength = 10*(obj.nodes.length)  }
 		else if((obj.nodes.length >=800) && (obj.nodes.length < 2000)) { objLength = 5*(obj.nodes.length)  }
 		else  { objLength = 3*(obj.nodes.length)  }	;
+=======
+		localStorage.clear();	
+		localStorage.setItem("tempTopologyArray", data);
+		let obj = JSON.parse(data);
+		let objLength =0; 
+		if (obj.nodes.length <100) {objLength = 10*(obj.nodes.length) } 
+		else if ((obj.nodes.length >=100) && (obj.nodes.length < 800)) { objLength = 6*(obj.nodes.length)  }
+		else if((obj.nodes.length >=800) && (obj.nodes.length < 2000)) { objLength = 6*(obj.nodes.length)  }
+		else  { objLength = 4*(obj.nodes.length)  }	;
+>>>>>>> origin/master
 		newWindow.document.write('<script   src="https://code.jquery.com/jquery-1.12.4.min.js"   integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="   crossorigin="anonymous"></script>');
 		newWindow.document.write('<link rel="stylesheet" href="'+params.displayCss+'" type="text/css">');
 		newWindow.document.write('<script src="https://d3js.org/d3.v4.min.js"></script>');
