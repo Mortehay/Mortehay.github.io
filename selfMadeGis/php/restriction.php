@@ -230,22 +230,26 @@ $tools ='';
 		array('ctv','КТВ',
 			array(
 				array(/*id  for buttons*/
-					'ctvTopologyUpdate', 
+					'ctvTopologyUpdate',
+					'ctvTopologyLoad', 
 					'ctvNodCoverageUpdate',
 					'ctvTopologyDataView'
 				),
 				array(/*buttons names*/
-					'Оновлення топології КТВ', 
+					'Оновлення топології КТВ',
+					'Додавання до топології КТВ елементів', 
 					'Оновлення покриття оптичних вузлів',
 					'Відображення топології КТВ'
 				),
 				array(/*seletors ids*/
-					'ctv_city_eng', 
+					'ctv_city_eng',
+					'ctv_city_topology_load_eng', 
 					'ctv_city_nod_eng',
 					'ctv_topology_dataView_city_eng'
 				),
 				array(/*titles for buttons*/
-					'Оновлює топлогію з файлу CSV(city_ctv_topology.csv поки не реалізовано), КУБІК(Реестр введенных узлов  без КУ)',
+					'Оновлює топлогію з файлу CSV(city_ctv_topology.csv), КУБІК(Реестр введенных узлов  без КУ)',
+					'Додає відсутні елементи топлогії з файлу CSV(city_ctv_topology.csv), КУБІК(Реестр введенных узлов  без КУ)',
 					'Нажати після оновлення даних в КУБІКУ(для великих міст може заняти багато часу)',
 					'Нажати для відображення топології міста'
 				)
