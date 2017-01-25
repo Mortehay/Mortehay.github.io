@@ -19,7 +19,7 @@
             // echo "Opened database successfully\n";
             $json = array( 'equipment' => array());
 
-                $sql = "SELECT cubic_city, cubic_street, cubic_house, cubic_name, cubic_code, cubic_ou_code, cubic_coment, archive_link, link   FROM ".$selectedCity.".".$selectedCity."_ctv_topology WHERE  cubic_code ='".$cubic_code."';";
+                $sql = "SELECT cubic_city, cubic_street, cubic_house, cubic_name, cubic_code, cubic_ou_code, cubic_ou_name, cubic_ou_street, cubic_ou_house,  cubic_coment, archive_link, link   FROM ".$selectedCity.".".$selectedCity."_ctv_topology WHERE  cubic_code ='".$cubic_code."';";
                 $ret = pg_query($db, $sql);
                   
                   if($ret) {
@@ -28,14 +28,17 @@
 
                           $arr = array(
                               'cubic_city' => $row[0],
-                              'cubic_street' => $row[1],
-                              'cubic_house' => $row[2],
+                              'cubic_coment' => $row[9],
                               'cubic_name' => $row[3],
                               'cubic_code' => $row[4],
+                              'cubic_street' => $row[1],
+                              'cubic_house' => $row[2],
+                              'cubic_ou_name' => $row[6],
                               'cubic_ou_code' => $row[5],
-                              'cubic_coment' => $row[6],
-                              'archive_link' => $row[7],
-                              'link' => $row[8]
+                              'cubic_ou_street' => $row[7],
+                              'cubic_ou_house' => $row[8], 
+                              'archive_link' => $row[10],
+                              'link' => $row[11]
                             );
                           
                         }
