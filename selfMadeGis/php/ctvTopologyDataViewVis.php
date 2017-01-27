@@ -49,7 +49,7 @@
                               'title' => $row[3].' - '.$row[1].' , № '.$row[2].'  '.$row[6],
                               'group' => groupSelect($row[3])[0],
                               'color' => groupSelect($row[3])[1],
-                              'label' => groupSelect($row[3])[4],
+                              'label' => groupSelect($row[3])[4].' - '.$row[1].' , № '.$row[2],
                               'comment' => $row[6],
                               'she' =>$row[7]
                             );
@@ -57,13 +57,13 @@
                         }
                   }
                   //---------------------------------------/*блохи*/
-                  $topologyBug = '';
+                  /*$topologyBug = '';
                   if ($selectedCity == 'chernivtsi') { 
                     $topologyBug =   "AND cubic_ou_code NOT IN('4055118')";
                   }
                   if ($selectedCity == 'kiev') { 
                     $topologyBug =   "AND cubic_ou_code NOT IN('1113580')";
-                  }
+                  }*/
                   //-------------------------------------------------------
                   $links_sql = "SELECT cubic_code, cubic_ou_code, cubic_name,  cubic_pgs_addr   FROM ".$selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_ou_code IN(SELECT  cubic_code FROM ".$selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL)  AND cubic_name NOT IN('Блок питания', 'Домовой узел', 'Магистральный узел', 'Ответвитель магистральный', 'Распределительный стояк', 'Порт ОК', 'Ответвитель домовой', 'Субмагистральный узел')".$topologyBug.";"; 
 

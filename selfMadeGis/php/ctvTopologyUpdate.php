@@ -1,9 +1,34 @@
 <?php
 //ini_set('display_errors', 1);
 //ini_set('max_execution_time', 0);
-          
-	 $selectedCity= $_POST['ctv_city_eng'];
-        
+       function groupSelect($cubic_name){
+            $group_value = array(0, '#DC143C',null,null);
+            if ($cubic_name == 'Оптический узел') { $group_value = array( 1, '#ff9900', 60, 'nod');}
+            if ($cubic_name == 'Оптичний приймач') { $group_value = array(2, '#663300', 60, 'op');}
+            if ($cubic_name == 'Магістральний оптичний вузол') { $group_value = array( 3, '#3333cc', 90, 'mnod');}
+            if ($cubic_name == 'Передатчик оптический') { $group_value = array( 4, '#333399', 90, 'ot');}
+            if ($cubic_name == 'Магистральный распределительный узел') { $group_value = array( 5, '#ff0000', 80, 'mdod');}
+            if ($cubic_name == 'Кросс-муфта') { $group_value = array( 6, '#ff0066', 60, 'cc');}
+        return $group_value;
+      }
+      function topologyDirCreate($description, $city){
+              
+                $dirPath = '/var/www/QGIS-Web-Client-master/site/tmp/archive/'.$city.'/topology/'.$description['cubic_name'].'/'.$description['cubic_code'];
+                if (!file_exists($dirPath )) {
+                  $oldmask = umask(0);
+                      mkdir($dirPath , 0777, true);
+                      umask($oldmask);
+                }
+        //echo $dirPath;
+        return true;
+
+      }
+	 //$selectedCity= $_POST['ctv_city_eng'];
+       if ($_POST['ctv_city_eng']) {
+        $selectedCity= $_POST['ctv_city_eng'];
+      } else {
+        $selectedCity = $_REQUEST["selectedCity"];
+      } 
       $linkStorage = "'/tmp/".$selectedCity."_ctv_topology.csv'";
       $dir = sys_get_temp_dir();
       $files = scandir($dir);  
@@ -67,7 +92,8 @@
               }
 
             //-----------------------------------------------------------------
-            $equipment_geom_update ="UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET equipment_geom = ".$selectedCity.".".$selectedCity."_buildings.building_geom_firstpoint FROM ".$selectedCity.".".$selectedCity."_buildings WHERE ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_name = 'Магистральный распределительный узел' AND ".$selectedCity.".".$selectedCity."_ctv_topology.equipment_geom IS NULL AND ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_house_id = ".$selectedCity.".".$selectedCity."_buildings.cubic_house_id; UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET equipment_geom = ".$selectedCity.".".$selectedCity."_buildings.building_geom_firstpoint FROM ".$selectedCity.".".$selectedCity."_buildings WHERE ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_name = 'Магістральний оптичний вузол' AND ".$selectedCity.".".$selectedCity."_ctv_topology.equipment_geom IS NULL AND ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_house_id = ".$selectedCity.".".$selectedCity."_buildings.cubic_house_id; UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET equipment_geom = ".$selectedCity.".".$selectedCity."_buildings.building_geom_firstpoint FROM ".$selectedCity.".".$selectedCity."_buildings WHERE ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_name = 'Оптический узел' AND ".$selectedCity.".".$selectedCity."_ctv_topology.equipment_geom IS NULL AND ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_house_id = ".$selectedCity.".".$selectedCity."_buildings.cubic_house_id; UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET equipment_geom = ".$selectedCity.".".$selectedCity."_buildings.building_geom_firstpoint FROM ".$selectedCity.".".$selectedCity."_buildings WHERE ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_name = 'Оптичний приймач' AND ".$selectedCity.".".$selectedCity."_ctv_topology.equipment_geom IS NULL AND ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_house_id = ".$selectedCity.".".$selectedCity."_buildings.cubic_house_id; UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET equipment_geom = ".$selectedCity.".".$selectedCity."_buildings.building_geom_firstpoint FROM ".$selectedCity.".".$selectedCity."_buildings WHERE ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_name = 'Передатчик оптический' AND ".$selectedCity.".".$selectedCity."_ctv_topology.equipment_geom IS NULL AND ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_house_id = ".$selectedCity.".".$selectedCity."_buildings.cubic_house_id; UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET equipment_geom = ".$selectedCity.".".$selectedCity."_buildings.building_geom_firstpoint FROM ".$selectedCity.".".$selectedCity."_buildings WHERE ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_name = 'Порт ОК' AND ".$selectedCity.".".$selectedCity."_ctv_topology.equipment_geom IS NULL AND ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_house_id = ".$selectedCity.".".$selectedCity."_buildings.cubic_house_id; UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET equipment_geom = ".$selectedCity.".".$selectedCity."_buildings.building_geom_secondpoint FROM ".$selectedCity.".".$selectedCity."_buildings WHERE ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_name = 'Домовой узел' AND ".$selectedCity.".".$selectedCity."_ctv_topology.equipment_geom IS NULL AND ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_house_id = ".$selectedCity.".".$selectedCity."_buildings.cubic_house_id; UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET equipment_geom = ".$selectedCity.".".$selectedCity."_buildings.building_geom_thirdpoint FROM ".$selectedCity.".".$selectedCity."_buildings WHERE ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_name = 'Ответвитель магистральный' AND ".$selectedCity.".".$selectedCity."_ctv_topology.equipment_geom IS NULL AND ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_house_id = ".$selectedCity.".".$selectedCity."_buildings.cubic_house_id; UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET equipment_geom = ".$selectedCity.".".$selectedCity."_buildings.building_geom_fourthpoint FROM ".$selectedCity.".".$selectedCity."_buildings WHERE ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_name = 'Распределительный стояк' AND ".$selectedCity.".".$selectedCity."_ctv_topology.equipment_geom IS NULL AND ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_house_id = ".$selectedCity.".".$selectedCity."_buildings.cubic_house_id; UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET equipment_geom = ".$selectedCity.".".$selectedCity."_buildings.building_geom_thirdpoint FROM ".$selectedCity.".".$selectedCity."_buildings WHERE ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_name = 'Магистральный узел' AND ".$selectedCity.".".$selectedCity."_ctv_topology.equipment_geom IS NULL AND ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_house_id = ".$selectedCity.".".$selectedCity."_buildings.cubic_house_id; UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET equipment_geom = ".$selectedCity.".".$selectedCity."_buildings.building_geom_thirdpoint FROM ".$selectedCity.".".$selectedCity."_buildings WHERE ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_name = 'Субмагистральный узел' AND ".$selectedCity.".".$selectedCity."_ctv_topology.equipment_geom IS NULL AND ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_house_id = ".$selectedCity.".".$selectedCity."_buildings.cubic_house_id;UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET equipment_geom = ".$selectedCity.".".$selectedCity."_buildings.building_geom_thirdpoint FROM ".$selectedCity.".".$selectedCity."_buildings WHERE ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_name = 'Кросс-муфта' AND ".$selectedCity.".".$selectedCity."_ctv_topology.equipment_geom IS NULL AND ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_house_id = ".$selectedCity.".".$selectedCity."_buildings.cubic_house_id;";
+            $equipment_geom_update ="UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET equipment_geom = CASE "." WHEN cubic_name LIKE '%Магистральный распределительный узел%' THEN ".$selectedCity.".".$selectedCity."_buildings.building_geom_firstpoint"." WHEN cubic_name LIKE '%Магістральний оптичний вузол%' THEN ".$selectedCity.".".$selectedCity."_buildings.building_geom_thirdpoint"." WHEN cubic_name LIKE '%Оптический узел%' THEN ".$selectedCity.".".$selectedCity."_buildings.building_geom_fourthpoint"." WHEN cubic_name LIKE '%Оптичний приймач%' THEN ".$selectedCity.".".$selectedCity."_buildings.building_geom_firstpoint"." WHEN cubic_name LIKE '%Передатчик оптический%' THEN ".$selectedCity.".".$selectedCity."_buildings.building_geom_secondpoint"." WHEN cubic_name LIKE '%Порт ОК%' THEN ".$selectedCity.".".$selectedCity."_buildings.building_geom_secondpoint"." WHEN cubic_name LIKE '%Домовой узел%' THEN ".$selectedCity.".".$selectedCity."_buildings.building_geom_thirdpoint"." WHEN cubic_name LIKE '%Ответвитель магистральный%' THEN ".$selectedCity.".".$selectedCity."_buildings.building_geom_fourthpoint"." WHEN cubic_name LIKE '%Распределительный стояк%' THEN ".$selectedCity.".".$selectedCity."_buildings.building_geom_thirdpoint"." WHEN cubic_name LIKE '%Магистральный узел%' THEN ".$selectedCity.".".$selectedCity."_buildings.building_geom_secondpoint"." WHEN cubic_name LIKE '%Субмагистральный узел%' THEN ".$selectedCity.".".$selectedCity."_buildings.building_geom_thirdpoint"." WHEN cubic_name LIKE '%Кросс-муфта%' THEN ".$selectedCity.".".$selectedCity."_buildings.building_geom_fourthpoint"." END FROM  ".$selectedCity.".".$selectedCity."_buildings WHERE ".$selectedCity.".".$selectedCity."_ctv_topology.equipment_geom IS NULL AND ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_house_id = ".$selectedCity.".".$selectedCity."_buildings.cubic_house_id;";
+            //print($equipment_geom_update);
                 $equipment_geometry_update_query =pg_query($db, $equipment_geom_update);
                 //print( $equipment_geom_update);
             //-----------------------------------------------------------------
@@ -78,6 +104,38 @@
             //update cubic_ou_name/cubic_ou_street/cubic_ou_house 
             $sql_ou_update = "CREATE TEMP TABLE tmp AS SELECT cubic_name, cubic_street, cubic_house FROM ".$selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IN (SELECT DISTINCT cubic_ou_code FROM ".$selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_ou_code IS NOT NULL);UPDATE  ".$selectedCity.".".$selectedCity."_ctv_topology SET cubic_ou_name = tmp.cubic_name, cubic_ou_street = tmp.cubic_name, cubic_ou_house = tmp.cubic_name FROM tmp WHERE ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_ou_code = tmp.cubic_code); DROP TABLE tmp;";
             $ret_ou_update = pg_query($db, $sql_ou_update);
+            //--------------------------------------------------------------------
+            // update link to Archive----------------------------------------
+            $dir_arr_response = array();
+                 $description_sql = "SELECT  cubic_name, cubic_code  FROM ".$selectedCity.".".$selectedCity."_ctv_topology;";
+                  $description_ret = pg_query($db, $description_sql);
+                  
+                  if($description_ret) {
+                         while ($row = pg_fetch_row($description_ret))  {
+
+                          $description = array(
+                              'cubic_name' => groupSelect($row[0])[3],
+                              'cubic_code' => $row[1],
+
+                            );
+                          if($description['cubic_name'] !==null){
+                            array_push($dir_arr_response, $description );
+                            //print_r($description);
+                           // echo'<br>';
+                            topologyDirCreate($description, $selectedCity);
+                            //echo'<hr>';
+                          }
+                          
+                        }
+                  }
+                  $link_left_part = '"<a href="http://77.121.192.25/qgis-ck/tmp/archive/';
+                  $link_right_part = '/" target="_blank">посилання на архів</a>"';
+
+
+                  $archive_link_sql = "UPDATE $selectedCity"."."."$selectedCity"."_ctv_topology SET archive_link = CASE "." WHEN cubic_name like '%Магистральный распределительный узел%' THEN '$link_left_part"."$selectedCity"."/topology/mdod/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Оптический узел%' THEN '$link_left_part"."$selectedCity"."/topology/nod/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Оптичний приймач%' THEN '$link_left_part"."$selectedCity"."/topology/op/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Передатчик оптический%' THEN '$link_left_part"."$selectedCity"."/topology/ot/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Кросс-муфта%' THEN '$link_left_part"."$selectedCity"."/topology/cc/"."'||cubic_code||'"."$link_right_part' "."END;";
+                  $archive_link_ret = pg_query($db, $archive_link_sql);
+                 //print( $archive_link_sql);
+                 //--------------------------------------------------------------------
 }
 print json_encode($arr_response);
 pg_close($db); // Closing Connection

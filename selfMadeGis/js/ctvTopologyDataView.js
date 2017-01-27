@@ -1,12 +1,21 @@
 let json = localStorage.getItem("tempTopologyArray");
 
 let graph =  JSON.parse(json);
+$('body').prepend(rotatingArrows);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
+function closeSpan(index){
+  $('.'+index).prepend('<span class="closeSpan"></span>');
+  $('.closeSpan').on('click', function(){
+    console.log('click');
+    $(this).parent().remove();
+  })
+}
+///////////////////////////////////////////////////////////////////////////////////////////
 
     let options = {
-      layout:{randomSeed:2},
+      layout:{randomSeed:7},
         nodes: {
             shape: 'dot',
             size: 10,
@@ -78,17 +87,20 @@ let graph =  JSON.parse(json);
     function dataArrayAfterSelector(data,selectorId, options){
       $( '#' +selectorId).change(function(){
         let selectedValue = $(this).val();
+        
         console.log('selector value', selectedValue);
         if(selectedValue =='select she'){
           $('#mynetwork').empty();
         } else if (selectedValue == 'all') {
           $('#mynetwork').empty();
+          
           networkDraw(data, options);
         } else {
           $('#mynetwork').empty();
           //console.log('data',data.nodes);
          // let sortedNodes = data.nodes.filter(function( obj ) { return obj.she == selectedValue;});
           //let sortedEdges = data.edges.filter(function( obj ) { return obj.she == selectedValue;});
+          
           let sortedData = {
               nodes: data.nodes.filter(function( obj ) { return obj.she == selectedValue;}),
               links: data.links.filter(function( obj ) {return obj.she == selectedValue;})
@@ -114,7 +126,9 @@ let graph =  JSON.parse(json);
               nodes: nodes,
               edges: edges
           };
+
           network = new vis.Network(container, data, options);
+
           network.on("click", function (params) {
               params.event = "[original event]";
               $('#stats').remove();
@@ -145,15 +159,31 @@ let graph =  JSON.parse(json);
                    console.log('row',row);
                    function rowColor(key){
                     if(key.includes('_ou_')){
-                      return 'style = "background:rgba(127,255,0,0.3);"';
-                    } else { return 'style = "background-color:rgba(138,43,226,0.3)"';}
+                      return 'style = "background:rgba(127,255,0,0.6);"';
+                    } else { return 'style = "background-color:rgba(138,43,226,0.6)"';}
+                   }
+                   function buttonAdd(key, row){
+                    if(row[key].includes('cc')){return row[key] + '<button id="displayWireing" data-city="'+dataRequest.city+'" data-type="cc" data-code="'+row['cubic_code']+'">rozvarka</button>' } else { return row[key]}
                    }
                    for (let key in row){
                           if (row[key] != null) {
-                            $('#stats').find('table').append( '<tr '+rowColor(key)+'><td>'+key+'</td><td>'+row[key]+'</td></tr>');
+                            $('#stats').find('table').append( '<tr '+rowColor(key)+'><td>'+key+'</td><td>'+buttonAdd(key,row)+'</td></tr>');
                           }
                            
                   }
+                  $('#displayWireing').on('click', function(){
+                    $('.wireing').remove();
+                    $('body').prepend('<div class="wireing"><img class="backup_picture" src="../tmp/archive/'+$(this).data('city')+'/topology/'+$(this).data('type')+'/'+$(this).data('code')+'/'+$(this).data('code')+'_wireing.png">'+'</div>');
+                      $('.backup_picture').on('error', function(){
+                          $(this).attr('src', '../img/vguh.png');
+                          $('.wireing').on('click', function(){
+                            $('.wireing').hide();
+                          });  
+                      });
+                      closeSpan('wireing');
+
+                          //alert($(this).data('city')+' / '+$(this).data('type') +' ' +$(this).data('code'));
+                  })
                    //row.forEach(rowMaker);
                 }
                   
@@ -169,7 +199,9 @@ let graph =  JSON.parse(json);
 
     
     selectorGenerator(graph.mdods, 'selectedCity');
+
     dataArrayAfterSelector(graph, 'mdodSelector', options);
+
     //networkDraw(data, options);
 
 

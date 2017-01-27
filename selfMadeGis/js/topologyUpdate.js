@@ -390,12 +390,12 @@ let fileUploadParams = {
 }
 //----------vocabulars----------------------------------------------------------------------------------------------------------------------
 let vocabulary ={
-	cableChannelCableDataView:['№','Технічні умови','Договір', 'Даткова угода','Акт прийомки','Затверджена картограма','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС'],
+	cableChannelCableDataView:['№','Технічні умови','Договір', 'Додаткова угода','Акт прийомки','Затверджена картограма','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС'],
 	cityBuildingDataUpdate:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
-	cableAirCableDataView:['№','id кабеля', 'Посилання на архів','Дата монтажа кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення','Опис маршруту', 'Довжина, км'],
+	cableAirCableDataView:['№','id кабеля', 'Посилання на архів','Дата монтажу кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення','Опис маршруту', 'Довжина, км'],
 	cityBuildingDublicatesFinder:['№','Вулиця OSM', '№будинку OSM', 'Вулиця CUBIC', '№будинку CUBIC', '"Кубік" HOUSE_ID', 'Тип мережі', 'Координата будинку'],
 	ctvTopologyUpdate:['№', 'Місто', 'Вулиця', '№будинку', 'Квартира', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID'],
-	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під"їзду', '№Поверху', 'Розташування', 'house_id', 'mac_address', 'ip_address', 'serial_numbe', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни']
+	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під&acute;їзду', '№Поверху', 'Розташування', 'house_id', 'mac_address', 'ip_address', 'serial_number', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни']
 };
 
 //------document ready-------------------------------------------------------------------------------------------------------------------
@@ -442,7 +442,7 @@ $.fn.phpRequest = function(params) {
 		request[params.id] = $('#'+params.id).val();
 		if ($('#'+params.id).val() !=='вибери місто') {
 
-			$('.phpScripStatus').show();
+			$('.curtenScripStatus').show();
 			console.log('request',request);
 			$.ajax({
 				url: params.phpFile+'.php', //This is the current doc
@@ -455,7 +455,7 @@ $.fn.phpRequest = function(params) {
 						console.log('test', test);
 						if( test = null) {
 							alert('Відсутні нові елементи');
-							$('.phpScripStatus').hide();
+							$('.curtenScripStatus').hide();
 						} else {
 							if( params.displayStyle == 'table' ) {
 								displayTableData('displayResult'+attributId, 'container', data, vocabulary[attributId]);
@@ -471,11 +471,11 @@ $.fn.phpRequest = function(params) {
 							}								
 							// with the result from the ajax call
 							//console.log('data', data);
-							$('.phpScripStatus').hide();
+							$('.curtenScripStatus').hide();
 							
 						}
 					} else {
-						$('.phpScripStatus').hide();
+						$('.curtenScripStatus').hide();
 					}
 				//	
 				}
@@ -577,8 +577,10 @@ $.fn.openNewWindow = function(data,params,request){
 		newWindow.document.write('<link rel="stylesheet" href="../css/vis.css" type="text/css">');
 		newWindow.document.write('<script  src="../libs/vis/vis.js"></script>');
 
+
 		newWindow.document.write('<h4 id="selectedCity">'+request[params.id]+'</h4>');
 		newWindow.document.write('<div id="mynetwork" width="'+objLength+'" height="'+objLength+'"></div>');
+		newWindow.document.write('<script  type="text/javascript" src="../js/rotatingArrows.js"></script>');
 		newWindow.document.write('<script type="text/javascript" src="'+params.displayCode+'"></script>');
 					
 }
