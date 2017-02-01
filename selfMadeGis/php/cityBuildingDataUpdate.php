@@ -2,10 +2,20 @@
 //ini_set('display_errors', 1);
 
  	$selectedCity= $_POST['city_building_data_eng'];  
-	
-      $linkStorage = "'/tmp/".$selectedCity."_buildings.csv'";
-      $dir = sys_get_temp_dir();
-      $files = scandir($dir);
+
+
+      if (file_exists("/tmp/".$selectedCity."_buildings.csv'")) {
+        $linkStorage = "'/tmp/".$selectedCity."_buildings.csv''";
+        $dir = sys_get_temp_dir();
+        $files = scandir($dir);  
+      } else {
+        $linkStorage = "'/var/www/QGIS-Web-Client-master/site/csv/archive/".$selectedCity."/".$selectedCity."_buildings.csv'" ;
+        $dir = "/var/www/QGIS-Web-Client-master/site/csv/archive/".$selectedCity."/";
+        $files = scandir($dir);
+      }
+      //echo $linkStorage;
+      //echo '<hr>'. file_exists($linkStorage);
+
            $host        = "host=127.0.0.1";
            $port        = "port=5432";
            $dbname      = "dbname=postgres";

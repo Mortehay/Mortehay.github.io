@@ -3,9 +3,7 @@
 
  	$selectedCity= $_POST['city_building_data_eng'];  
 	
-      $linkStorage = "'/tmp/".$selectedCity."_buildings.csv'";
-      $dir = sys_get_temp_dir();
-      $files = scandir($dir);
+
            $host        = "host=127.0.0.1";
            $port        = "port=5432";
            $dbname      = "dbname=postgres";
@@ -17,7 +15,7 @@
              } else {
                 //echo "Opened database successfully\n";
             // echo "Opened database successfully\n";
-	}
+	
 
               
                   //-------------------------------------------------------------------------------------------------------------------
@@ -40,7 +38,7 @@
                         }
 
             }
-         
+        } 
                        
 
        print json_encode($arr_response);

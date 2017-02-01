@@ -1,6 +1,23 @@
-AuthName "pass"
-AuthType Basic
-AuthUserFile /etc/httpd/pass/pass
-require user ohusachenko yshpylovyi testuser
-RewriteEngine On    # Turn on the rewriting engine
-RewriteRule    ^pet-care/?$    main_page.php?restriction=$1     [NC,L]    # Handle requests for "pet-care"
+RewriteEngine On
+RewriteBase /
+Options +Indexes
+Options +FollowSymLinks
+IndexOptions Charset=UTF8
+<Files ~ "^.*\.([Hh][Tt][Aa])">
+    order allow,deny
+    deny from all
+</Files>
+
+<IfModule mod_autoindex.c>
+IndexOptions IgnoreCase FancyIndexing FoldersFirst NameWidth=* DescriptionWidth=* XHTML HTMLtable SuppressHTMLPreamble SuppressRules SuppressLastModified
+    IndexOrderDefault Ascending Name
+    HeaderName /путь/dirlist_header.shtml
+    ReadmeName /путь/dirlist_footer.shtml
+    IndexIgnore .htaccess .ftpquota .DS_Store
+</IfModule>
+
+#DefaultIcon /путь/ico/bullet_black.png
+#AddIcon /путь/list_blank.png ^^BLANKICON^^
+#AddIcon /путь/list_folder.png ^^DIRECTORY^^
+#AddIcon /путь/bullet_arrow_up.png ..
+#AddIcon /путь/list_images.png .png .gif .tiff .jpg .jpeg

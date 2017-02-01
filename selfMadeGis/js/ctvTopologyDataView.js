@@ -163,7 +163,7 @@ function closeSpan(index){
                     } else { return 'style = "background-color:rgba(138,43,226,0.6)"';}
                    }
                    function buttonAdd(key, row){
-                    if(row[key].includes('cc')){return row[key] + '<button id="displayWireing" data-city="'+dataRequest.city+'" data-type="cc" data-code="'+row['cubic_code']+'">rozvarka</button>' } else { return row[key]}
+                    if(row[key].includes('cc')){return row[key] + '<button id="displayWiring" data-city="'+dataRequest.city+'" data-type="cc" data-code="'+row['cubic_code']+'">rozvarka</button>' } else { return row[key]}
                    }
                    for (let key in row){
                           if (row[key] != null) {
@@ -171,16 +171,16 @@ function closeSpan(index){
                           }
                            
                   }
-                  $('#displayWireing').on('click', function(){
-                    $('.wireing').remove();
-                    $('body').prepend('<div class="wireing"><img class="backup_picture" src="../tmp/archive/'+$(this).data('city')+'/topology/'+$(this).data('type')+'/'+$(this).data('code')+'/'+$(this).data('code')+'_wireing.png">'+'</div>');
+                  $('#displayWiring').on('click', function(){
+                    $('.wiring').remove();
+                    $('body').prepend('<div class="wiring"><img class="backup_picture" src="../tmp/archive/'+$(this).data('city')+'/topology/'+$(this).data('type')+'/'+$(this).data('code')+'/'+$(this).data('code')+'_wiring.png">'+'</div>');
                       $('.backup_picture').on('error', function(){
                           $(this).attr('src', '../img/vguh.png');
-                          $('.wireing').on('click', function(){
-                            $('.wireing').hide();
+                          $('.wiring').on('click', function(){
+                            $('.wiring').hide();
                           });  
                       });
-                      closeSpan('wireing');
+                      closeSpan('wiring');
 
                           //alert($(this).data('city')+' / '+$(this).data('type') +' ' +$(this).data('code'));
                   })

@@ -3,10 +3,21 @@
 //ini_set('max_execution_time', 0);
           
 	$selectedCity= $_POST['building_entrance_OSM_data_update_city_eng'];  
-	$linkStorageOSM = "'/tmp/".$selectedCity."_entrances_osm.csv'";
-      $linkStorageCUBIC = "'/tmp/".$selectedCity."_entrances_cubic.csv'";
-      $dir = sys_get_temp_dir();
-      $files = scandir($dir);
+	$linkStorage = "'/tmp/".$selectedCity."_entrances_osm.csv'";
+
+
+      if (file_exists("/tmp/".$selectedCity."_entrances_osm.csv")) {
+        $linkStorage = "'/tmp/".$selectedCity."_entrances_osm.csv'";
+        $dir = sys_get_temp_dir();
+        $files = scandir($dir);  
+      } else {
+        $linkStorage = "'/var/www/QGIS-Web-Client-master/site/csv/archive/".$selectedCity."/".$selectedCity."_entrances_osm.csv'" ;
+        $dir = "/var/www/QGIS-Web-Client-master/site/csv/archive/".$selectedCity."/";
+        $files = scandir($dir);
+      }
+      //echo $linkStorage;
+      //echo '<hr>'. file_exists($linkStorage);
+
            $host        = "host=127.0.0.1";
            $port        = "port=5432";
            $dbname      = "dbname=postgres";
@@ -23,7 +34,7 @@
                           print_r($str_file);
                           if ($str_file == $selectedCity."_entrances_osm.csv") {
                             
-                         $insert = "CREATE temp TABLE tmp (id serial, openstreet_wkt text,openstreet_id_rel varchar(100),openstreet_entrance varchar(100),openstreet_addr_flats varchar(100),openstreet_entrance_ref varchar(100)); select copy_for_testuser('tmp (openstreet_wkt, openstreet_id_rel, openstreet_entrance, openstreet_addr_flats,openstreet_entrance_ref)', ".$linkStorageOSM.", ';', 'windows-1251') ;  INSERT INTO ".$selectedCity.".".$selectedCity."_entrances(openstreet_wkt, openstreet_id_rel, openstreet_entrance, openstreet_addr_flats,openstreet_entrance_ref) SELECT openstreet_wkt, openstreet_id_rel, openstreet_entrance, openstreet_addr_flats,openstreet_entrance_ref FROM tmp WHERE openstreet_id_rel NOT IN(SELECT openstreet_id_rel FROM ".$selectedCity.".".$selectedCity."_entrances WHERE openstreet_id_rel IS NOT NULL);DROP TABLE tmp;";
+                         $insert = "CREATE temp TABLE tmp (id serial, openstreet_wkt text,openstreet_id_rel varchar(100),openstreet_entrance varchar(100),openstreet_addr_flats varchar(100),openstreet_entrance_ref varchar(100)); select copy_for_testuser('tmp (openstreet_wkt, openstreet_id_rel, openstreet_entrance, openstreet_addr_flats,openstreet_entrance_ref)', ".$linkStorage.", ';', 'windows-1251') ;  INSERT INTO ".$selectedCity.".".$selectedCity."_entrances(openstreet_wkt, openstreet_id_rel, openstreet_entrance, openstreet_addr_flats,openstreet_entrance_ref) SELECT openstreet_wkt, openstreet_id_rel, openstreet_entrance, openstreet_addr_flats,openstreet_entrance_ref FROM tmp WHERE openstreet_id_rel NOT IN(SELECT openstreet_id_rel FROM ".$selectedCity.".".$selectedCity."_entrances WHERE openstreet_id_rel IS NOT NULL);DROP TABLE tmp;";
                           $ret = pg_query($db, $insert);
                           $update_geom = "UPDATE ".$selectedCity.".".$selectedCity."_entrances SET geom = ST_GeomFromText(openstreet_wkt, 32636) WHERE geom IS NULL;";
                           $ret = pg_query($db, $update_geom);

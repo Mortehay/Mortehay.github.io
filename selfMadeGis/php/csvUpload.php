@@ -1,27 +1,31 @@
 <?php
 include('restriction.php'); 
+///////////////////////////////////////
+ function topologyCsvDirCreate($city, $target_file, $file_name){
+              
+                $newDirPath = '/var/www/QGIS-Web-Client-master/site/csv/archive/'.$city.'/';
+                if (!file_exists($newDirPath )) {
+                  $oldmask = umask(0);
+                      mkdir($newDirPath , 0777, true);
+                      umask($oldmask);
+                }
+                        copy($target_file, $newDirPath . $file_name);
+        //echo $dirPath;
+        return true;
+
+      }
+      ///////////////////////////////////////
 //$restriction = $_GET["restriction"];
 ini_set('display_errors', 1);
 $target_dir = "/tmp/";
 $target_file = $target_dir . basename($_FILES["csv_file_upload"]["name"]);
-
+$file_name = $_FILES["csv_file_upload"]["name"];
+$selectedCity = substr($file_name,0,stripos($file_name, '_'));
 $uploadOk = 1;
 $fileType = pathinfo($target_file,PATHINFO_EXTENSION);
 $csvUploadReturnRespond ='';
 //echo $fileType;
-// Check if image file is a actual image or fake image
-/*$mimes = array('application/vnd.ms-excel','text/plain','text/csv','text/tsv','application/csv','text/comma-separated-values','application/vnd.msexcel','text/anytext','application/excel','text/plain');
-if(in_array($_FILES["csv_file_upload"]["type"],$mimes) ){
-    $csvUploadReturnRespond .= "File is an CSV ";
-    echo $csvUploadReturnRespond;
-        $uploadOk = 1;
-  // do something
-} else {
-    $csvUploadReturnRespond .= "File is not an CSV.";
-    echo $csvUploadReturnRespond;
-        $uploadOk = 0;
-}
-*/
+
 // Check file size
 if ($_FILES["csv_file_upload"]["size"] > 512000000) {
     $csvUploadReturnRespond .= "Sorry, your file is too large.";
@@ -45,7 +49,9 @@ if ($uploadOk == 0) {
         $csvUploadReturnRespond .= "The file ". basename( $_FILES["csv_file_upload"]["name"]). " has been uploaded.";
         echo $csvUploadReturnRespond;
         chmod($target_file, 0666);
-        header("location: main_page.php?restriction=admin"); // Redirecting To Other Page
+        topologyCsvDirCreate($selectedCity, $target_file, $file_name);
+
+       header("location: main_page.php?restriction=admin"); // Redirecting To Other Page
     } else {
         $csvUploadReturnRespond .= "Sorry, there was an error uploading your file.";
         echo $csvUploadReturnRespond;

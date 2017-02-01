@@ -209,7 +209,7 @@ let params = {
 		phpFile:'etherTopologyUpdate',
 		id:'ether_city_eng',
 		type:'POST',
-		displayResult: false,
+		displayResult: true,
 		displayStyle:'table'
 	},
 	cableChannelCabelDataUpdate:{
@@ -449,7 +449,7 @@ $.fn.phpRequest = function(params) {
 				type: params.type,
 				data: (request),
 				success: function(data){
-					//console.log(data);
+					console.log(data);
 					if(  (data) && (params.displayResult == true) ) {
 						let test =  JSON.parse(data);
 						console.log('test', test);
