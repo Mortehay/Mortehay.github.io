@@ -13,6 +13,23 @@ function closeSpan(index){
   })
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
+function doAnimation(nodeParams) {
+       let moveOptions = {
+            // position: {x:positionx,y:positiony}, // this is not relevant when focusing on nodes
+            scale: parseFloat(nodeParams.scale),
+            offset: {x:parseInt(nodeParams.offsetx),y:parseInt(nodeParams.offsety)},
+            locked:false,
+            //position: {x:parseInt(nodeParams.positionx),y:parseInt(nodeParams.positiony)},
+            animation: {
+                duration: parseInt(nodeParams.duration),
+                easingFunction: nodeParams.easingFunction
+            }
+        }
+        //statusUpdateSpan.innerHTML = "Focusing on node: " + nodeId;
+        //finishMessage = "Node: " + nodeId + " in focus.";
+      network.focus(parseInt(nodeParams.nodeId),moveOptions);
+    }
+///////////////////////////////////////////////////////////////////////////////////////////
 
     let options = {
       layout:{randomSeed:7},
@@ -112,7 +129,38 @@ function closeSpan(index){
       });
 
     }
-    
+    ///////////////////////////////////////
+    function nodeSelection(nodesCanvasData, nodesData){
+       console.log('nodesCanvasData',nodesCanvasData);
+       console.log('graph',nodesData);
+          $('#nodes').remove();
+          $('<input type="text" name="nodes" id="nodes" list="node_list"  style="width:250px;height:20px;background-color:#FAEBD7;"><datalist id="node_list"></datalist>').insertBefore($('#mynetwork'));
+           for (let objKey in nodesCanvasData){
+            if ((objKey!=null) || (objKey!='') ) {$('#node_list').append('<option value="'+objKey+'" data-x="'+nodesCanvasData[objKey].x+'" data-y="'+nodesCanvasData[objKey].y+'">'+objKey+'<option>');}
+           }
+            $('#nodes').keypress(function (e) {
+              if (e.which == 13) {
+                
+                let selectedValue = $(this).val();
+                  if(selectedValue.length>0){
+
+                    console.log(selectedValue);
+                    new doAnimation({
+                      nodeId:$(this).val(),
+                      scale:5,
+                      offsetx:0,
+                      offsety:0,
+                      locked:true,
+                      duration:2000,
+                      easingFunction:'easeInOutQuart'
+                  });
+
+                  }
+
+              }
+            });
+    }
+    //////////////////////////////////////
     function networkDraw(graph, options){
          let color = '#000000';
       let len = undefined;
@@ -126,8 +174,11 @@ function closeSpan(index){
               nodes: nodes,
               edges: edges
           };
-
+          console.log('networkData',data);
           network = new vis.Network(container, data, options);
+          //let nodesCanvasData = network.getPositions(); // get the data from selected node
+
+          nodeSelection(network.getPositions(), nodes); //adding adress list selector on cubic_code number 
 
           network.on("click", function (params) {
               params.event = "[original event]";
@@ -157,11 +208,15 @@ function closeSpan(index){
                   
                    let row = test.equipment[0];
                    console.log('row',row);
+//////////////////////function different color  for equipment and parent equipment                 
                    function rowColor(key){
+
                     if(key.includes('_ou_')){
                       return 'style = "background:rgba(127,255,0,0.6);"';
                     } else { return 'style = "background-color:rgba(138,43,226,0.6)"';}
                    }
+///////////////////////////
+///////////////////////function cude null values in table
                    function buttonAdd(key, row){
                     if(row[key].includes('cc')){return row[key] + '<button id="displayWiring" data-city="'+dataRequest.city+'" data-type="cc" data-code="'+row['cubic_code']+'">rozvarka</button>' } else { return row[key]}
                    }
@@ -171,6 +226,7 @@ function closeSpan(index){
                           }
                            
                   }
+///////////////////////
                   $('#displayWiring').on('click', function(){
                     $('.wiring').remove();
                     $('body').prepend('<div class="wiring"><img class="backup_picture" src="../tmp/archive/'+$(this).data('city')+'/topology/'+$(this).data('type')+'/'+$(this).data('code')+'/'+$(this).data('code')+'_wiring.png">'+'</div>');
@@ -195,6 +251,7 @@ function closeSpan(index){
               console.log('hoverNode Event:', params);
               //$('#stats').remove();
           });
+         
     }
 
     

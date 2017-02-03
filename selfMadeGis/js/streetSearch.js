@@ -58,7 +58,7 @@ $.fn.phpRequest = function(params) {
 				for (let i = 0; i < streets.length; i++) {
 
 			               	//$('input[type="text"]').css('color', 'blue');
-			               	$('#street_list').append('<option>' + streets[i].cubic_street + '</option>')
+			               	$('#street_list').append('<option>' + streets[i].cubic_street + '</option>');
 		               	}
 			}
 
