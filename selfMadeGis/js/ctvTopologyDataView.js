@@ -130,13 +130,14 @@ function doAnimation(nodeParams) {
 
     }
     ///////////////////////////////////////
-    function nodeSelection(nodesCanvasData, nodesData){
+    function nodeSelection(nodesCanvasData, networkNodesData){
        console.log('nodesCanvasData',nodesCanvasData);
-       console.log('graph',nodesData);
+       let nodesData = networkNodesData.nodes._data;
+       console.log('nodesData',nodesData);
           $('#nodes').remove();
-          $('<input type="text" name="nodes" id="nodes" list="node_list"  style="width:250px;height:20px;background-color:#FAEBD7;"><datalist id="node_list"></datalist>').insertBefore($('#mynetwork'));
+          $('<label for="nodes">choose CTV topology</label><input type="text" name="nodes" id="nodes" list="node_list"  style="width:250px;height:20px;background-color:#FAEBD7;"><datalist id="node_list"></datalist>').insertBefore($('#mynetwork'));
            for (let objKey in nodesCanvasData){
-            if ((objKey!=null) || (objKey!='') ) {$('#node_list').append('<option value="'+objKey+'" data-x="'+nodesCanvasData[objKey].x+'" data-y="'+nodesCanvasData[objKey].y+'">'+objKey+'<option>');}
+            if ((objKey!=null) || (objKey!='') ) {$('#node_list').append('<option value="'+objKey+'" data-x="'+nodesCanvasData[objKey].x+'" data-y="'+nodesCanvasData[objKey].y+'">'+nodesData[objKey].title+'</option>');}
            }
             $('#nodes').keypress(function (e) {
               if (e.which == 13) {
@@ -174,12 +175,12 @@ function doAnimation(nodeParams) {
               nodes: nodes,
               edges: edges
           };
-          console.log('networkData',data);
+          //console.log('networkData',data);
           network = new vis.Network(container, data, options);
           //let nodesCanvasData = network.getPositions(); // get the data from selected node
 
-          nodeSelection(network.getPositions(), nodes); //adding adress list selector on cubic_code number 
-
+          //nodeSelection(network.getPositions(), nodes); //adding adress list selector on cubic_code number 
+          nodeSelection(network.getPositions(), data); //adding adress list selector on cubic_code number 
           network.on("click", function (params) {
               params.event = "[original event]";
               $('#stats').remove();
@@ -189,8 +190,8 @@ function doAnimation(nodeParams) {
               cubic_code:params.nodes[0],
               url:'ctvEquipmentData.php'
             }
-            console.log('params', params);
-            console.log('dataRequest', dataRequest);
+            //console.log('params', params);
+            //console.log('dataRequest', dataRequest);
             if (params.nodes.length == 0) {
                 $('#stats').remove();
               } else{
@@ -201,13 +202,13 @@ function doAnimation(nodeParams) {
                 success: function(request){
                   //console.log(data);
                   let test =  JSON.parse(request);
-                  console.log('test',test);
+                  //console.log('test',test);
                    $('body').append('<div id ="stats" class="stats"></div>');;
                    $('#stats').append('<table></table>');
                    $('#stats').find('table').append('<tr><th>Item</th><th>Value</th></tr>');
                   
                    let row = test.equipment[0];
-                   console.log('row',row);
+                   //console.log('row',row);
 //////////////////////function different color  for equipment and parent equipment                 
                    function rowColor(key){
 
@@ -248,7 +249,7 @@ function doAnimation(nodeParams) {
            });
           ///////////////////////////////////////////
           network.on("hoverNode", function (params) {
-              console.log('hoverNode Event:', params);
+              //console.log('hoverNode Event:', params);
               //$('#stats').remove();
           });
          

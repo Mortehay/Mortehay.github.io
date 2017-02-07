@@ -112,6 +112,23 @@ $tools ='';
 					'Додає шаблонний комплет таблиць, фунцій та тригерів до нового міста')
 			) 
 		),
+		array('filesUpload', 'Завантаження файлів',
+			array(
+				array(
+					'NULL',
+				),
+				array(
+					'NULL',
+				),
+				array(
+					'NULL',
+				),
+				array(
+					'NULL' ,
+				)
+				
+			)
+		),
 		array('cableChannelChannels', 'КК - канали',
 			array( 
 				array(/*id  for buttons*/

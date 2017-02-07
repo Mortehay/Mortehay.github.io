@@ -1,4 +1,17 @@
-
+//-----------------unique values from array ------------------------------------
+Array.prototype.uniqueValues = function()
+{
+	var n = {},r=[];
+	for(var i = 0; i < this.length; i++)
+	{
+		if (!n[this[i]])
+		{
+			n[this[i]] = true;
+			r.push(this[i]);
+		}
+	}
+	return r;
+}
 //----------compare function---compare array of objects-----------------
 function compare(a,b) {
   if (a.table_id < b.table_id)
@@ -129,7 +142,12 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 	//console.log('resp',resp);
 	$('.'+mainTagClass).remove();
 	if (resp !=null) {
+		console.log('resp',resp);
+		
+		     
 		$('.'+joinedToTgClass).next().after('<div class="'+mainTagClass+' clear"><table style="width:inherit;"></table></div>');
+		$('.'+mainTagClass).prepend('<div id="tableFilter"><ul  style="width:300px"></ul></div>');
+
 		 let header = '';
 	               if (vocabulary !==  'noVocabulary') {
 	               	header +='<tr>'
@@ -146,6 +164,31 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 	               let list = resp.response;
 	               //let list =unsortedCableList.sort(compare);
 	               if (list !=null) {
+	               	//-------------------------------------unique values for selector creation------------
+
+	               	let sortedUniqueMatrix = [];
+	               	let listNames = Object.keys(list[0]);
+	               	listNames.forEach(function(item,index){
+	               		$('#tableFilter').find('ul').append('<li><input type="text" name="name_'+item+'" id="id_'+item+'" list="list_'+item+'"  style="width:80px;height:20px;background-color:#FAEBD7;"><label for="name_'+item+'">'+vocabulary[index+1]+'</label><datalist id="list_'+item+'"></datalist></li>');
+	               	});
+	               	//console.log(listNames);
+	               	for (let i = 0; i < listNames.length; i++) {
+	               		let sortedUniqueColumn = [];
+				list.forEach(function(item,index){
+					sortedUniqueColumn.push('all');
+					sortedUniqueColumn.push(item[listNames[i]]);
+				});
+				sortedUniqueColumn = sortedUniqueColumn.uniqueValues();
+				for (let j = 0; j < sortedUniqueColumn.length; j++) {
+					$('#list_'+listNames[i]).append('<option value="'+sortedUniqueColumn[j]+'">'+sortedUniqueColumn[j]+'</option>');
+				}
+				
+				//console.log('sortedUniqueColumn', sortedUniqueColumn);
+				sortedUniqueMatrix.push(sortedUniqueColumn);
+	               	}
+	               	console.log('sortedUniqueMatrix', sortedUniqueMatrix);
+	               	//-------------row of selectors cration-----------------------------------
+			//------------------------------------------------------------------------------
 		               for (let i = 0; i < list.length; i++) {
 		               	let row ='<tr>';
 		               	let rowData = list[i];
@@ -386,6 +429,16 @@ let fileUploadParams = {
 		method:'POST',
 		enctype:'multipart/form-data',
 		submitName:'csvSubmit'
+	},
+	qgsUpload:{
+		phpFile:'qgsUpload',
+		fileId:'qgs_file_upload',
+		formId:'qgsUploadForm',
+		fileName:'qgs_file_upload',
+		formValueUpload:'Завантажити QGS',
+		method:'POST',
+		enctype:'multipart/form-data',
+		submitName:'qgsSubmit'
 	}
 }
 //----------vocabulars----------------------------------------------------------------------------------------------------------------------
@@ -414,7 +467,8 @@ $(document).ready(function(){
 	$('.toolsListLabel').visibility('newTools');
 
 	//----------------------------------file upload------------------------------------------------------------------------------
-	$('#fullAccess_holder').fileUploadToTmp(fileUploadParams.csvUpload,'#fullAccess_holder');
+	//$('#fullAccess_holder').fileUploadToTmp(fileUploadParams.csvUpload,'#fullAccess_holder');
+	$('#filesUpload_holder').fileUploadToTmpAll(fileUploadParams.csvUpload,'#filesUpload_holder');
 	
 });
 //--------ajax error-------------------------------------------------------------------------------------------------------------------
@@ -443,16 +497,16 @@ $.fn.phpRequest = function(params) {
 		if ($('#'+params.id).val() !=='вибери місто') {
 
 			$('.curtenScripStatus').show();
-			console.log('request',request);
+			//console.log('request',request);
 			$.ajax({
 				url: params.phpFile+'.php', //This is the current doc
 				type: params.type,
 				data: (request),
 				success: function(data){
-					console.log(data);
+					//console.log(data);
 					if(  (data) && (params.displayResult == true) ) {
 						let test =  JSON.parse(data);
-						console.log('test', test);
+						//console.log('test', test);
 						if( test = null) {
 							alert('Відсутні нові елементи');
 							$('.curtenScripStatus').hide();
@@ -510,7 +564,15 @@ $.fn.fileUploadToTmp = function(params, target){
 		'<input type="submit" value="'+params.formValueUpload+'"name="'+params.submitName+'" class="myToolButton">');
 
 }
+//-----------add file upload not for ful access----------------------------------------------------------
+$.fn.fileUploadToTmpAll = function(params, target){
+	console.log('target', target);
+	$(target).find('ul').append('<li><form id="'+params.formId+'" action="'+params.phpFile+'.php'+'" method="'+params.method+'" enctype="'+params.enctype+'"></form></li>');
+	$('#'+params.formId).append(/*'<label>виберіть файл CSV</label>'*/
+		'<input type="file" name="'+params.fileName+'" id="'+params.fileId+'" class="myToolButton">'+
+		'<input type="submit" value="'+params.formValueUpload+'"name="'+params.submitName+'" class="myToolButton">');
 
+}
 //-------open link in new window-----------------------------------------------------------------------
 $.fn.openNewMapWindow = function(params) {
 	$(this).on('click', function(){
