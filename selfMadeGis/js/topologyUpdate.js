@@ -143,41 +143,37 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 	$('.'+mainTagClass).remove();
 	if (resp !=null) {
 		console.log('resp',resp);
-		
-		     
+		let list = resp.response;
+		if ((list !=null) && (list.length>0) ) {  
 		$('.'+joinedToTgClass).next().after('<div class="'+mainTagClass+' clear"><table style="width:inherit;"></table></div>');
-		$('.'+mainTagClass).prepend('<div id="tableFilter"><ul  style="width:300px"></ul></div>');
-
 		 let header = '';
+		 let headerSelectors = '';
+		 let sortedUniqueMatrix = [];
+	              let listNames = Object.keys(list[0]);
 	               if (vocabulary !==  'noVocabulary') {
 	               	header +='<tr>'
 	               	for (let i = 0; i < vocabulary.length; i++) {
 	               		header +='<th>'+vocabulary[i]+'</th>';
 	               	}
 	               	header +='</tr>';
+	               	headerSelectors = '<td></td>';
 	               	$('.'+mainTagClass).find('table').append(header);
+	               	listNames.forEach(function(item,index){
+	               		headerSelectors +='<td><input type="text" class="tableRowSelector" name="name_'+item+'" data-name="'+index+'" id="id_'+item+'" list="list_'+item+'"  style="background-color:#FAEBD7;"><datalist id="list_'+item+'"></datalist></td>';
+	               	});
+	               	$('.'+mainTagClass).find('table').append('<tr>'+headerSelectors +'</tr>');
 	               } else {
 	               	console.log('noVocabulary for table header')
 	               }
-
-	               //let unsortedList = resp.response;
-	               let list = resp.response;
-	               //let list =unsortedCableList.sort(compare);
-	               if (list !=null) {
-	               	//-------------------------------------unique values for selector creation------------
-
-	               	let sortedUniqueMatrix = [];
-	               	let listNames = Object.keys(list[0]);
-	               	listNames.forEach(function(item,index){
-	               		$('#tableFilter').find('ul').append('<li><input type="text" name="name_'+item+'" id="id_'+item+'" list="list_'+item+'"  style="width:80px;height:20px;background-color:#FAEBD7;"><label for="name_'+item+'">'+vocabulary[index+1]+'</label><datalist id="list_'+item+'"></datalist></li>');
-	               	});
-	               	//console.log(listNames);
-	               	for (let i = 0; i < listNames.length; i++) {
+	               	console.log('listNames',listNames);
+	               	
+	               	sortedUniqueMatrix = new function(){
+	               		for (let i = 0; i < listNames.length; i++) {
 	               		let sortedUniqueColumn = [];
 				list.forEach(function(item,index){
-					sortedUniqueColumn.push('all');
 					sortedUniqueColumn.push(item[listNames[i]]);
 				});
+				///------------------------------------
 				sortedUniqueColumn = sortedUniqueColumn.uniqueValues();
 				for (let j = 0; j < sortedUniqueColumn.length; j++) {
 					$('#list_'+listNames[i]).append('<option value="'+sortedUniqueColumn[j]+'">'+sortedUniqueColumn[j]+'</option>');
@@ -185,10 +181,50 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 				
 				//console.log('sortedUniqueColumn', sortedUniqueColumn);
 				sortedUniqueMatrix.push(sortedUniqueColumn);
+	               		}
+	               		return sortedUniqueMatrix;
 	               	}
+	               	$('.tableRowSelector').change(function(){
+			        let selectedValue = $(this).val();
+			        let selectedColumnName = ($(this).attr('id')).substr(3);
+			        console.log('selectedValue', selectedValue);
+			        console.log('selectedColumnName', selectedColumnName);
+			        sortedUniqueMatrix = new function(){
+			        		trimList = list.filter(function( obj ) { 
+			        			//console.log('innerselectedValue', selectedValue);
+			        			//console.log('innerselectedColumnName', selectedColumnName);
+			        			if(obj[selectedColumnName] == selectedValue){
+			        				return obj;
+			        			}
+			        		});
+			        		$('.dataCell').remove();
+			        		rowDraw(trimList ,vocabulary,mainTagClass);  
+			        		console.log('trimList',trimList);
+		               		for (let i = 0; i < listNames.length; i++) {
+		               		let sortedUniqueColumn = [];
+
+					trimList.forEach(function(item,index){
+						sortedUniqueColumn.push(item[listNames[i]]);
+					});
+					///------------------------------------
+					sortedUniqueColumn = sortedUniqueColumn.uniqueValues();
+					for (let j = 0; j < sortedUniqueColumn.length; j++) {
+						$('#list_'+listNames[i]).append('<option value="'+sortedUniqueColumn[j]+'">'+sortedUniqueColumn[j]+'</option>');
+					}
+					
+					//console.log('sortedUniqueColumn', sortedUniqueColumn);
+					sortedUniqueMatrix.push(sortedUniqueColumn);
+		               		}
+		               		return sortedUniqueMatrix;
+		               	}
+			});
+
 	               	console.log('sortedUniqueMatrix', sortedUniqueMatrix);
 	               	//-------------row of selectors cration-----------------------------------
 			//------------------------------------------------------------------------------
+			function rowDraw(list,vocabulary,mainTagClass){
+
+			
 		               for (let i = 0; i < list.length; i++) {
 		               	let row ='<tr>';
 		               	let rowData = list[i];
@@ -210,17 +246,19 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		               	for (let key in rowData) {
 		               		//console.log('vocabulary.indexOf(key)',vocabulary.indexOf(key) );
 		               		if (key == pathIndexCC ) {
-		               			row +='<td>'+'<button id="'+rowData['table_id']+'" class="mapWindow" data-cable="cc">'+rowData[key]+'</button>'+'</td>';
+		               			row +='<td class="dataCell">'+'<button id="'+rowData['table_id']+'" class="mapWindow" data-cable="cc">'+rowData[key]+'</button>'+'</td>';
 		               		} else if (key == pathIndexPKP) {
-		               			row +='<td>'+'<button id="'+rowData['table_id']+'" class="mapWindow" data-cable="pkp">'+rowData[key]+'</button>'+'</td>';
+		               			row +='<td class="dataCell">'+'<button id="'+rowData['table_id']+'" class="mapWindow" data-cable="pkp">'+rowData[key]+'</button>'+'</td>';
 		               		} else {
-		               			row +='<td>'+rowData[key]+'</td>';	
+		               			row +='<td class="dataCell">'+rowData[key]+'</td>';	
 		               		}
 		               		//row +='<td>'+rowData[key]+'</td>';
 		               	}
 		               	row += '</tr>';
 		               	$('.'+mainTagClass).find('table').append(row);	
 		               }
+		            } 
+		            rowDraw(list,vocabulary,mainTagClass);  
 	               }
 	}
 	

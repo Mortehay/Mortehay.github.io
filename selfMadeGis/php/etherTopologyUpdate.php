@@ -48,7 +48,7 @@ ini_set('display_errors', 1);
                          while ($row = pg_fetch_row($data_upload_query) )  {
  
                           $arr = array(
-                              'cubic_street,' => $row[0],
+                              'cubic_street' => $row[0],
                               'cubic_house' => $row[1],
                               'DOORWAY' => $row[8],
                               'FLOOR' => $row[10],
