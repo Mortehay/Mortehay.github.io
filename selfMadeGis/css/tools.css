@@ -36,7 +36,8 @@ div.tools__visible{
 	margin: 0 auto;
 	background-color: #FFDAB9;
 	position:relative;
-	z-index: 10;
+	top:-70%;
+	z-index: 1000;
 	color:#FF4500;
 
 }
@@ -212,4 +213,13 @@ li.toolsListLabel>h2{
 ._holder form{
 	width:500px;
 	margin: 0 auto;
+}
+/* --------------------table-------------------------------------- */
+td, th{
+	margin:0;
+	padding:0;
+	width:80px;
+}
+td input{
+	width:80px;
 }
