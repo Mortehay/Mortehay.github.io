@@ -364,10 +364,13 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		let list = resp.response;
 		if ((list !=null) && (list.length>0) ) {  
 		$('.'+joinedToTgClass).next().after('<div class="'+mainTagClass+' clear"><table style="width:inherit;"></table></div>');
+		$('.'+mainTagClass).prepend('<button id="restoreDefaultTable" style="float:left;">очистити фільтр<button>');
+		
 		 let header = '';
 		 let headerSelectors = '';
 		 let sortedUniqueMatrix = [];
 	              let listNames = Object.keys(list[0]);
+	              let selectionParams =[];
 	               if (vocabulary !==  'noVocabulary') {
 	               	header +='<tr>'
 	               	for (let i = 0; i < vocabulary.length; i++) {
@@ -380,6 +383,16 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 	               		headerSelectors +='<td><input type="text" class="tableRowSelector" name="name_'+item+'" data-name="'+index+'" id="id_'+item+'" list="list_'+item+'"  style="background-color:#FAEBD7;"><datalist id="list_'+item+'" class="trimSelection"></datalist></td>';
 	               	});
 	               	$('.'+mainTagClass).find('table').append('<tr>'+headerSelectors +'</tr>');
+	               	//---------------------crear table filters--------------------------------------------------
+			$('#restoreDefaultTable').on('click', function(){
+				$('.dataCell').remove();
+				sortedSelectLists(listNames, list);
+				rowDraw(list,vocabulary,mainTagClass);
+				selectionParams =[];
+				$('.tableRowSelector').val('');
+				$('button.mapWindow').openNewMapWindow(params);
+			});
+			//---------------------------------------------------------------------------------------------
 	               } else { console.log('noVocabulary for table header') }
 	               	console.log('listNames',listNames);
 	               	
@@ -401,29 +414,39 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 	               	}
 	               	sortedSelectLists(listNames, list);
 			rowDraw(list,vocabulary,mainTagClass);
-	               	let selectionParams =[];
+	               	
 	               	$('.tableRowSelector').change(function(){
 	               		selectionParams.push({
 	               			selectedValue:$(this).val(),
 	               			selectedColumnName:($(this).attr('id')).substr(3)
 	               		});
 
-			        let selectedValue = $(this).val();
-			        let selectedColumnName = ($(this).attr('id')).substr(3);
-			        //console.log('selectedValue', selectedValue);
-			        //console.log('selectedColumnName', selectedColumnName);
-			        console.log('selectionParams',selectionParams);
-			        trimList = list;
-			        for (let k = 0; k< selectionParams.length; k++) {
-			        	trimList = trimList.filter(function( obj ) { if(obj[selectionParams[k].selectedColumnName] == selectionParams[k].selectedValue){  return obj;}});
-			        }
-			        console.log('list',list);
-			        console.log('trimList',trimList);
-			        $('.trimSelection').empty();
-			        $('.dataCell').remove();
-			        sortedSelectLists(listNames, trimList);
-			        rowDraw(trimList,vocabulary,mainTagClass);
-			        $('button.mapWindow').openNewMapWindow(params);  
+				let selectedValue = $(this).val();
+				let selectedColumnName = ($(this).attr('id')).substr(3);
+				//console.log('selectedValue', selectedValue);
+				//console.log('selectedColumnName', selectedColumnName);
+				console.log('selectionParams',selectionParams);
+				trimList = list;
+				for (let k = 0; k< selectionParams.length; k++) {
+				        trimList = trimList.filter(function( obj ) { if(obj[selectionParams[k].selectedColumnName] == selectionParams[k].selectedValue){  return obj;}});
+				}
+				console.log('list',list);
+				console.log('trimList',trimList);
+				$('.trimSelection').empty();
+				$('.dataCell').remove();
+				sortedSelectLists(listNames, trimList);
+				rowDraw(trimList,vocabulary,mainTagClass);
+				$('button.mapWindow').openNewMapWindow(params);
+			        	//---------------------crear table filters--------------------------------------------------
+				$('#restoreDefaultTable').on('click', function(){
+					$('.dataCell').remove();
+					sortedSelectLists(listNames, list);
+					rowDraw(list,vocabulary,mainTagClass);
+					selectionParams =[];
+					$('.tableRowSelector').val('');
+					$('button.mapWindow').openNewMapWindow(params);
+				});
+				//---------------------------------------------------------------------------------------------  
 			        
 			});
 
