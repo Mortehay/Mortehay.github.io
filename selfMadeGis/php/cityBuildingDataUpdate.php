@@ -4,9 +4,9 @@
  	$selectedCity= $_POST['city_building_data_eng'];  
 
 
-      if (file_exists("/tmp/".$selectedCity."_buildings.csv'")) {
-        $linkStorage = "'/tmp/".$selectedCity."_buildings.csv''";
-        $dir = sys_get_temp_dir();
+      if (file_exists("/tmp/cubic/_buildings/".$selectedCity."_buildings.csv'")) {
+        $linkStorage = "'/tmp/cubic/_buildings/".$selectedCity."_buildings.csv'";
+        $dir = '/tmp/cubic/_buildings/';
         $files = scandir($dir);  
       } else {
         $linkStorage = "'/var/www/QGIS-Web-Client-master/site/csv/archive/".$selectedCity."/".$selectedCity."_buildings.csv'" ;
@@ -71,7 +71,7 @@
                         }
 
                       } else {
-                        echo 'no new buildings';
+                        //echo 'no new buildings';
                       }
                    
                   } else {

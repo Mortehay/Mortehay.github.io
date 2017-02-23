@@ -2,7 +2,7 @@
 //ini_set('display_errors', 1);
 
  	$selectedCity= $_POST['cable_air_cable_data_city_eng'];  
-	$linkArchive = "'".'<a href='.'"'.'http://77.121.192.25/qgis-ck/tmp/archive/'.$selectedCity.'/air/'."'".'||tmp.progect_number||'."'".'" target="_blank">посилання на архів</a>'."'";
+	$linkArchive = "'".'<a href='.'"'.'http://10.112.129.170/qgis-ck/tmp/archive/'.$selectedCity.'/air/'."'".'||tmp.progect_number||'."'".'" target="_blank">посилання на архів</a>'."'";
     
       if (file_exists("/tmp/".$selectedCity."_cable_air.csv")) {
         $linkStorage = "'/tmp/".$selectedCity."_cable_air.csv'";

@@ -181,6 +181,13 @@ let params = {
 		displayResult: false,
 		displayStyle:'none'
 	},
+	cityBuildingDataUpdateAuto:{
+		phpFile:'cityBuildingDataUpdateAuto',
+		id:'city_building_data_eng_auto',
+		type:'POST',
+		displayResult:true,
+		displayStyle:'table'
+	}
 
 }
 //-------------------file upload params-------------------------------------------------------------------------------------------------
@@ -210,6 +217,7 @@ let fileUploadParams = {
 let vocabulary ={
 	cableChannelCableDataView:['№','Технічні умови','Договір', 'Додаткова угода','Акт прийомки','Затверджена картограма','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС'],
 	cityBuildingDataUpdate:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
+	cityBuildingDataUpdateAuto:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
 	cableAirCableDataView:['№','id кабеля', 'Посилання на архів','Дата монтажу кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення','Опис маршруту', 'Довжина, км'],
 	cityBuildingDublicatesFinder:['№','Вулиця OSM', '№будинку OSM', 'Вулиця CUBIC', '№будинку CUBIC', '"Кубік" HOUSE_ID', 'Тип мережі', 'Координата будинку'],
 	ctvTopologyUpdate:['№', 'Місто', 'Вулиця', '№будинку', 'Квартира', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID'],
@@ -370,6 +378,7 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		 let headerSelectors = '';
 		 let sortedUniqueMatrix = [];
 	              let listNames = Object.keys(list[0]);
+	              //console.log('listNames', listNames);
 	              let selectionParams =[];
 	               if (vocabulary !==  'noVocabulary') {
 	               	header +='<tr>'
@@ -394,7 +403,7 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 			});
 			//---------------------------------------------------------------------------------------------
 	               } else { console.log('noVocabulary for table header') }
-	               	console.log('listNames',listNames);
+	               	//console.log('listNames',listNames);
 	               	
 	               	function sortedSelectLists(listNames, list){
 	               		for (let z = 0; z < listNames.length; z++) {
@@ -412,8 +421,9 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 	               		}
 	               		//return sortedUniqueMatrix;
 	               	}
+	               	////////////////////////////////////////
 	               	sortedSelectLists(listNames, list);
-			rowDraw(list,vocabulary,mainTagClass);
+	               	////////////////////////////////////////
 	               	
 	               	$('.tableRowSelector').change(function(){
 	               		selectionParams.push({
