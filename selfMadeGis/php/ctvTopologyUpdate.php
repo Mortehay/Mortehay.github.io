@@ -138,7 +138,8 @@
                           
                         }
                   }
-                  $link_left_part = '"<a href="http://77.121.192.25/qgis-ck/tmp/archive/';
+                  $server_address = $_SERVER['SERVER_ADDR'];
+                  $link_left_part = '"<a href="http://'.$server_address.'/qgis-ck/tmp/archive/';
                   $link_right_part = '/" target="_blank">посилання на архів</a>"';
 
 

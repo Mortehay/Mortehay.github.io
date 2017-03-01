@@ -6,15 +6,18 @@
 	foreach($files as $file) {
 		$str_file = (string)$file;
 		//print_r($str_file);
-		$oldMessage = '77.121.192.25';
+		$oldMessage = array('77.121.192.25');
+		$oldMessage[] = $_SERVER['SERVER_ADDR']; 
 		$deletedFormat = '127.0.0.1';
 		if ($str_file !== '.' && $str_file !== '..') {
 			//print($str_file);
 			//chmod($dir.$str_file, 0666);
 			$str=file_get_contents($dir.$str_file);
 			//print($str);
-		
-			$str=str_replace("$oldMessage", "$deletedFormat",$str);
+			foreach ($oldMessage as $key => $oldMessageValue) {
+				$str=str_replace("$oldMessageValue", "$deletedFormat",$str);
+			}
+			
 			//print($str);
 
 			//print($file);

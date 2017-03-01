@@ -50,6 +50,6 @@
 
 
 	pg_close($db); // Closing Connection
-	print( $insert.$update_geom.$add_house_id.$update_entrance_id);
+	print( $insert.$update_geom);
 ?>
 

@@ -64,7 +64,7 @@ ini_set('display_errors', 1);
                           
                         }
                   }
-                  $link_left_part = '"<a href="http://77.121.192.25/qgis-ck/tmp/archive/';
+                  $link_left_part = '"<a href="http://'.$_SERVER['SERVER_ADDR'].'/qgis-ck/tmp/archive/';
                   $link_right_part = '/" target="_blank">посилання на архів</a>"';
                   $archive_link_sql = "UPDATE $selectedCity"."."."$selectedCity"."_ctv_topology SET archive_link = CASE "."WHEN cubic_name like '%Магистральный распределительный узел%' THEN '$link_left_part"."$selectedCity"."/topology/mdod/"."'||cubic_code||'"."$link_right_part' "."WHEN cubic_name like '%Оптический узел%' THEN '$link_left_part"."$selectedCity"."/topology/nod/"."'||cubic_code||'"."$link_right_part' "."WHEN cubic_name like '%Оптичний приймач%' THEN '$link_left_part"."$selectedCity"."/topology/op/"."'||cubic_code||'"."$link_right_part' "."WHEN cubic_name like '%Передатчик оптический%' THEN '$link_left_part"."$selectedCity"."/topology/ot/"."'||cubic_code||'"."$link_right_part' "."WHEN cubic_name like '%Передатчик оптический%' THEN '$link_left_part"."$selectedCity"."/topology/ot/"."'||cubic_code||'"."$link_right_part' "."END;";
                   $archive_link_ret = pg_query($db, $archive_link_sql);

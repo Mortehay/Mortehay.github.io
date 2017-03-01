@@ -187,6 +187,13 @@ let params = {
 		type:'POST',
 		displayResult:true,
 		displayStyle:'table'
+	},
+	ctvToplogyAddFlats:{
+		phpFile:'ctvToplogyAddFlats',
+		id:'ctv_city_flats_eng',
+		type:'POST',
+		displayResult:true,
+		displayStyle:'table'
 	}
 
 }
@@ -221,7 +228,8 @@ let vocabulary ={
 	cableAirCableDataView:['№','id кабеля', 'Посилання на архів','Дата монтажу кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення','Опис маршруту', 'Довжина, км'],
 	cityBuildingDublicatesFinder:['№','Вулиця OSM', '№будинку OSM', 'Вулиця CUBIC', '№будинку CUBIC', '"Кубік" HOUSE_ID', 'Тип мережі', 'Координата будинку'],
 	ctvTopologyUpdate:['№', 'Місто', 'Вулиця', '№будинку', 'Квартира', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID'],
-	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під&acute;їзду', '№Поверху', 'Розташування', 'house_id', 'mac_address', 'ip_address', 'serial_number', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни']
+	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під&acute;їзду', '№Поверху', 'Розташування', 'house_id', 'mac_address', 'ip_address', 'serial_number', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни'],
+	ctvToplogyAddFlats:['№',  'Вулиця', '№будинку', 'Квартира', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID','Квартири']
 };
 
 //-----------------unique values from array ------------------------------------
