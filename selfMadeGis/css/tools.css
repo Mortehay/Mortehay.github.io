@@ -29,17 +29,21 @@ div.tools__visible{
 }
 
 
-.displayResultcableChannelCableDataView, .displayResultcityBuildingDataUpdate, .displayResultcableAirCableDataView, .displayResultcityBuildingDublicatesFinder, .displayResultctvTopologyUpdate, .displayResultetherTopologyUpdate{
-	min-width: 650px;
-	max-width:1360px;
-	width:100%;
+.displayDataView{
+	width: auto;
 	margin: 0 auto;
 	background-color: #FFDAB9;
 	position:relative;
-	top:-70%;
+	top:-15%;
 	z-index: 1000;
-	color:#FF4500;
+	-webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
 
+}
+.tableDisplayResult{
+	max-width:1200;
+	margin:0 auto;
 }
 .visualization{
 	width:800px;

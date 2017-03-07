@@ -9,7 +9,9 @@ include('restriction.php');
                       mkdir($newDirPath , 0777, true);
                       umask($oldmask);
                 }
+                        chmod($target_file, 0666);
                         copy($target_file, $newDirPath . $file_name);
+
         //echo $dirPath;
         return true;
 

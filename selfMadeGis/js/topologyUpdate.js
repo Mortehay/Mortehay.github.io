@@ -229,7 +229,7 @@ let vocabulary ={
 	cityBuildingDublicatesFinder:['№','Вулиця OSM', '№будинку OSM', 'Вулиця CUBIC', '№будинку CUBIC', '"Кубік" HOUSE_ID', 'Тип мережі', 'Координата будинку'],
 	ctvTopologyUpdate:['№', 'Місто', 'Вулиця', '№будинку', 'Квартира', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID'],
 	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під&acute;їзду', '№Поверху', 'Розташування', 'house_id', 'mac_address', 'ip_address', 'serial_number', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни'],
-	ctvToplogyAddFlats:['№',  'Вулиця', '№будинку', 'Квартира', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID','Квартири']
+	ctvToplogyAddFlats:['№',  'Вулиця', '№будинку', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID','Квартири']
 };
 
 //-----------------unique values from array ------------------------------------
@@ -379,7 +379,7 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		console.log('resp',resp);
 		let list = resp.response;
 		if ((list !=null) && (list.length>0) ) {  
-		$('.'+joinedToTgClass).next().after('<div class="'+mainTagClass+' clear"><table style="width:inherit;"></table></div>');
+		$('.'+joinedToTgClass).next().after('<div class="'+mainTagClass+' clear tableDisplayResult"><table class="displayDataView"></table></div>');
 		$('.'+mainTagClass).prepend('<button id="restoreDefaultTable" style="float:left;">очистити фільтр<button>');
 		
 		 let header = '';
@@ -542,6 +542,7 @@ $(document).ready(function(){
 	//----------------------------------file upload------------------------------------------------------------------------------
 	//$('#fullAccess_holder').fileUploadToTmp(fileUploadParams.csvUpload,'#fullAccess_holder');
 	$('#filesUpload_holder').fileUploadToTmpAll(fileUploadParams.csvUpload,'#filesUpload_holder');
+	$('#ctv_holder').addSheList(); 
 	
 });
 //--------ajax error-------------------------------------------------------------------------------------------------------------------
@@ -567,10 +568,11 @@ $.fn.phpRequest = function(params) {
 		//-------------------------------------------------------------------------------------
 		console.log('phpFile',$(this).attr('id'));
 		request[params.id] = $('#'+params.id).val();
+		request['she'] = $('#sheSelection').val();
 		if ($('#'+params.id).val() !=='вибери місто') {
 
 			$('.curtenScripStatus').show();
-			//console.log('request',request);
+			console.log('request',request);
 			$.ajax({
 				url: params.phpFile+'.php', //This is the current doc
 				type: params.type,
@@ -727,5 +729,33 @@ $.fn.openNewWindow = function(data,params,request){
 		newWindow.document.write('<script  type="text/javascript" src="../js/rotatingArrows.js"></script>');
 		newWindow.document.write('<script type="text/javascript" src="'+params.displayCode+'"></script>');
 					
+}
+$.fn.addSheList = function(){
+	let bigCities = ['kiev', 'dnipro', 'bilatserkva'];
+	$('#ctv_holder select').on('change', function(){
+		if(bigCities.indexOf($(this).val())>-1 ) {
+			$('#sheSelection').remove();
+			let request = {};
+			request['selectedCity'] = $(this).val();
+			$(this).next().before('<select id="sheSelection" style="max-width:100px;"><option value="виберіть ПГС">виберіть ПГС</option></select>');
+			$.ajax({
+				url: 'sheSelection.php', //This is the current doc
+				type: 'GET',
+				data: (request),
+				success: function(data){
+					let obj =  JSON.parse(data);
+					console.log('obj', obj);
+					for (let i = 0; i < obj.response.length; i++) {
+						$('#sheSelection').append('<option value="'+obj.response[i].she+'">'+obj.response[i].she+'</option>');
+					}
+
+				}
+			})
+			
+
+		} else {
+			$('#sheSelection').remove();
+		}
+	});
 }
 })(jQuery);
