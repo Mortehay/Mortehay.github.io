@@ -1,7 +1,11 @@
 <?php
 //ini_set('display_errors', 1);
-
- 	$selectedCity= $_POST['cable_channel_cable_data_city_eng'];  
+      if ($_POST['cable_channel_cable_data_city_eng']) {
+        $selectedCity= $_POST['cable_channel_cable_data_city_eng'];
+      } else {
+                $selectedCity = $_REQUEST['cable_channel_cable_data_city_eng'];
+      } 
+ 	//$selectedCity= $_POST['cable_channel_cable_data_city_eng'];  
 	$linkArchive = "'".'<a href='.'"'.'http://'.$_SERVER['SERVER_ADDR'].'/qgis-ck/tmp/archive/'.$selectedCity.'/cc/'."'".'||tmp_x.table_id||'."'".'" target="_blank">посилання на архів</a>'."'";
 
       if (file_exists("/tmp/".$selectedCity."_cable_channels.csv'")) {
@@ -13,8 +17,8 @@
         $dir = "/var/www/QGIS-Web-Client-master/site/csv/archive/".$selectedCity."/";
         $files = scandir($dir);
       }
-      //echo $linkStorage;
-      //echo '<hr>'. file_exists($linkStorage);
+      echo $linkStorage;
+      echo '<hr>'. file_exists($linkStorage);
 
 
            $host        = "host=127.0.0.1";

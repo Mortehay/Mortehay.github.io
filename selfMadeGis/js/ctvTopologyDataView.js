@@ -32,6 +32,7 @@ function doAnimation(nodeParams) {
 ///////////////////////////////////////////////////////////////////////////////////////////
 
     let options = {
+      animationPreload:true,
       layout:{randomSeed:7},
         nodes: {
             shape: 'dot',

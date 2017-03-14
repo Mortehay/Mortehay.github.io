@@ -731,28 +731,33 @@ $.fn.openNewWindow = function(data,params,request){
 					
 }
 $.fn.addSheList = function(){
-	let bigCities = ['kiev', 'dnipro', 'bilatserkva'];
+	let notCities = ['вибери місто'];
+	let nextButtonId = ['ctvTopologyDataView', 'ctvTopologyLoad'];
 	$('#ctv_holder select').on('change', function(){
-		if(bigCities.indexOf($(this).val())>-1 ) {
-			$('#sheSelection').remove();
-			let request = {};
-			request['selectedCity'] = $(this).val();
-			$(this).next().before('<select id="sheSelection" style="max-width:100px;"><option value="виберіть ПГС">виберіть ПГС</option></select>');
-			$.ajax({
-				url: 'sheSelection.php', //This is the current doc
-				type: 'GET',
-				data: (request),
-				success: function(data){
-					let obj =  JSON.parse(data);
-					console.log('obj', obj);
-					for (let i = 0; i < obj.response.length; i++) {
-						$('#sheSelection').append('<option value="'+obj.response[i].she+'">'+obj.response[i].she+'</option>');
+		if(notCities.indexOf($(this).val())<0 ) {
+			if(nextButtonId.indexOf($(this).next().attr('id'))<0){
+				$('#sheSelection').remove();
+				let request = {};
+				request['selectedCity'] = $(this).val();
+				$(this).next().before('<select id="sheSelection" style="max-width:100px;"><option value="виберіть ПГС">виберіть ПГС</option></select>');
+				$.ajax({
+					url: 'sheSelection.php', //This is the current doc
+					type: 'GET',
+					data: (request),
+					success: function(data){
+						let obj =  JSON.parse(data);
+						console.log('obj', obj);
+						for (let i = 0; i < obj.response.length; i++) {
+							$('#sheSelection').append('<option value="'+obj.response[i].she+'">'+obj.response[i].she+'</option>');
+						}
+
 					}
+				})
+				
 
-				}
-			})
-			
-
+			} else {
+				$('#sheSelection').remove();
+			}
 		} else {
 			$('#sheSelection').remove();
 		}
