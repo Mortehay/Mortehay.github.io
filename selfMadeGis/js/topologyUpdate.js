@@ -194,6 +194,13 @@ let params = {
 		type:'POST',
 		displayResult:true,
 		displayStyle:'table'
+	},
+	ctvTopologyCouplerView:{
+		phpFile:'ctvTopologyCouplerView',
+		id:'ctv_city_couplers_eng',
+		type:'POST',
+		displayResult:true,
+		displayStyle:'table'
 	}
 
 }
@@ -229,7 +236,8 @@ let vocabulary ={
 	cityBuildingDublicatesFinder:['№','Вулиця OSM', '№будинку OSM', 'Вулиця CUBIC', '№будинку CUBIC', '"Кубік" HOUSE_ID', 'Тип мережі', 'Координата будинку'],
 	ctvTopologyUpdate:['№', 'Місто', 'Вулиця', '№будинку', 'Квартира', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID'],
 	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під&acute;їзду', '№Поверху', 'Розташування', 'house_id', 'mac_address', 'ip_address', 'serial_number', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни'],
-	ctvToplogyAddFlats:['№',  'Вулиця', '№будинку', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID','Квартири']
+	ctvToplogyAddFlats:['№',  'Вулиця', '№будинку', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID','Квартири'],
+	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsxFile','xlsFile','dwgFile','pdfFile','imgFile']
 };
 
 //-----------------unique values from array ------------------------------------
@@ -542,7 +550,8 @@ $(document).ready(function(){
 	//----------------------------------file upload------------------------------------------------------------------------------
 	//$('#fullAccess_holder').fileUploadToTmp(fileUploadParams.csvUpload,'#fullAccess_holder');
 	$('#filesUpload_holder').fileUploadToTmpAll(fileUploadParams.csvUpload,'#filesUpload_holder');
-	$('#ctv_holder').addSheList(); 
+	$('#ctv_holder').addSheList('ctv_holder'); 
+	$('#opticalCouplers_holder').addSheList('opticalCouplers_holder');
 	
 });
 //--------ajax error-------------------------------------------------------------------------------------------------------------------
@@ -730,10 +739,10 @@ $.fn.openNewWindow = function(data,params,request){
 		newWindow.document.write('<script type="text/javascript" src="'+params.displayCode+'"></script>');
 					
 }
-$.fn.addSheList = function(){
+$.fn.addSheList = function(holder){
 	let notCities = ['вибери місто'];
 	let nextButtonId = ['ctvTopologyDataView', 'ctvTopologyLoad'];
-	$('#ctv_holder select').on('change', function(){
+	$('#'+holder+' select').on('change', function(){
 		if(notCities.indexOf($(this).val())<0 ) {
 			if(nextButtonId.indexOf($(this).next().attr('id'))<0){
 				$('#sheSelection').remove();
