@@ -40,25 +40,25 @@ function groupSelect($cubic_name){
   //echo '$imgFile - '.$imgFile.'<hr>';
   if (file_exists($xlsxFile) || file_exists($xlsFile) || file_exists($dwgFile)|| file_exists($pdfFile)) {
     $group_value['archiveLink'] =  $archiveLink;
-  } else {$group_value['archiveLink'] =  null; }
+  } else {$group_value['archiveLink'] =  '-'; }
   if (file_exists($imgFile)) {
-    $group_value['imgLink'] =  $imgLink;
-  } else {$group_value['imgLink'] =  null; }
+    $group_value['imgLink'] =  '/tmp/archive/'.$selectedCity.'/topology/'.$cubic_name.'/'.$cubic_code.'/'.$cubic_code. '_wiring.png';
+  } else {$group_value['imgLink'] =  '-'; }
   if (file_exists($xlsxFile)) {
-    $group_value['xlsxFile'] =  'exists';
-  } else {$group_value['xlsxFile'] =  null; }
+    $group_value['xlsxFile'] =  '+';
+  } else {$group_value['xlsxFile'] =  '-'; }
   if (file_exists($xlsFile)) {
-    $group_value['xlsFile'] =  'exists';
-  } else {$group_value['xlsFile'] =  null; }
+    $group_value['xlsFile'] =  '+';
+  } else {$group_value['xlsFile'] =  '-'; }
   if (file_exists($dwgFile)) {
-    $group_value['dwgFile'] =  'exists';
-  } else {$group_value['pdfFile'] =  null; }
+    $group_value['dwgFile'] =  '+';
+  } else {$group_value['dwgFile'] =  '-'; }
   if (file_exists($pdfFile)) {
-    $group_value['pdfFile'] =  'exists';
-  } else {$group_value['pdfFile'] =  null; }
+    $group_value['pdfFile'] =  '+';
+  } else {$group_value['pdfFile'] =  '-'; }
   if (file_exists($imgFile)) {
-    $group_value['imgFile'] =  'exists';
-  } else {$group_value['imgFile'] =  null; }
+    $group_value['imgFile'] =  '+';
+  } else {$group_value['imgFile'] =  '-'; }
   return $group_value;
  } 
 $host        = "host=127.0.0.1";
@@ -72,7 +72,7 @@ $db = pg_connect( "$host $port $dbname $credentials"  );
  } else {
     //echo "Opened database successfully\n";
 // echo "Opened database successfully\n";
- 	$coupler_selection = "SELECT cubic_city, cubic_street, cubic_house, cubic_name, cubic_code, cubic_ou_code, cubic_ou_name, cubic_ou_street, cubic_ou_house,  cubic_coment, archive_link, link, cubic_pgs_addr from ".$selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_name = 'Кросс-муфта' ".$selectedShe.";";
+ 	$coupler_selection = "SELECT cubic_city, cubic_street, cubic_house, cubic_name, cubic_code, cubic_ou_code, cubic_ou_name, cubic_ou_street, cubic_ou_house,  cubic_coment, archive_link, link, cubic_pgs_addr from ".$selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_name in ('Кросс-муфта','Оптический узел','Оптичний приймач') ".$selectedShe.";";
     $coupler_selection_query = pg_query($db, $coupler_selection);
    if($coupler_selection_query) {
     $arr_response = array('response' => array());

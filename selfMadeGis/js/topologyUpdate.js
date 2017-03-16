@@ -237,7 +237,7 @@ let vocabulary ={
 	ctvTopologyUpdate:['№', 'Місто', 'Вулиця', '№будинку', 'Квартира', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID'],
 	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під&acute;їзду', '№Поверху', 'Розташування', 'house_id', 'mac_address', 'ip_address', 'serial_number', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни'],
 	ctvToplogyAddFlats:['№',  'Вулиця', '№будинку', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID','Квартири'],
-	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsxFile','xlsFile','dwgFile','pdfFile','imgFile']
+	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsx','xls','dwg','pdf','png']
 };
 
 //-----------------unique values from array ------------------------------------
@@ -388,7 +388,7 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		let list = resp.response;
 		if ((list !=null) && (list.length>0) ) {  
 		$('.'+joinedToTgClass).next().after('<div class="'+mainTagClass+' clear tableDisplayResult"><table class="displayDataView"></table></div>');
-		$('.'+mainTagClass).prepend('<button id="restoreDefaultTable" style="float:left;">очистити фільтр<button>');
+		$('.'+mainTagClass).prepend('<button id="restoreDefaultTable">очистити фільтр</button>');
 		
 		 let header = '';
 		 let headerSelectors = '';
@@ -471,6 +471,7 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 					selectionParams =[];
 					$('.tableRowSelector').val('');
 					$('button.mapWindow').openNewMapWindow(params);
+					$('.wiringShow').imgLinkShow();
 				});
 				//---------------------------------------------------------------------------------------------  
 			        
@@ -493,11 +494,19 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		               	let pathIndex;
 		               	let pathIndexPKP;
 		               	let pathIndexCC;
+		               	let fileState=[];
+		               	let imgLink;
 		               	if(vocabulary.findIndex(y => y =='Опис маршруту') >-1){
 		               		pathIndexCC = 'summ_route_description';
 		               	}
 		               	if(vocabulary.findIndex(y => y =='Опис маршруту') >-1){
 		               		pathIndexPKP = 'rote_description';
+		               	}
+		               	if(vocabulary.findIndex(y => y =='Схема зварювань') >-1){
+		               		imgLink = 'link';
+		               	}
+		               	if((vocabulary.findIndex(y => y =='xlsx') >-1) || (vocabulary.findIndex(y => y =='xls') >-1) || (vocabulary.findIndex(y => y =='dwg') >-1) || (vocabulary.findIndex(y => y =='png') >-1) ){
+		               		fileState = ['xlsxFile','xlsFile','dwgFile','imgFile','pdfFile'];
 		               	}
 		               	//console.log('rowData', rowData);
 		               	for (let key in rowData) {
@@ -506,6 +515,21 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		               			row +='<td class="dataCell">'+'<button id="'+rowData['table_id']+'" class="mapWindow" data-cable="cc" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</button>'+'</td>';
 		               		} else if (key == pathIndexPKP) {
 		               			row +='<td class="dataCell">'+'<button id="'+rowData['table_id']+'" class="mapWindow" data-cable="pkp" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</button>'+'</td>';
+		               		} else if ( fileState.indexOf(key)>-1) {
+		               			if(rowData[key] == '+'){
+		               				row +='<td class="dataCell '+'filePresent'+'" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</td>';
+		               			} else if (rowData[key] == '-'){
+		               				row +='<td class="dataCell '+'fileAbsend'+'" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</td>';
+		               			} else {
+		               				row +='<td class="dataCell '+'fileNotDefinedState'+'" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</td>';
+		               			}
+		               		} else if(key == imgLink) {
+		               			$('.wiringShow').imgLinkShow();
+		               			if (rowData[key] == '-') {
+		               				row +='<td class="dataCell" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</td>';	
+		               			} else {
+		               				row +='<td class="dataCell">'+'<button id="'+rowData['cubic_code']+'" class="wiringShow" data-link="'+rowData[key]+'">схема зварювань</button>'+'</td>';
+		               			}	
 		               		} else {
 		               			row +='<td class="dataCell" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</td>';	
 		               		}
@@ -537,6 +561,7 @@ $(document).ready(function(){
 	//----------------tools--panel---------------------------------------------------------------------------------------------------
 	$('.myToolButton').on('click', function(){
 		//console.log('clicked',$(this).attr('id'));
+		$('.tableDisplayResult').remove();
 		let callId = $(this).attr('id');
 		if(params.hasOwnProperty(callId)){
 			$('#'+callId).phpRequest(params[callId]);
@@ -552,6 +577,7 @@ $(document).ready(function(){
 	$('#filesUpload_holder').fileUploadToTmpAll(fileUploadParams.csvUpload,'#filesUpload_holder');
 	$('#ctv_holder').addSheList('ctv_holder'); 
 	$('#opticalCouplers_holder').addSheList('opticalCouplers_holder');
+	
 	
 });
 //--------ajax error-------------------------------------------------------------------------------------------------------------------
@@ -771,5 +797,15 @@ $.fn.addSheList = function(holder){
 			$('#sheSelection').remove();
 		}
 	});
+}
+$.fn.imgLinkShow = function(){
+	$(this).on('click', function(){
+		$('.wiringImg').remove();
+		let imgLink = $(this).data('link');
+		let attributId = $(this).data('code');
+		console.log(imgLink);
+		$('body').append('<div class="wiringImg"><img src="..'+imgLink+'"></div>');
+		closeSpan('wiringImg');
+	})
 }
 })(jQuery);

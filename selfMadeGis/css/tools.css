@@ -28,7 +28,14 @@ div.tools__visible{
 	
 }
 
-
+.newTools h2{
+	font-size: 12px;
+	font-weight: bold;
+}
+#restoreDefaultTable{
+	z-index: 1000;
+	float:right;
+}
 .displayDataView{
 	width: auto;
 	margin: 0 auto;
@@ -42,7 +49,7 @@ div.tools__visible{
 
 }
 .tableDisplayResult{
-	max-width:1200;
+	max-width:1600px;
 	margin:0 auto;
 }
 .visualization{
@@ -56,6 +63,7 @@ div.tools__visible{
 	float:right;
 
 	/* color:#000000; */
+
 	width:26px;
 	height:25px;
 	background-color: transparent;
@@ -93,8 +101,10 @@ div.tools__visible{
 	max-width: 300px;
 	text-align: center;
 }
-.toolsListLabel {
+.toolsListLabel h2{
 	color:#ffffff;
+	font-size: 14px;
+	text-shadow: 1px 1px 4px rgba(93, 0, 255, 0.7);
 }
 .myToolButton:hover {
 	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #88aec9), color-stop(1, #007dc1));
@@ -178,15 +188,11 @@ div.tools__visible{
 	position:relative;
 	top:1px;
 }
-li.toolsListLabel>h2{
-	color:#000000;
-}
+
 .invisible{
 	display:none;
 }
-.newTools h2{
-	font-size: 12px;
-}
+
 .visible{
 	display:block;
 }
@@ -222,8 +228,58 @@ li.toolsListLabel>h2{
 td, th{
 	margin:0;
 	padding:0;
-	width:80px;
+	min-width:30px;
 }
 td input{
-	width:80px;
+	min-width:30px;
+	max-width: 80px;
+}
+tbody tr:nth-child(even){background:#e5ecf9;}
+tbody tr:nth-child(odd){background:#cceeff;}
+
+td.filePresent{
+	background-color: #ebffcc;
+	text-align: center;
+}
+
+td.fileAbsend{
+	background-color: #ffe6e6;
+	text-align: center;
+}
+td.fileNotDefinedState{
+	background-color: ##f2ccff;
+	text-align: center;
+}
+td.filePresent:hover, td.fileAbsend:hover, td.fileNotDefinedState:hover, tr:hover{
+	font-weight: bold;
+	-webkit-box-shadow: inset 0px 0px 1px 2px rgba(0,0,0,0.5);
+	-moz-box-shadow: inset 0px 0px 1px 2px rgba(0,0,0,0.5);
+	box-shadow: inset 0px 0px 1px 2px rgba(0,0,0,0.5);
+}
+
+.wiringImg{
+	display:block;
+	opacity:1.0;
+	background-color:#ccc;
+	position:fixed;
+	width:100%;
+	height:100%;
+	top:0px;
+	left:0px;
+	z-index:1001;
+}
+
+.wiringImg img{
+	position:relative;
+	display: block;
+	top:5%;
+    	margin-left: auto;
+    	margin-right: auto;
+}
+.wiringImg span{
+	float: none;
+	display: block;
+    position: relative;
+    left: 70%;
+    top: 5%;
 }
