@@ -1,5 +1,6 @@
 <?php
 //ini_set('display_errors', 1);
+include('classFunctionStorage.php');
 if ($_POST['ctv_city_couplers_eng']) {
 		$selectedCity= $_POST['ctv_city_couplers_eng'];
 } else {
@@ -17,7 +18,7 @@ else {
 	$selectedShe = " AND cubic_pgs_addr  ='".$selectedShe."'  ";
 }
 
-function groupSelect($cubic_name){
+/*function groupSelect($cubic_name){
             $group_value = array(0, '#DC143C',null,null);
             if ($cubic_name == 'Оптический узел') { $group_value = array( 1, '#ff9900', 60, 'nod');}
             if ($cubic_name == 'Оптичний приймач') { $group_value = array(2, '#663300', 60, 'op');}
@@ -64,9 +65,27 @@ function groupSelect($cubic_name){
 $host        = "host=127.0.0.1";
 $port        = "port=5432";
 $dbname      = "dbname=postgres";
-$credentials = "user=simpleuser password=simplepassword";
-
-$db = pg_connect( "$host $port $dbname $credentials"  );
+$credentials = "user=simpleuser password=simplepassword";*/
+$newDBrequest = new dbConnSetClass;
+$query = "SELECT cubic_city, cubic_street, cubic_house, cubic_name, cubic_code, cubic_ou_code, cubic_ou_name, cubic_ou_street, cubic_ou_house,  cubic_coment, archive_link, link, cubic_pgs_addr from ".$selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_name in ('Кросс-муфта','Оптический узел','Оптичний приймач') ".$selectedShe.";";
+$queryArrayKeys = array('cubic_city', 'cubic_street', 'cubic_house', 'cubic_name', 'cubic_code', 'cubic_ou_code', 'cubic_ou_name', 'cubic_ou_street', 'cubic_ou_house',  'cubic_coment', 'archive_link', 'link', 'cubic_pgs_addr');
+$retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
+//print_r($retuenedArray);
+$sumObjectsArray = $retuenedArray;
+foreach ($sumObjectsArray as $sumObjectsArrayKey => $$objectArray) {
+  $sumObjectsArray[$sumObjectsArrayKey]['archive_link'] = checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['cubic_coment'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['archiveLink'];
+  $sumObjectsArray[$sumObjectsArrayKey]['link'] = checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['cubic_coment'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['imgLink'];
+  $sumObjectsArray[$sumObjectsArrayKey]['xlsxFile'] = checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['cubic_coment'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['xlsxFile'];
+  $sumObjectsArray[$sumObjectsArrayKey]['xlsFile'] = checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['cubic_coment'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['xlsFile'];
+  $sumObjectsArray[$sumObjectsArrayKey]['dwgFile'] = checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['cubic_coment'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['dwgFile'];
+  $sumObjectsArray[$sumObjectsArrayKey]['pdfFile'] = checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['cubic_coment'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['pdfFile'];
+  $sumObjectsArray[$sumObjectsArrayKey]['imgFile'] = checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['cubic_coment'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['imgFile'];
+}
+//print_r($sumObjectsArray);
+//$arr_response = array('response' => array());
+$arr_response['response'] =  $sumObjectsArray;
+print json_encode($arr_response);
+/*$db = pg_connect( "$host $port $dbname $credentials"  );
  if(!$db){
     echo "Error : Unable to open database\n";
  } else {
@@ -110,7 +129,8 @@ $db = pg_connect( "$host $port $dbname $credentials"  );
   }
 }
 print json_encode($arr_response);
-pg_close($db); // Closing Connection
+pg_close($db); // Closing Connection*/
+
 
 
 ?>
