@@ -1,161 +1,133 @@
 <?php
 //ini_set('display_errors', 1);
-        
- 	$selectedCity= $_POST['cityId'];  
-       $tableId = $_POST['tempId'];
-       $cableType = $_POST['cableType'];
-       //$selectedCity= 'kiev';  
-       //$tableId ='t_120';  
+include('classFunctionStorage.php');
+if ($_POST['cityId']) {$selectedCity= $_POST['cityId'];} else {$selectedCity = $_REQUEST['cityId'];}
+if ($_POST['tempId']) {$tableId= $_POST['tempId'];} else {$tableId = $_REQUEST['tempId'];}
+if ($_POST['cableType']) {$cableType= $_POST['cableType'];} else {$cableType = $_REQUEST['cableType'];}
+$geojson = array( 'type' => 'FeatureCollection', 'features' => array());
+if ($cableType == 'cc') {
+  $newDBrequest = new dbConnSetClass;
+  $query = "SELECT summ_tu, summ_contract_sum , summ_sub_contract, summ_acceptance_act, summ_approval_cartogram, summ_route_description, summ_cable_type, summ_archive_link, table_id,  notes2 , rezerve1 , rezerve2 , rezerve3, ST_AsGeoJSON(ST_Transform(geom_cable,3857) ) as cable_geom,  ST_AsGeoJSON(ST_Transform(ST_StartPoint(geom_cable) ,3857) ) as start_point_geom, ST_AsGeoJSON(ST_Transform(ST_EndPoint(geom_cable) ,3857) ) as end_point_geom  FROM ".$selectedCity.".".$selectedCity."_cable_channels WHERE table_id = '$tableId' AND geom_cable IS NOT NULL;";
+  $queryArrayKeys = array('summ_tu', 'summ_contract_sum' , 'summ_sub_contract', 'summ_acceptance_act', 'summ_approval_cartogram', 'summ_route_description', 'summ_cable_type', 'summ_archive_link', 'table_id',  'notes2' , 'rezerve1' , 'rezerve2' , 'rezerve3', 'cable_geom', 'start_point_geom', 'end_point_geom');
+  $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
 
-
-           $host        = "host=127.0.0.1";
-           $port        = "port=5432";
-           $dbname      = "dbname=postgres";
-           $credentials = "user=simpleuser password=simplepassword";
-
-           $db = pg_connect( "$host $port $dbname $credentials"  );
-             if(!$db){
-                echo "Error : Unable to open database\n";
-             } else {
-                //echo "Opened database successfully\n";
-            // echo "Opened database successfully\n";
-            $geojson = array( 'type' => 'FeatureCollection', 'features' => array());
-              if ($cableType == 'cc') {
-                $sql = "SELECT summ_tu, summ_contract_sum , summ_sub_contract, summ_acceptance_act, summ_approval_cartogram, summ_route_description, summ_cable_type, summ_archive_link, table_id,  notes2 , rezerve1 , rezerve2 , rezerve3, ST_AsGeoJSON(ST_Transform(geom_cable,3857) ),  ST_AsGeoJSON(ST_Transform(ST_StartPoint(geom_cable) ,3857) ) , ST_AsGeoJSON(ST_Transform(ST_EndPoint(geom_cable) ,3857) )  FROM ".$selectedCity.".".$selectedCity."_cable_channels WHERE table_id = '$tableId' AND geom_cable IS NOT NULL;  ";
-                $ret = pg_query($db, $sql);
-                  
-                  if($ret) {
-
-                         while ($row = pg_fetch_row($ret))  {
-
-                          $cable = array(
-                            'type' => 'Feature',
-                            'properties' => array(
-                              'summ_tu' => $row[0],
-                              'summ_contract_sum' => $row[1],
-                              'summ_sub_contract' => $row[2],
-                              'summ_acceptance_act' => $row[3],
-                              'summ_approval_cartogram' => $row[4],
-                              'summ_route_description' => $row[5],
-                              'summ_cable_type' => $row[6],
-                              'summ_archive_link' => $row[7],
-                              'table_id' => $row[8],
-                              'notes2' => $row[9],
-                              'rezerve1' => $row[10],
-                              'rezerve2' => $row[11],
-                              'rezerve3' => $row[12]
-                            ),
-                            'geometry'=>json_decode($row[13])
-                            );
-                          $startPoint = array(
-                            'type' =>'Feature',
-                            'properties' => array(
-                              'summ_tu' => $row[0],
-                              'summ_contract_sum' => $row[1],
-                              'summ_sub_contract' => $row[2],
-                              'summ_acceptance_act' => $row[3],
-                              'summ_approval_cartogram' => $row[4],
-                              'summ_route_description' => $row[5],
-                              'summ_cable_type' => $row[6],
-                              'summ_archive_link' => $row[7],
-                              'table_id' => $row[8],
-                              'notes2' => $row[9],
-                              'rezerve1' => $row[10],
-                              'rezerve2' => $row[11],
-                              'rezerve3' => $row[12]
-                            ),
-                            'geometry' =>json_decode($row[14])
-                            );
-                          $endPoint = array(
-                            'type' =>'Feature',
-                            'properties' => array(
-                              'summ_tu' => $row[0],
-                              'summ_contract_sum' => $row[1],
-                              'summ_sub_contract' => $row[2],
-                              'summ_acceptance_act' => $row[3],
-                              'summ_approval_cartogram' => $row[4],
-                              'summ_route_description' => $row[5],
-                              'summ_cable_type' => $row[6],
-                              'summ_archive_link' => $row[7],
-                              'table_id' => $row[8],
-                              'notes2' => $row[9],
-                              'rezerve1' => $row[10],
-                              'rezerve2' => $row[11],
-                              'rezerve3' => $row[12]
-                            ),
-                            'geometry' =>json_decode($row[15])
-                            );
-                        }
-                      }
-              }
-              if ($cableType == 'pkp') {
-                $sql = "SELECT table_id , cable_progect_link , cable_mount_date ,  cable_type , cable_short_type_description , cable_description ,  progect_number ,  cable_purpose , cubic_start_street , cubic_start_house_num,  cubic_start_house_entrance_num ,    cubic_end_street , cubic_end_house_num ,  cubic_end_house_entrance_num , total_cable_length, ST_AsGeoJSON(ST_Transform(geom_cable,3857) ),  ST_AsGeoJSON(ST_Transform(ST_StartPoint(geom_cable) ,3857) ) , ST_AsGeoJSON(ST_Transform(ST_EndPoint(geom_cable) ,3857) )  FROM ".$selectedCity.".".$selectedCity."_cable_air WHERE table_id = '$tableId' AND geom_cable IS NOT NULL;  ";
-                $ret = pg_query($db, $sql);
-                  
-                  if($ret) {
-
-                         while ($row = pg_fetch_row($ret))  {
-
-                          $cable = array(
-                            'type' => 'Feature',
-                            'properties' => array(
-                              'table_id' => $row[0],
-                              'cable_progect_link' => $row[1],
-                              'cable_mount_date' => $row[2],
-                              'cable_type' => $row[3],
-                              'cable_short_type_description' => $row[4],
-                              'cable_description' => $row[5],
-                              'progect_number' => $row[6],
-                              'cable_purpose' => $row[7],
-                              'rote_description' => $row[8].",буд.№ ".$row[9].",під.№ ".$row[10]." - ".$row[11].",буд.№ ".$row[12].",під.№ ".$row[13] ,
-                              'total_cable_length' => $row[14]
-                            ),
-                            'geometry'=>json_decode($row[15])
-                            );
-                          $startPoint = array(
-                            'type' =>'Feature',
-                            'properties' => array(
-                              'table_id' => $row[0],
-                              'cable_progect_link' => $row[1],
-                              'cable_mount_date' => $row[2],
-                              'cable_type' => $row[3],
-                              'cable_short_type_description' => $row[4],
-                              'cable_description' => $row[5],
-                              'progect_number' => $row[6],
-                              'cable_purpose' => $row[7],
-                              'rote_description' => $row[8].",буд.№ ".$row[9].",під.№ ".$row[10]." - ".$row[11].",буд.№ ".$row[12].",під.№ ".$row[13] ,
-                              'total_cable_length' => $row[14]
-                            ),
-                            'geometry' =>json_decode($row[16])
-                            );
-                          $endPoint = array(
-                            'type' =>'Feature',
-                            'properties' => array(
-                              'table_id' => $row[0],
-                              'cable_progect_link' => $row[1],
-                              'cable_mount_date' => $row[2],
-                              'cable_type' => $row[3],
-                              'cable_short_type_description' => $row[4],
-                              'cable_description' => $row[5],
-                              'progect_number' => $row[6],
-                              'cable_purpose' => $row[7],
-                              'rote_description' => $row[8].",буд.№ ".$row[9].",під.№ ".$row[10]." - ".$row[11].",буд.№ ".$row[12].",під.№ ".$row[13] ,
-                              'total_cable_length' => $row[14]
-                            ),
-                            'geometry' =>json_decode($row[17])
-                            );
-                          }
-                        }
-                      }                  
-
-                          
-                          array_push($geojson['features'], $startPoint);
-                          array_push($geojson['features'], $cable);
-                          array_push($geojson['features'], $endPoint);
-                 }   
-
-	pg_close($db); // Closing Connection
-	//print( $sql);
-       print json_encode($geojson);
+   $cable = array(
+    'type' => 'Feature',
+    'properties' => array(
+      'summ_tu' => $retuenedArray[0]['summ_tu'],
+      'summ_contract_sum' => $retuenedArray[0]['summ_contract_sum'],
+      'summ_sub_contract' => $retuenedArray[0]['summ_sub_contract'],
+      'summ_acceptance_act' => $retuenedArray[0]['summ_acceptance_act'],
+      'summ_approval_cartogram' => $retuenedArray[0]['summ_approval_cartogram'],
+      'summ_route_description' => $retuenedArray[0]['summ_route_description'],
+      'summ_cable_type' => $retuenedArray[0]['summ_cable_type'],
+      'summ_archive_link' => $retuenedArray[0]['summ_tu'],
+      'table_id' => $retuenedArray[0]['table_id'],
+      'notes2' => $retuenedArray[0]['notes2'],
+      'rezerve1' => $retuenedArray[0]['rezerve1'],
+      'rezerve2' => $retuenedArray[0]['rezerve2'],
+      'rezerve3' => $retuenedArray[0]['rezerve3']
+    ),
+    'geometry'=>json_decode($retuenedArray[0]['cable_geom'])
+    );
+  $startPoint = array(
+    'type' =>'Feature',
+    'properties' => array(
+      'summ_tu' => $retuenedArray[0]['summ_tu'],
+      'summ_contract_sum' => $retuenedArray[0]['summ_contract_sum'],
+      'summ_sub_contract' => $retuenedArray[0]['summ_sub_contract'],
+      'summ_acceptance_act' => $retuenedArray[0]['summ_acceptance_act'],
+      'summ_approval_cartogram' => $retuenedArray[0]['summ_approval_cartogram'],
+      'summ_route_description' => $retuenedArray[0]['summ_route_description'],
+      'summ_cable_type' => $retuenedArray[0]['summ_cable_type'],
+      'summ_archive_link' => $retuenedArray[0]['summ_tu'],
+      'table_id' => $retuenedArray[0]['table_id'],
+      'notes2' => $retuenedArray[0]['notes2'],
+      'rezerve1' => $retuenedArray[0]['rezerve1'],
+      'rezerve2' => $retuenedArray[0]['rezerve2'],
+      'rezerve3' => $retuenedArray[0]['rezerve3']
+    ),
+    'geometry' =>json_decode($retuenedArray[0]['start_point_geom'])
+    );
+  $endPoint = array(
+    'type' =>'Feature',
+    'properties' => array(
+      'summ_tu' => $retuenedArray[0]['summ_tu'],
+      'summ_contract_sum' => $retuenedArray[0]['summ_contract_sum'],
+      'summ_sub_contract' => $retuenedArray[0]['summ_sub_contract'],
+      'summ_acceptance_act' => $retuenedArray[0]['summ_acceptance_act'],
+      'summ_approval_cartogram' => $retuenedArray[0]['summ_approval_cartogram'],
+      'summ_route_description' => $retuenedArray[0]['summ_route_description'],
+      'summ_cable_type' => $retuenedArray[0]['summ_cable_type'],
+      'summ_archive_link' => $retuenedArray[0]['summ_tu'],
+      'table_id' => $retuenedArray[0]['table_id'],
+      'notes2' => $retuenedArray[0]['notes2'],
+      'rezerve1' => $retuenedArray[0]['rezerve1'],
+      'rezerve2' => $retuenedArray[0]['rezerve2'],
+      'rezerve3' => $retuenedArray[0]['rezerve3']
+    ),
+    'geometry' =>json_decode($retuenedArray[0]['end_point_geom'])
+    );
+}
+if ($cableType == 'pkp') {
+  $newDBrequest = new dbConnSetClass;
+  $query = "SELECT table_id , cable_progect_link , cable_mount_date ,  cable_type , cable_short_type_description , cable_description ,  progect_number ,  cable_purpose , cubic_start_street , cubic_start_house_num,  cubic_start_house_entrance_num ,    cubic_end_street , cubic_end_house_num ,  cubic_end_house_entrance_num , total_cable_length, ST_AsGeoJSON(ST_Transform(geom_cable,3857) ) as cable_geom,  ST_AsGeoJSON(ST_Transform(ST_StartPoint(geom_cable) ,3857) ) as start_point_geom, ST_AsGeoJSON(ST_Transform(ST_EndPoint(geom_cable) ,3857) ) as end_point_geom   FROM ".$selectedCity.".".$selectedCity."_cable_air WHERE table_id = '$tableId' AND geom_cable IS NOT NULL;";
+  $queryArrayKeys = array('table_id' , 'cable_progect_link' , 'cable_mount_date' ,  'cable_type' , 'cable_short_type_description' , 'cable_description' ,  'progect_number' ,  'cable_purpose' , 'cubic_start_street' , 'cubic_start_house_num',  'cubic_start_house_entrance_num' ,    'cubic_end_street' , 'cubic_end_house_num' ,  'cubic_end_house_entrance_num' , 'total_cable_length', 'cable_geom', 'start_point_geom' , 'end_point_geom');
+  $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
+  $cable = array(
+    'type' => 'Feature',
+    'properties' => array(
+      'table_id' => $retuenedArray[0]['table_id'],
+      'cable_progect_link' => $retuenedArray[0]['cable_progect_link'],
+      'cable_mount_date' => $retuenedArray[0]['cable_mount_date'],
+      'cable_type' => $retuenedArray[0]['cable_type'],
+      'cable_short_type_description' => $retuenedArray[0]['cable_short_type_description'],
+      'cable_description' => $retuenedArray[0]['cable_description'],
+      'progect_number' => $retuenedArray[0]['progect_number'],
+      'cable_purpose' => $retuenedArray[0]['cable_purpose'],
+      'rote_description' => $retuenedArray[0]['cubic_start_street'].",буд.№ ".$retuenedArray[0]['cubic_start_house_num'].",під.№ ".$retuenedArray[0]['cubic_start_house_entrance_num']." - ".$retuenedArray[0]['cubic_end_street'].",буд.№ ".$retuenedArray[0]['cubic_end_house_num'].",під.№ ".$retuenedArray[0]['cubic_end_house_entrance_num'],
+      'total_cable_length' => $retuenedArray[0]['total_cable_length']
+    ),
+    'geometry'=>json_decode($retuenedArray[0]['cable_geom'])
+    );
+  $startPoint = array(
+    'type' => 'Feature',
+    'properties' => array(
+      'table_id' => $retuenedArray[0]['table_id'],
+      'cable_progect_link' => $retuenedArray[0]['cable_progect_link'],
+      'cable_mount_date' => $retuenedArray[0]['cable_mount_date'],
+      'cable_type' => $retuenedArray[0]['cable_type'],
+      'cable_short_type_description' => $retuenedArray[0]['cable_short_type_description'],
+      'cable_description' => $retuenedArray[0]['cable_description'],
+      'progect_number' => $retuenedArray[0]['progect_number'],
+      'cable_purpose' => $retuenedArray[0]['cable_purpose'],
+      'rote_description' => $retuenedArray[0]['cubic_start_street'].",буд.№ ".$retuenedArray[0]['cubic_start_house_num'].",під.№ ".$retuenedArray[0]['cubic_start_house_entrance_num']." - ".$retuenedArray[0]['cubic_end_street'].",буд.№ ".$retuenedArray[0]['cubic_end_house_num'].",під.№ ".$retuenedArray[0]['cubic_end_house_entrance_num'],
+      'total_cable_length' => $retuenedArray[0]['total_cable_length']
+    ),
+    'geometry'=>json_decode($retuenedArray[0]['start_point_geom'])
+    );
+  $endPoint = array(
+    'type' => 'Feature',
+    'properties' => array(
+      'table_id' => $retuenedArray[0]['table_id'],
+      'cable_progect_link' => $retuenedArray[0]['cable_progect_link'],
+      'cable_mount_date' => $retuenedArray[0]['cable_mount_date'],
+      'cable_type' => $retuenedArray[0]['cable_type'],
+      'cable_short_type_description' => $retuenedArray[0]['cable_short_type_description'],
+      'cable_description' => $retuenedArray[0]['cable_description'],
+      'progect_number' => $retuenedArray[0]['progect_number'],
+      'cable_purpose' => $retuenedArray[0]['cable_purpose'],
+      'rote_description' => $retuenedArray[0]['cubic_start_street'].",буд.№ ".$retuenedArray[0]['cubic_start_house_num'].",під.№ ".$retuenedArray[0]['cubic_start_house_entrance_num']." - ".$retuenedArray[0]['cubic_end_street'].",буд.№ ".$retuenedArray[0]['cubic_end_house_num'].",під.№ ".$retuenedArray[0]['cubic_end_house_entrance_num'],
+      'total_cable_length' => $retuenedArray[0]['total_cable_length']
+    ),
+    'geometry'=>json_decode($retuenedArray[0]['ebd_point_geom'])
+    );
+}
+//echo $query;
+//print_r($retuenedArray);
+array_push($geojson['features'], $startPoint);
+array_push($geojson['features'], $cable);
+array_push($geojson['features'], $endPoint);
+print json_encode($geojson);
 ?>
 

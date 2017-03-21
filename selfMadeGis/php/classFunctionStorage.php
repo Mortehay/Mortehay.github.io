@@ -57,6 +57,7 @@ class dbConnSetClass{
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //functions///////////////////////////////////////////////////////////////////////////////////////////////
+//
 function groupSelect($cubic_name){
             $group_value = array(0, '#DC143C',null,null);
             if ($cubic_name == 'Оптический узел') { $group_value = array( 1, '#ff9900', 60, 'nod');}
@@ -67,6 +68,7 @@ function groupSelect($cubic_name){
             if ($cubic_name == 'Кросс-муфта') { $group_value = array( 6, '#ff0066', 60, 'cc');}
         return $group_value;
 }
+//check toplogy files existence////////////////////////////////////////////////////////////////////////////////////////
  function checkIfFileExist($selectedCity, $cubic_name, $cubic_code, $archiveLink, $imgLink){
   $group_value = array();
   $cubic_name = groupSelect($cubic_name)[3];
@@ -100,52 +102,34 @@ function groupSelect($cubic_name){
     $group_value['imgFile'] =  '+';
   } else {$group_value['imgFile'] =  '-'; }
   return $group_value;
- } 
+ }
+////////////// check where file exists////////////////////////////////////////////////////////////////////
+function fileExistenceCheck($promeLink, $secondaryLink, $selectedCity, $fileExtention){
+  if (file_exists($promeLink.$selectedCity.$fileExtention)) {
+      $linkStorage = "'".$promeLink.$selectedCity.$fileExtention."'";
+      $dir = sys_get_temp_dir();
+      $files = scandir($dir);  
+    } else {
+      $linkStorage = "'".$secondaryLink.$selectedCity."/".$selectedCity.$fileExtention."'" ;
+      $dir = $secondaryLink.$selectedCity."/";
+      $files = scandir($dir);
+    }
+  return array('files' =>$files, 'linkStorage' =>$linkStorage);
+}
+///////replace element position with other element in named array //////////////////////////////////////////
+function array_swap($key1, $key2, $array) {
+    $newArray = array ();
+    foreach ($array as $key => $value) {
+        if ($key == $key1) {
+            $newArray[$key2] = $array[$key2];
+        } elseif ($key == $key2) {
+            $newArray[$key1] = $array[$key1];
+        } else {
+            $newArray[$key] = $value;
+        }
+    }
+    return $newArray;
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*$obj = new dbConnSetClass;
-print_r( $obj-> getProp('dbConnSet'));
 
-$setNewdbConnSet = array(
-    "host"=>"host=127.0.0.1",
-    "port"=>"port=5432",
-    "dbname"=>"dbname=postgres",
-    "user"=>"user=postgres",
-    "password"=>"password=Xjrjkzlrf30"
-    );
-echo '<hr>';
-$obj -> setProp('dbConnSet',$setNewdbConnSet);
-print_r( $obj-> getProp('dbConnSet'));
-echo '<hr>';
-echo $obj ->getProp('selectedCity');
-echo '<hr>';
-$obj -> setProp('selectedCity','bilatserkva');
-echo '<hr>';
-
-
-echo '<hr>';
-print_r( $obj-> getProp('queryArrayKeys'));
-echo '<hr>';
-
-print_r( $obj-> getProp('queryArrayKeys'));
-echo $obj ->getProp('selectedCity');
-echo '<hr>';
-$queryArrayKeys = array('cubic_city',  'cubic_street',  'cubic_house', 'cubic_flat',  'cubic_code',  'cubic_name',  'cubic_pgs_addr',  'cubic_ou_op_addr',  'cubic_ou_code', 'cubic_date_reg',  'cubic_coment',  'cubic_uname', 'cubic_net_type',  'cubic_house_id');
-$obj -> setProp('queryArrayKeys',$queryArrayKeys);
-
-$query = "Select ".implode(", ",$queryArrayKeys)." from bilatserkva.bilatserkva_ctv_topology limit 5;";
-//echo '<hr>';
-//echo '<hr>';
-//print_r($obj -> dbConnect($query, $queryArrayKeys,true));
-//echo '<hr>';
-//$arr_response['response'] = $obj -> dbConnect($query, $queryArrayKeys,true);
-//print json_encode($arr_response);
-$query1 = "create temp table tmp(id serial, value varchar(100));";
-$obj -> dbConnect($query1, false, false);
-$query2 = "insert into tmp(value) values ('one'),('two'),('three');";
-$obj -> dbConnect($query2, false, false);
-$query3 = "select * from tmp";
-$queryArrayKeys = array('id','value');
-print_r($obj -> dbConnect($query3, $queryArrayKeys, true));
-
-print_r($obj -> dbConnect($query, $queryArrayKeys, true));*/
 ?>

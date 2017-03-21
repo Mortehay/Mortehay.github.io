@@ -232,7 +232,7 @@ let vocabulary ={
 	cableChannelCableDataView:['№','Технічні умови','Договір', 'Додаткова угода','Акт прийомки','Затверджена картограма','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС'],
 	cityBuildingDataUpdate:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
 	cityBuildingDataUpdateAuto:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
-	cableAirCableDataView:['№','id кабеля', 'Посилання на архів','Дата монтажу кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення','Опис маршруту', 'Довжина, км'],
+	cableAirCableDataView:['№','id кабеля', 'Посилання на архів','Дата монтажу кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення', 'Довжина, км','Опис маршруту'],
 	cityBuildingDublicatesFinder:['№','Вулиця OSM', '№будинку OSM', 'Вулиця CUBIC', '№будинку CUBIC', '"Кубік" HOUSE_ID', 'Тип мережі', 'Координата будинку'],
 	ctvTopologyUpdate:['№', 'Місто', 'Вулиця', '№будинку', 'Квартира', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID'],
 	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під&acute;їзду', '№Поверху', 'Розташування', 'house_id', 'mac_address', 'ip_address', 'serial_number', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни'],
@@ -800,12 +800,17 @@ $.fn.addSheList = function(holder){
 }
 $.fn.imgLinkShow = function(){
 	$(this).on('click', function(){
-		$('.wiringImg').remove();
+		$('.wiringImgOuter').remove();
 		let imgLink = $(this).data('link');
 		let attributId = $(this).data('code');
 		console.log(imgLink);
-		$('body').append('<div class="wiringImg"><img src="..'+imgLink+'"></div>');
-		closeSpan('wiringImg');
+		$('body').append('<div class="wiringImgOuter"><div class="wiringImg"><img src="..'+imgLink+'"></div></div>');
+		$('.wiringImg').append('<span class="closeSpan"></span>');
+		$('.closeSpan').on('click', function(){
+			console.log('click');
+			$(this).parent().parent().remove();
+		})
+
 	})
 }
 })(jQuery);
