@@ -66,15 +66,16 @@ class dbConnSetClass{
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //functions///////////////////////////////////////////////////////////////////////////////////////////////
 //
+
 function groupSelect($cubic_name){
-            $group_value = array(0, '#DC143C',null,null);
-            if ($cubic_name == 'Оптический узел') { $group_value = array( 1, '#ff9900', 60, 'nod');}
-            if ($cubic_name == 'Оптичний приймач') { $group_value = array(2, '#663300', 60, 'op');}
-            if ($cubic_name == 'Магістральний оптичний вузол') { $group_value = array( 3, '#3333cc', 90, 'mnod');}
-            if ($cubic_name == 'Передатчик оптический') { $group_value = array( 4, '#333399', 90, 'ot');}
-            if ($cubic_name == 'Магистральный распределительный узел') { $group_value = array( 5, '#ff0000', 80, 'mdod');}
-            if ($cubic_name == 'Кросс-муфта') { $group_value = array( 6, '#ff0066', 60, 'cc');}
-        return $group_value;
+      $group_value = array(0, '#DC143C',);
+      if ($cubic_name == 'Оптический узел') { $group_value = array( 1, '#ff9900', 8 ,16, 'nod');}
+      if ($cubic_name == 'Оптичний приймач') { $group_value = array(2, '#663300', 8, 16, 'op');}
+      if ($cubic_name == 'Магістральний оптичний вузол') { $group_value = array( 3, '#3333cc', 18, 36, 'mnod');}
+      if ($cubic_name == 'Передатчик оптический') { $group_value = array( 4, '#333399', 18, 36, 'ot');}
+      if ($cubic_name == 'Магистральный распределительный узел') { $group_value = array( 5, '#ff0000', 15, 30, 'mdod');}
+      if ($cubic_name == 'Кросс-муфта') { $group_value = array( 6, '#ff0066', 11, 22, 'cc');}
+  return $group_value;
 }
 //check toplogy files existence////////////////////////////////////////////////////////////////////////////////////////
  function checkIfFileExist($selectedCity, $cubic_name, $cubic_code, $archiveLink, $imgLink){

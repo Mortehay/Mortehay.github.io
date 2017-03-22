@@ -230,16 +230,19 @@ function doAnimation(nodeParams) {
                   }
 ///////////////////////
                   $('#displayWiring').on('click', function(){
-                    $('.wiring').remove();
-                    $('body').prepend('<div class="wiring"><img class="backup_picture" src="../tmp/archive/'+$(this).data('city')+'/topology/'+$(this).data('type')+'/'+$(this).data('code')+'/'+$(this).data('code')+'_wiring.png">'+'</div>');
+                    $('.wiringImgOuter').remove();
+                    $('body').prepend('<div class="wiringImgOuter"><div class="wiringImg"><img class="backup_picture" src="../tmp/archive/'+$(this).data('city')+'/topology/'+$(this).data('type')+'/'+$(this).data('code')+'/'+$(this).data('code')+'_wiring.png">'+'</div></div>');
+                      $('.wiringImg').append('<span class="closeSpan"></span>');
+                      $('.closeSpan').on('click', function(){
+                        console.log('click');
+                        $(this).parent().parent().remove();
+                      });
                       $('.backup_picture').on('error', function(){
                           $(this).attr('src', '../img/vguh.png');
-                          $('.wiring').on('click', function(){
-                            $('.wiring').hide();
+                          $('.wiringImgOuter').on('click', function(){
+                            $('.wiringImgOuter').hide();
                           });  
                       });
-                      closeSpan('wiring');
-
                           //alert($(this).data('city')+' / '+$(this).data('type') +' ' +$(this).data('code'));
                   })
                    //row.forEach(rowMaker);
