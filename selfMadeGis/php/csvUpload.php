@@ -1,22 +1,8 @@
 <?php
 include('restriction.php'); 
+include('classFunctionStorage.php');
 ///////////////////////////////////////
- function topologyCsvDirCreate($city, $target_file, $file_name){
-              
-                $newDirPath = '/var/www/QGIS-Web-Client-master/site/csv/archive/'.$city.'/';
-                if (!file_exists($newDirPath )) {
-                  $oldmask = umask(0);
-                      mkdir($newDirPath , 0777, true);
-                      umask($oldmask);
-                }
-                        chmod($target_file, 0666);
-                        copy($target_file, $newDirPath . $file_name);
 
-        //echo $dirPath;
-        return true;
-
-      }
-      ///////////////////////////////////////
 //$restriction = $_GET["restriction"];
 ini_set('display_errors', 1);
 $target_dir = "/tmp/";

@@ -32,7 +32,7 @@ function doAnimation(nodeParams) {
 ///////////////////////////////////////////////////////////////////////////////////////////
 
     let options = {
-      animationPreload:true,
+
       layout:{randomSeed:7},
         nodes: {
             shape: 'dot',
@@ -220,10 +220,10 @@ function doAnimation(nodeParams) {
 ///////////////////////////
 ///////////////////////function cude null values in table
                    function buttonAdd(key, row){
-                    if(row[key].includes('cc')){return row[key] + '<button id="displayWiring" data-city="'+dataRequest.city+'" data-type="cc" data-code="'+row['cubic_code']+'">rozvarka</button>' } else { return row[key]}
+                    if(row[key].includes('cc') && key == 'link'){return '<button id="displayWiring" data-city="'+dataRequest.city+'" data-type="cc" data-code="'+row['cubic_code']+'">rozvarka</button>' } else { return row[key]}
                    }
                    for (let key in row){
-                          if (row[key] != null) {
+                          if (row[key] !='-') {
                             $('#stats').find('table').append( '<tr '+rowColor(key)+'><td>'+key+'</td><td>'+buttonAdd(key,row)+'</td></tr>');
                           }
                            

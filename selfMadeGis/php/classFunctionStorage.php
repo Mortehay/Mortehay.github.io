@@ -1,5 +1,13 @@
 <?php
 //ini_set('display_errors', 1);
+//usefull variables/////////////////////////////////////////////////////////////////////////
+$connLSetings = array(
+    "host"=>"host=127.0.0.1",
+    "port"=>"port=5432",
+    "dbname"=>"dbname=postgres",
+    "user"=>"user=postgres ",
+    "password"=>"password=Xjrjkzlrf30"
+    );
 //classes///////////////////////////////////////////////////////////////////////////////////
 class dbConnSetClass{
   private $dbConnSet = array(
@@ -130,6 +138,23 @@ function array_swap($key1, $key2, $array) {
     }
     return $newArray;
 }
+//////////////////////adds directories if not exist///////////////////////////////////////////////////////////
+ function topologyCsvDirCreate($city, $target_file, $file_name){
+              
+                $newDirPath = '/var/www/QGIS-Web-Client-master/site/csv/archive/'.$city.'/';
+                if (!file_exists($newDirPath )) {
+                  $oldmask = umask(0);
+                      mkdir($newDirPath , 0777, true);
+                      umask($oldmask);
+                }
+                        chmod($target_file, 0666);
+                        copy($target_file, $newDirPath . $file_name);
+
+        //echo $dirPath;
+        return true;
+
+      }
+      ///////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ?>

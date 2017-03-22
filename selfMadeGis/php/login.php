@@ -46,7 +46,7 @@ print $password;
             $login_time = pg_query($db, "INSERT INTO public.login(e_mail, login_time) VALUES ('$e_mail',now())");
             //echo 'yes';
             
-            header("location: main_page.php?restriction=$restriction"); // Redirecting To Other Page
+            header("location: main_page.php?restriction=$restriction&e_mail=$e_mail"); // Redirecting To Other Page
          }
          
       } else {
