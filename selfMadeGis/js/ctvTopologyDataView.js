@@ -220,7 +220,11 @@ function doAnimation(nodeParams) {
 ///////////////////////////
 ///////////////////////function cude null values in table
                    function buttonAdd(key, row){
-                    if(row[key].includes('cc') && key == 'link'){return '<button id="displayWiring" data-city="'+dataRequest.city+'" data-type="cc" data-code="'+row['cubic_code']+'">rozvarka</button>' } else { return row[key]}
+                    let rowData;
+                    if (key == 'link') {
+                      if(row[key].includes('cc')){return '<button id="displayWiring" data-city="'+dataRequest.city+'" data-type="cc" data-code="'+row['cubic_code']+'">rozvarka</button>' }
+                      if(row[key].includes('nod')){return '<button id="displayWiring" data-city="'+dataRequest.city+'" data-type="nod" data-code="'+row['cubic_code']+'">rozvarka</button>' }  
+                    } else {return row[key]}
                    }
                    for (let key in row){
                           if (row[key] !='-') {

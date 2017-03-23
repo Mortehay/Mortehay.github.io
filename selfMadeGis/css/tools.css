@@ -284,6 +284,9 @@ tr:hover{
     max-width: 1300px;
     max-height: 100%;
 }
+.wiringImg img{
+	width: 70%;
+}
 .wiringImgOuter span{
 	display: block;
 	   margin-right: 20px;

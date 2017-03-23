@@ -68,7 +68,7 @@ include('rotatingArrows.php');
         <div class="supply">
           <ul>
             <li>qgis web project and database support - <span>Yurii Shpylovyi</span></li>
-            <li>data preparation - <span>Andrey Zaverukha</span></li>
+            <li>data validation and beta testing - <span>Andrey Zaverukha</span></li>
             <li>serverside scripting support - <span>Yurii Shpylovyi and Alexander Gusachenko</span></li>
             <li>network engineer - <span>Oleksandr Sadovnik</span></li>
           </ul>
