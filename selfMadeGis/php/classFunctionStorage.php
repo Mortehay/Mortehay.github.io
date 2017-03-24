@@ -68,13 +68,29 @@ class dbConnSetClass{
 //
 
 function groupSelect($cubic_name){
-      $group_value = array('group' => 0, '#DC143C',);
-      if ($cubic_name == 'Оптический узел') { $group_value = array('group' =>  1,'color' =>  '#ff9900', 8 ,'value' =>16,'label' => 'nod');}
-      if ($cubic_name == 'Оптичний приймач') { $group_value = array('group' => 2,'color' => '#663300', 8,'value' => 16,'label' =>  'op');}
-      if ($cubic_name == 'Магістральний оптичний вузол') { $group_value = array('group' =>  3,'color' => '#3333cc', 18,'value' => 36,'label' =>  'mnod');}
-      if ($cubic_name == 'Передатчик оптический') { $group_value = array('group' =>  4,'color' => '#333399', 18,'value' => 36,'label' => 'ot');}
-      if ($cubic_name == 'Магистральный распределительный узел') { $group_value = array('group' =>  5,'color' => '#ff0000', 15,'value' => 30,'label' =>  'mdod');}
-      if ($cubic_name == 'Кросс-муфта') { $group_value = array('group' =>  6,'color' => '#ff0066', 11,'value' => 22,'label' =>  'cc');}
+      switch ($cubic_name){
+        case 'Оптический узел':
+          $group_value = array('group' =>  1,'color' =>  '#ff9900', 8 ,'value' =>16,'label' => 'nod');
+          break;
+        case 'Оптичний приймач':
+          $group_value = array('group' => 2,'color' => '#663300', 8,'value' => 16,'label' =>  'op');
+          break;
+        case 'Магістральний оптичний вузол':
+          $group_value = array('group' =>  3,'color' => '#3333cc', 18,'value' => 36,'label' =>  'mnod');
+          break;
+        case 'Передатчик оптический':
+          $group_value = array('group' =>  4,'color' => '#333399', 18,'value' => 36,'label' => 'ot');
+          break;
+        case 'Магистральный распределительный узел':
+          $group_value = array('group' =>  5,'color' => '#ff0000', 15,'value' => 30,'label' =>  'mdod');
+          break;
+        case 'Кросс-муфта':
+          $group_value = array('group' =>  6,'color' => '#ff0066', 11,'value' => 22,'label' =>  'cc');
+          break;
+        default:
+          $group_value = array('group' =>  0,'color' =>  '#DC143C', 1 ,'value' =>1,'label' => 'not assigned');
+          break;
+      }
   return $group_value;
 }
 //check toplogy files existence////////////////////////////////////////////////////////////////////////////////////////
@@ -142,20 +158,34 @@ function array_swap($key1, $key2, $array) {
 //////////////////////adds directories if not exist///////////////////////////////////////////////////////////
  function topologyCsvDirCreate($city, $target_file, $file_name){
               
-                $newDirPath = '/var/www/QGIS-Web-Client-master/site/csv/archive/'.$city.'/';
-                if (!file_exists($newDirPath )) {
-                  $oldmask = umask(0);
-                      mkdir($newDirPath , 0777, true);
-                      umask($oldmask);
-                }
-                        chmod($target_file, 0666);
-                        copy($target_file, $newDirPath . $file_name);
+  $newDirPath = '/var/www/QGIS-Web-Client-master/site/csv/archive/'.$city.'/';
+  if (!file_exists($newDirPath )) {
+    $oldmask = umask(0);
+        mkdir($newDirPath , 0777, true);
+        umask($oldmask);
+  }
+  chmod($target_file, 0666);
+  copy($target_file, $newDirPath . $file_name);
 
-        //echo $dirPath;
-        return true;
+  //echo $dirPath;
+  return true;
 
-      }
-      ///////////////////////////////////////
+}
+///////////////////////////////////////
+//creates directory for topology element/////////////////////////////////////////////////////////////////
+function topologyDirCreate($description, $city){
+  if($description['cubic_name'] !='not assigned'){
+    $dirPath = '/var/www/QGIS-Web-Client-master/site/tmp/archive/'.$city.'/topology/'.$description['cubic_name'].'/'.$description['cubic_code'];
+    if (!file_exists($dirPath )) {
+      $oldmask = umask(0);
+          mkdir($dirPath , 0777, true);
+          umask($oldmask);
+    }
+    //echo $dirPath;
+  }            
+  
+  return true;
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ?>
