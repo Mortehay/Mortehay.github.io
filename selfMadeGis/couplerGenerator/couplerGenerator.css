@@ -1,0 +1,10 @@
+#myCanvas{
+  width:600px;
+  height:600px;
+  background-color:rgba(255,0,0,0.3);
+}
+
+*{
+  marging:0;
+  pudding:0;
+}
