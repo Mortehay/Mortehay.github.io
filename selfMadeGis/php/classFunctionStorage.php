@@ -9,6 +9,7 @@ $connLSetings = array(
     "password"=>"password=Xjrjkzlrf30"
     );
 //classes///////////////////////////////////////////////////////////////////////////////////
+///postgresql///////////////////////////////////////////////////////////////////////////////
 class dbConnSetClass{
   private $dbConnSet = array(
     "host"=>"host=127.0.0.1",
@@ -62,6 +63,84 @@ class dbConnSetClass{
       pg_close($db); // Closing Connection
     }
   }
+}
+////oracle////////////////////////////////////////////////////////////////////////////////////////////////
+class dbOrConnSetClass{
+  private $dbConnSet = array(
+    "host"=>"10.10.16.171:1521/pol",
+    "encoding"=>"AL32UTF8",
+    "user"=>"puma_qgis",
+    "password"=>"vjDjA3JkcKdD"
+    );
+  private $selectedCity = 'none';
+  private $queryArrayKeys = array();
+  private $destinationPath ='/var/www/QGIS-Web-Client-master/site/csv/cubic/';
+  private $query_type = 'none';
+  private $query = '';
+  public function setProp($prop,$newValue){
+    if (property_exists($this,$prop)){
+      $this->$prop = $newValue;
+    } else {
+      echo "Setting of Undefined Property";
+    }
+  }
+  public function getProp($prop){
+    if (property_exists($this,$prop)){
+      return $this->$prop;
+    } else {
+      echo "Gettin of Undefined Property";
+    }
+  }
+  public function dbOrConnect($cities){
+    $conn = oci_connect($this->dbConnSet['user'], $this->dbConnSet['password'], $this->dbConnSet['host'],$this->dbConnSet['encoding']);
+    if (!$conn) {
+        $e = oci_error();
+        trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+    } else {
+      foreach ($cities as $city => $city_name) {
+        self::cityTablesCreate($city_name, $conn);
+      }
+    }
+  }
+  public function csvFromQuery($query_type, $city, $header,$table_array){
+    if ($header) {
+        $dirPath = $this->destinationPath.$query_type;
+            if (!file_exists($dirPath )) {
+                $oldmask = umask(0);
+                    mkdir($dirPath , 0777, true);
+                    umask($oldmask);
+            }
+            $filePath = $this->destinationPath.$query_type.'/'.$city.$query_type.'.csv';
+            touch($filePath);
+            chmod($filePath, 0666);
+            $file = fopen($filePath, 'w');
+            fputcsv($file, $header, ',', '"');
+            foreach ($table_array as $row_key => $row) {
+                   fputcsv($file, $row, ',', '"');
+            }
+            fclose($file);
+    }
+            
+            return true;
+  }
+  public function cityTablesCreate($city, $conn){
+        $stid = oci_parse($conn, $this->query. " WHERE CITY ='$city[2]' ");//AND ROWNUM <=1000
+        if (oci_execute($stid)) {
+            $headder = array();
+            if ($row = oci_fetch_array($stid, OCI_ASSOC+OCI_RETURN_NULLS)) {
+                 foreach (array_keys($row)  as $row_name_key => $row_name) {
+                    $header[] = $row_name;
+
+                }
+            }
+            $table_array = array();
+            while ($row = oci_fetch_array($stid, OCI_ASSOC+OCI_RETURN_NULLS)) {
+                array_push($table_array, $row);
+            }
+            self::csvFromQuery($this->query_type, $city[1], $header,$table_array);
+            }
+        
+    }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //functions///////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,6 +219,25 @@ function fileExistenceCheck($promeLink, $secondaryLink, $selectedCity, $fileExte
       $files = scandir($dir);
     }
   return array('files' =>$files, 'linkStorage' =>$linkStorage);
+}
+////////////// check where file exists////////////////////////////////////////////////////////////////////
+function fileExistenceCheckAuto($promeLink, $secondaryLink, $tableType, $selectedCity, $fileExtention){
+  $manualUpdateLink = $promeLink.$selectedCity."/".$selectedCity.$tableType.$fileExtention;
+  $autoUpdateLink = $secondaryLink.$tableType."/".$selectedCity.$tableType.$fileExtention;
+  $manualUpdateTime = stat($manualUpdateLink)[9];
+  $autoUpdateTime = stat($autoUpdateLink)[9];
+  if (file_exists($manualUpdateLink) && ($manualUpdateTime > $autoUpdateTime) ) {
+      $linkStorage = "'".$manualUpdateLink."'";
+      $dir = $promeLink.$selectedCity."/";
+      $files = scandir($dir);
+      $updateState = 'manual';  
+    } else {
+      $linkStorage = "'".$autoUpdateLink."'" ;
+      $dir = $secondaryLink.$tableType."/";
+      $files = scandir($dir);
+      $updateState = 'auto';  
+    }
+  return array('files' =>$files, 'linkStorage' =>$linkStorage, 'manualUpdateTime' =>$manualUpdateTime, 'autoUpdateTime'=> $autoUpdateTime, 'manualUpdateLink' =>$manualUpdateLink, 'autoUpdateLink' => $autoUpdateLink, 'updateState' => $updateState);
 }
 ///////replace element position with other element in named array //////////////////////////////////////////
 function array_swap($key1, $key2, $array) {
