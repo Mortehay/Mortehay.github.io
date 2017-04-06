@@ -361,6 +361,7 @@ function statistcsDraw(data){
 
 	};
 	vargraph2d = new vis.Graph2d(container, visitorsArr, groups,options);
+	$('.vis-legend').find('svg').css({"height": names.length*21+"px"});
 	//------------------------------------------------------
 }
 //-------------------------------------------------------------------------------------------------------------------
