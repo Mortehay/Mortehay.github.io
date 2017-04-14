@@ -1,5 +1,7 @@
 <?php
 //ini_set('display_errors', 1);
+date_default_timezone_set('Europe/Kiev');
+
 include('classFunctionStorage.php');
 if ($_POST['ctv_city_couplers_eng']) {
 		$selectedCity= $_POST['ctv_city_couplers_eng'];
@@ -43,7 +45,8 @@ foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
     'xlsFile' => checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['xlsFile'],
     'dwgFile' => checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['dwgFile'],
     'pdfFile' => checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['pdfFile'],
-    'imgFile' => checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['imgFile']
+    'imgFile' => checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['imgFile'],
+    'pdfFileModDate' => checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['pdfFileModDate']
   );
   array_push($arr_response['response'], $arr ); 
 }

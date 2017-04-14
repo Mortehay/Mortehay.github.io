@@ -229,15 +229,15 @@ let fileUploadParams = {
 }
 //----------vocabulars----------------------------------------------------------------------------------------------------------------------
 let vocabulary ={
-	cableChannelCableDataView:['№','Технічні умови','Договір', 'Додаткова угода','Акт прийомки','Затверджена картограма','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС'],
+	cableChannelCableDataView:['№','Технічні умови','Договір', 'Додаткова угода','Акт прийомки','Затверджена картограма','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС', 'статус'],
 	cityBuildingDataUpdate:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
 	cityBuildingDataUpdateAuto:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
-	cableAirCableDataView:['№','id кабеля', 'Посилання на архів','Дата монтажу кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення', 'Довжина, км','Опис маршруту'],
+	cableAirCableDataView:['№','id кабеля', 'Посилання на архів','Дата монтажу кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення', 'Довжина, км','Опис маршруту', 'статус'],
 	cityBuildingDublicatesFinder:['№','Вулиця OSM', '№будинку OSM', 'Вулиця CUBIC', '№будинку CUBIC', '"Кубік" HOUSE_ID', 'Тип мережі', 'Координата будинку'],
 	ctvTopologyUpdate:['№', 'Місто', 'Вулиця', '№будинку', 'Квартира', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID'],
 	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під&acute;їзду', '№Поверху', 'Розташування', 'house_id', 'mac_address', 'ip_address', 'serial_number', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни'],
 	ctvToplogyAddFlats:['№',  'Вулиця', '№будинку', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID','Квартири'],
-	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsx','xls','dwg','pdf','png']
+	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsx','xls','dwg','pdf','png','дата pdf']
 };
 
 //-----------------unique values from array ------------------------------------
@@ -412,6 +412,7 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 	               	//---------------------crear table filters--------------------------------------------------
 			$('#restoreDefaultTable').on('click', function(){
 				$('.dataCell').remove();
+				
 				sortedSelectLists(listNames, list);
 				rowDraw(list,vocabulary,mainTagClass);
 				selectionParams =[];
@@ -430,6 +431,7 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 					});
 					///------------------------------------
 					sortedUniqueColumn = sortedUniqueColumn.uniqueValues();
+					
 					for (let j = 0; j < sortedUniqueColumn.length; j++) {
 						$('#list_'+listNames[z]).append('<option value="'+sortedUniqueColumn[j]+'">'+sortedUniqueColumn[j]+'</option>');
 					}
@@ -513,9 +515,18 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		               	for (let key in rowData) {
 		               		//console.log('vocabulary.indexOf(key)',vocabulary.indexOf(key) );
 		               		if (key == pathIndexCC ) {
-		               			row +='<td class="dataCell">'+'<button id="'+rowData['table_id']+'" class="mapWindow" data-cable="cc" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</button>'+'</td>';
+		               			if(rowData['geom_state'] =='+'){
+		               				row +='<td class="dataCell">'+'<button id="'+rowData['table_id']+'" class="mapWindow" data-cable="cc" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</button>'+'</td>';
+		               			} else {
+		               				row +='<td class="dataCell">'+'<p data-cable="cc" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</p>'+'</td>';
+		               			}
 		               		} else if (key == pathIndexPKP) {
-		               			row +='<td class="dataCell">'+'<button id="'+rowData['table_id']+'" class="mapWindow" data-cable="pkp" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</button>'+'</td>';
+		               			if(rowData['geom_state'] =='+'){
+		               				row +='<td class="dataCell">'+'<button id="'+rowData['table_id']+'" class="mapWindow" data-cable="pkp" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</button>'+'</td>';
+		               			} else {
+		               				row +='<td class="dataCell">'+'<p data-cable="pkp" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</p>'+'</td>';
+		               			}
+		               			//row +='<td class="dataCell">'+'<button id="'+rowData['table_id']+'" class="mapWindow" data-cable="pkp" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</button>'+'</td>';
 		               		} else if ( fileState.indexOf(key)>-1) {
 		               			if(rowData[key] == '+'){
 		               				row +='<td class="dataCell '+'filePresent'+'" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</td>';

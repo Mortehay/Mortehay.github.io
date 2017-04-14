@@ -3,9 +3,9 @@
 include('classFunctionStorage.php');
 if ($_POST['cable_channel_cable_dataView_city_eng']) {$selectedCity= $_POST['cable_channel_cable_dataView_city_eng'];} else {$selectedCity = $_REQUEST["cable_channel_cable_dataView_city_eng"];} 
 $newDBrequest = new dbConnSetClass;
-$query = "SELECT summ_tu, summ_contract_sum , summ_sub_contract, summ_acceptance_act, summ_approval_cartogram, summ_route_description, summ_cable_type, summ_archive_link, table_id,  notes2 , rezerve1 , rezerve2 , rezerve3   FROM ".$selectedCity.".".$selectedCity."_cable_channels WHERE summ_tu IS NOT NULL AND summ_cable_type IS NOT NULL AND geom_cable IS NOT NULL ORDER BY trim(leading 'ПГС-' from rezerve3)::int, trim(leading 't_' from table_id)::int ;";
+$query = "SELECT summ_tu, summ_contract_sum , summ_sub_contract, summ_acceptance_act, summ_approval_cartogram, summ_route_description, summ_cable_type, summ_archive_link, table_id,  notes2 , rezerve1 , rezerve2 , rezerve3, CASE WHEN geom_cable IS NULL THEN '-' ELSE '+' END as geom_state  FROM ".$selectedCity.".".$selectedCity."_cable_channels WHERE summ_tu IS NOT NULL AND summ_cable_type IS NOT NULL ORDER BY trim(leading 'ПГС-' from rezerve3)::int, trim(leading 't_' from table_id)::int ;";
 //echo $query;
-$queryArrayKeys = array('summ_tu', 'summ_contract_sum' , 'summ_sub_contract', 'summ_acceptance_act', 'summ_approval_cartogram', 'summ_route_description', 'summ_cable_type', 'summ_archive_link', 'table_id',  'notes2' , 'rezerve1' , 'rezerve2' , 'rezerve3');
+$queryArrayKeys = array('summ_tu', 'summ_contract_sum' , 'summ_sub_contract', 'summ_acceptance_act', 'summ_approval_cartogram', 'summ_route_description', 'summ_cable_type', 'summ_archive_link', 'table_id',  'notes2' , 'rezerve1' , 'rezerve2' , 'rezerve3', 'geom_state');
 $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
 $sumObjectsArray = $retuenedArray;
 //print_r($sumObjectsArray);
@@ -24,7 +24,8 @@ foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
     'notes2' => $sumObjectsArray[$sumObjectsArrayKey]['notes2'],
     'rezerve1' => $sumObjectsArray[$sumObjectsArrayKey]['rezerve1'],
     'rezerve2' => $sumObjectsArray[$sumObjectsArrayKey]['rezerve2'],
-    'rezerve3' => $sumObjectsArray[$sumObjectsArrayKey]['rezerve3']
+    'rezerve3' => $sumObjectsArray[$sumObjectsArrayKey]['rezerve3'],
+    'geom_state' => $sumObjectsArray[$sumObjectsArrayKey]['geom_state']
   );
   array_push($arr_response['response'], $arr ); 
 }

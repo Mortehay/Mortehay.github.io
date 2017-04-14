@@ -97,9 +97,15 @@ class dbOrConnSetClass{
         $e = oci_error();
         trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
     } else {
-      foreach ($cities as $city => $city_name) {
-        self::cityTablesCreate($city_name, $conn);
+      if (is_array($cities)) {
+        foreach ($cities as $city => $city_name) {
+          self::cityTablesCreate($city_name, $conn);
+        }
+      } elseif (is_string($cities)) {
+        return self::cityTablesCreateBrowser($cities,$conn);
       }
+      
+      
     }
   }
   public function csvFromQuery($query_type, $city, $header,$table_array){
@@ -130,7 +136,6 @@ class dbOrConnSetClass{
             if ($row = oci_fetch_array($stid, OCI_ASSOC+OCI_RETURN_NULLS)) {
                  foreach (array_keys($row)  as $row_name_key => $row_name) {
                     $header[] = $row_name;
-
                 }
             }
             $table_array = array();
@@ -138,9 +143,21 @@ class dbOrConnSetClass{
                 array_push($table_array, $row);
             }
             self::csvFromQuery($this->query_type, $city[1], $header,$table_array);
-            }
+        }
         
     }
+  public function cityTablesCreateBrowser($city, $conn){
+      $stid = oci_parse($conn, $this->query. " WHERE CITY ='$city' ");//AND ROWNUM <=1000
+      $table_array = array();
+      if (oci_execute($stid)) {
+        
+        while ($row = oci_fetch_array($stid, OCI_ASSOC+OCI_RETURN_NULLS)) {
+              array_push($table_array, $row);
+          }
+      }
+      //print_r($table_array);
+      return $table_array;
+  }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //functions///////////////////////////////////////////////////////////////////////////////////////////////
@@ -181,6 +198,7 @@ function groupSelect($cubic_name){
   $dwgFile = '/var/www/QGIS-Web-Client-master/site/tmp/archive/'.$selectedCity.'/topology/'.$cubic_name.'/'.$cubic_code.'/'.$cubic_code. '_wiring.dwg';
   $pdfFile = '/var/www/QGIS-Web-Client-master/site/tmp/archive/'.$selectedCity.'/topology/'.$cubic_name.'/'.$cubic_code.'/'.$cubic_code. '_wiring.pdf';
   $imgFile = '/var/www/QGIS-Web-Client-master/site/tmp/archive/'.$selectedCity.'/topology/'.$cubic_name.'/'.$cubic_code.'/'.$cubic_code. '_wiring.png';
+
   //echo '$xlsFile - '.$xlsFile.'<hr>';
   //echo '$xlsxFile - '.$xlsxFile.'<hr>';
   //echo '$imgFile - '.$imgFile.'<hr>';
@@ -201,7 +219,8 @@ function groupSelect($cubic_name){
   } else {$group_value['dwgFile'] =  '-'; }
   if (file_exists($pdfFile)) {
     $group_value['pdfFile'] =  '+';
-  } else {$group_value['pdfFile'] =  '-'; }
+    $group_value['pdfFileModDate'] =  gmdate("Y-m-d",stat($pdfFile)['mtime']);
+  } else {$group_value['pdfFile'] =  '-'; $group_value['pdfFileModDate'] = '-'; }
   if (file_exists($imgFile)) {
     $group_value['imgFile'] =  '+';
   } else {$group_value['imgFile'] =  '-'; }
