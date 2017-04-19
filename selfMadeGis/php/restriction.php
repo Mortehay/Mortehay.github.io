@@ -220,7 +220,7 @@ $tools ='';
 					'cityBuildingDataUpdateOSM',
 					'cityRoadsDataUpdateOSM',
 					'cityBuildingDataUpdate',//update from csv manually loaded from cubic
-					'cityBuildingDataUpdateAuto', //update from csv automaticali loaded from cubic
+					//'cityBuildingDataUpdateAuto', //update from csv automaticali loaded from cubic
 					'cityBuildingDublicatesFinder',//findes building with same geometry
 					'cityEntranceDataUpdateOSM', //adds entrances from csv created using osm data
 					'cityEntranceDataUpdateCUBIC' //adds entrances from csv created using cubic data
@@ -228,8 +228,8 @@ $tools ='';
 				array(/*buttons names*/
 					'Оновлення даних про будинки OSM',
 					'Оновлення даних про дороги OSM',
-					'Оновлення даних про будинки CUBIC(from manually)',
-					'Оновлення даних про будинки CUBIC(from auto)', 
+					'Оновлення даних про будинки CUBIC',
+					//'Оновлення даних про будинки CUBIC(from auto)', 
 					'Відобразити дублікати будинків',
 					'Прив"язка OSM під"їздів до будинку', 
 					'Прив"язка CUBIC під"їздів до будинку'
@@ -238,7 +238,7 @@ $tools ='';
 					'city_building_OSM_data_eng',
 					'city_roads_OSM_data_eng',
 					'city_building_data_eng', 
-					'city_building_data_eng_auto', 
+					//'city_building_data_eng_auto', 
 					'city_building_dublicates_finder_eng',
 					'building_entrance_OSM_data_update_city_eng', 
 					'building_entrance_CUBIC_data_update_city_eng'
@@ -246,8 +246,8 @@ $tools ='';
 				array(/*titles for buttons*/
 					'Оновлення даних про будинки з завантаненої CSV(city_buildings_osm.csv), яка зформована з даних вивантажених з overpass-turbo',
 					'Оновлення даних про дороги з завантаненої CSV(city_roads_osm.csv), яка зформована з даних вивантажених з overpass-turbo',
-					'Оновлення даних про будинки з завантаненої CSV(city_buildings.csv), яка зформована з даних вивантажених з КУБІКУ(Дислокация по районам и типам сетей (дополненный))',
-					'Оновлення даних про будинки з автоматично завантаненої CSV(city_buildings.csv), яка зформована з даних вивантажених з КУБІКУ(автоматично)',
+					'Оновлення даних про будинки з завантаненої CSV(city_buildings.csv), яка зформована з даних вивантажених з КУБІКУ(Дислокация по районам и типам сетей (дополненный) чи автоматично)',
+					//'Оновлення даних про будинки з автоматично завантаненої CSV(city_buildings.csv), яка зформована з даних вивантажених з КУБІКУ(автоматично)',
 					'Відображає перелік будинків з однаковою адресою та різною геометрією',
 					'Додає entrance_id до підїздів(підїзди мають знаходитись в межах будинків, інакше дані не підтягнуться) і додає підїзди з файлу, які відсутні в таблиці CSV(city_entrances_osm.csv) УВАГА, МОЖЕ ЗАЙНЯТИ БАГАТО ЧАСУ',
 					'Додає підїзди в будинки(де немає підїздів з id) з геометрією підїзду першої точки будинку, та назнача entrance_id CSV(city_entrances_cubic.csv) КУБІК(Количество абонентов поподъездно)')

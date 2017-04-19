@@ -67,7 +67,7 @@ class dbConnSetClass{
 ////oracle////////////////////////////////////////////////////////////////////////////////////////////////
 class dbOrConnSetClass{
   private $dbConnSet = array(
-    "host"=>"10.10.16.171:1521/pol",
+    "host"=>"10.10.16.70:1521/DTV",
     "encoding"=>"AL32UTF8",
     "user"=>"puma_qgis",
     "password"=>"vjDjA3JkcKdD"
