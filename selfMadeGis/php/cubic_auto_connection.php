@@ -5,7 +5,7 @@ include('restriction.php');
 include('classFunctionStorage.php'); 
 //header('Content-type: text/plain; charset=utf-8');
 mb_internal_encoding("UTF-8");
-
+//downloading data from Cubic to our server and sore it in csv files
 $cityBuildings = new dbOrConnSetClass;
 $cityBuildings->setProp('query_type','_buildings');
 $cityBuildings->setProp('query',"SELECT * FROM puma_qgis.gis_spread_net_distr ");
@@ -15,6 +15,6 @@ $cityTopology = new dbOrConnSetClass;
 $cityTopology->setProp('query_type','_ctv_topology');
 $cityTopology->setProp('query',"SELECT * FROM puma_qgis.gis_nodesreestr_noku ");
 $requestcityTopology = $cityTopology->dbOrConnect($cities);
-
+////////////////////////////////////
 echo 'that is all';
 ?>
