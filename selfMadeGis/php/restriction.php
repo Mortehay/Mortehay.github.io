@@ -133,22 +133,22 @@ $tools ='';
 			array( 
 				array(/*id  for buttons*/
 					'cableChannelChannelDataUpdate',
-					'cableChannelTopologyUpdate',
+					//'cableChannelTopologyUpdate',
 					'cableChannelPitsDataUpdate'
 				), 
 				array(/*buttons names*/
-					'Оновлення даних КК - канали',
-					'Оновлення топології КК- канали',
+					'Оновлення даних/топології звязків КК - канали',
+					//'Оновлення топології КК- канали',
 					'Оновлення привязки колодязів КК'
 				), 
 				array(/*seletors ids*/
 					'cable_channel_channel_data_city_eng',
-					'cable_channel_city_eng',
+					//'cable_channel_city_eng',
 					'cable_channel_pits_city_eng'
 				),
 				array(/*titles for buttons*/
-					'Оновлює данні про кабельні канали, з завантаженої CSV(city_cable_channels_channels.csv)',
-					'Оновлює лінії каналів кабельних каналів на картіб нажати після /Оновлення даних КК - канали/',
+					'Оновлює данні про кабельні канали, з завантаженої CSV(city_cable_channels_channels.csv та Оновлює лінії каналів кабельних каналів на картіб нажати після /Оновлення даних КК - канали)',
+					//'Оновлює лінії каналів кабельних каналів на картіб нажати після /Оновлення даних КК - канали/',
 					'Привязує колодязі КК до мікрорайону/району/зони покриття ПГС'
 				)
 			) 

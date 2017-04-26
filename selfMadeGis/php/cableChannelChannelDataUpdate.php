@@ -19,7 +19,7 @@ if ($files) {
       //print_r($str_file);
       if ($str_file == $selectedCity.$fileExtention) {
         $newDBrequest = new dbConnSetClass;
-        $query = "CREATE TEMP TABLE temp(id serial, pit_1 varchar(100), rm_1 varchar(100), she_1 varchar(100), entry_comment_1 varchar(100), cubic_house_id_1 varchar(100), microdistrict_1 varchar(100),   temp_1 varchar(100), pit_2 varchar(100), rm_2 varchar(100), she_2 varchar(100), entry_comment_2 varchar(100), cubic_house_id_2 varchar(100), microdistrict_2 varchar(100),   temp_2 varchar(100) , distance varchar(100)); select copy_for_testuser('temp( pit_1, rm_1, she_1, entry_comment_1, cubic_house_id_1, microdistrict_1,   temp_1, pit_2, rm_2, she_2, entry_comment_2, cubic_house_id_2, microdistrict_2,   temp_2 , distance)', ".$linkStorage.", ';', 'windows-1251'); INSERT INTO ".$selectedCity.".".$selectedCity."_cable_channels_channels( pit_1, rm_1, she_1, entry_comment_1, cubic_house_id_1, microdistrict_1,   temp_1, pit_2, rm_2, she_2, entry_comment_2, cubic_house_id_2, microdistrict_2,   temp_2 , distance) SELECT pit_1, rm_1, she_1, entry_comment_1, cubic_house_id_1, microdistrict_1,   temp_1, pit_2, rm_2, she_2, entry_comment_2, cubic_house_id_2, microdistrict_2,   temp_2 , distance FROM temp WHERE pit_1 NOT IN(SELECT pit_1 FROM ".$selectedCity.".".$selectedCity."_cable_channels_channels) and pit_2 NOT IN(SELECT pit_2 FROM ".$selectedCity.".".$selectedCity."_cable_channels_channels) AND she_1 NOT IN(SELECT she_1 FROM ".$selectedCity.".".$selectedCity."_cable_channels_channels) AND she_2 NOT IN(SELECT she_2 FROM ".$selectedCity.".".$selectedCity."_cable_channels_channels) AND microdistrict_1 NOT IN(SELECT microdistrict_1 FROM ".$selectedCity.".".$selectedCity."_cable_channels_channels) AND microdistrict_2 NOT IN(SELECT microdistrict_2 FROM ".$selectedCity.".".$selectedCity."_cable_channels_channels);";
+        $query = "CREATE TEMP TABLE temp(id serial, pit_id_1 integer, pit_id_2 integer, distance varchar(100));select copy_for_testuser('temp( pit_id_1, pit_id_2, distance)', ".$linkStorage.", ';', 'windows-1251');INSERT INTO ".$selectedCity.".".$selectedCity."_cable_channels_channels( pit_id_1, pit_id_2, distance) SELECT pit_id_1, pit_id_2, distance FROM temp t WHERE not exists (SELECT 1 FROM ".$selectedCity.".".$selectedCity."_cable_channels_channels c where t.pit_id_1 = c.pit_id_1 and t.pit_id_2 = c.pit_id_2); ";
         $queryArrayKeys = false;
         echo $query;
         $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
@@ -27,5 +27,11 @@ if ($files) {
     } 
   }
 }
+$newDBrequest = new dbConnSetClass;
+$query = "UPDATE ".$selectedCity.".".$selectedCity."_cable_channels_channels SET pit_1 = ".$selectedCity."_cable_channel_pits.pit_number, she_n_1 = ".$selectedCity."_cable_channel_pits.pit_district, microdistrict_1 = ".$selectedCity."_cable_channel_pits.microdistrict, pit_1_geom = ".$selectedCity."_cable_channel_pits.geom
+FROM ".$selectedCity.".".$selectedCity."_cable_channel_pits WHERE pit_id_1 = ".$selectedCity."_cable_channel_pits.pit_id ; UPDATE ".$selectedCity.".".$selectedCity."_cable_channels_channels SET pit_2 = ".$selectedCity."_cable_channel_pits.pit_number, she_n_2 = ".$selectedCity."_cable_channel_pits.pit_district, microdistrict_2 = ".$selectedCity."_cable_channel_pits.microdistrict, pit_2_geom = ".$selectedCity."_cable_channel_pits.geom FROM ".$selectedCity.".".$selectedCity."_cable_channel_pits WHERE pit_id_2 = ".$selectedCity."_cable_channel_pits.pit_id; UPDATE ".$selectedCity.".".$selectedCity."_cable_channels_channels SET channel_geom = ST_MakeLine(pit_1_geom, pit_2_geom) WHERE pit_1_geom IS NOT NULL AND pit_2_geom IS NOT NULL;";
+$queryArrayKeys = false;
+echo $query;
+$retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
 ?>
 

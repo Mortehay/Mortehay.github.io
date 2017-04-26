@@ -2,7 +2,12 @@
 <?php
 ini_set('display_errors', 1);
 //include('restriction.php');
-$server_address = $_SERVER['SERVER_ADDR']; 
+if($_SERVER['SERVER_ADDR']) {
+	$server_address = $_SERVER['SERVER_ADDR']; 
+} else {
+	$server_address = '10.112.129.170';
+}
+//$server_address = $_SERVER['SERVER_ADDR']; 
 echo  $server_address;
 include('classFunctionStorage.php');
 $postgres = new dbConnSetClass;
