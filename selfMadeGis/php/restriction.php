@@ -197,19 +197,19 @@ $tools ='';
 			array(
 				array(/*id  for buttons*/
 					'opticalCouplersUpdate',
-					'ctvTopologyCouplerView'
+					//'ctvTopologyCouplerView'
 				),
 				array(/*buttons names*/
 					'Оновлення привязки оптичних муфт',
-					'Вивеси перелік оптичних муфт'
+					//'Вивеси перелік оптичних муфт'
 				),
 				array(/*seletors ids*/
 					'city_optical_couplers_data_update_eng',
-					'ctv_city_couplers_eng'
+					//'ctv_city_couplers_eng'
 				),
 				array(/*titles for buttons*/
 					'Привязує оптичні муфти до мікрорайону/району/зони покриття ПГС',
-					'Привязує занесені оптичні муфти, які в зоні покриття ПГС чи на все місто(з вказанням які наявності архівних файлів)'
+					//'Привязує занесені оптичні муфти, які в зоні покриття ПГС чи на все місто(з вказанням які наявності архівних файлів)'
 					
 				)
 			)
