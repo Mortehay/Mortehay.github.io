@@ -304,5 +304,14 @@ function topologyDirCreate($description, $city){
   return true;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+function fileDate($folderLink, $checkList, $responseValue){
+    $files = scandir($folderLink);
+    foreach ($files as $fileKey => $filename) {
+        if(strpos(mb_convert_case((string)$filename, MB_CASE_LOWER, "UTF-8") , $checkList['check'][array_search($responseValue, $checkList['response'])]) !== false){
+           $fileDate = '<br>'.'<span style ="color:blue">'. gmdate("Y-m-d",stat($folderLink.$filename)['mtime']).'</span>';
+           //echo $folderLink.$filename.'---'.$fileDate.'<br>';
+        } 
+    }
+    return $fileDate;
+}
 ?>

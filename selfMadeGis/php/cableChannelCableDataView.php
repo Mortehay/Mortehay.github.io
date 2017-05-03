@@ -10,13 +10,17 @@ $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
 $sumObjectsArray = $retuenedArray;
 //print_r($sumObjectsArray);
 $arr_response = array('response' => array());
+
+$checkList = array('check' => array ('акт','договір','погодж','ту'), 'response' => array ('summ_acceptance_act', 'summ_contract_sum','summ_approval_cartogram', 'summ_tu'));
+
 foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
+  $folderLink = '/var/www/QGIS-Web-Client-master/site/tmp/archive/'.$selectedCity.'/cc/'.$sumObjectsArray[$sumObjectsArrayKey]['table_id'].'/';
   $arr = array(
-    'summ_tu' => $sumObjectsArray[$sumObjectsArrayKey]['summ_tu'],
-    'summ_contract_sum' => $sumObjectsArray[$sumObjectsArrayKey]['summ_contract_sum'],
+    'summ_tu' => $sumObjectsArray[$sumObjectsArrayKey]['summ_tu']. fileDate($folderLink, $checkList, 'summ_tu'),
+    'summ_contract_sum' => $sumObjectsArray[$sumObjectsArrayKey]['summ_contract_sum']. fileDate($folderLink, $checkList, 'summ_contract_sum'),
     'summ_sub_contract' => $sumObjectsArray[$sumObjectsArrayKey]['summ_sub_contract'],
-    'summ_acceptance_act' => $sumObjectsArray[$sumObjectsArrayKey]['summ_acceptance_act'],
-    'summ_approval_cartogram' => $sumObjectsArray[$sumObjectsArrayKey]['summ_approval_cartogram'],
+    'summ_acceptance_act' => $sumObjectsArray[$sumObjectsArrayKey]['summ_acceptance_act']. fileDate($folderLink, $checkList, 'summ_acceptance_act'),
+    'summ_approval_cartogram' => $sumObjectsArray[$sumObjectsArrayKey]['summ_approval_cartogram']. fileDate($folderLink, $checkList, 'summ_approval_cartogram'),
     'summ_route_description' => $sumObjectsArray[$sumObjectsArrayKey]['summ_route_description'],
     'summ_cable_type' => $sumObjectsArray[$sumObjectsArrayKey]['summ_cable_type'],
     'summ_archive_link' => $sumObjectsArray[$sumObjectsArrayKey]['summ_archive_link'],
