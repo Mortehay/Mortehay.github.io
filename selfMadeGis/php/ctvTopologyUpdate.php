@@ -40,6 +40,7 @@ else {
 //print_r(fileExistenceCheckAuto($promeLink, $secondaryLink, $tableType, $selectedCity, $fileExtention));
 //echo ('<hr>');
 $newDBrequest = new dbConnSetClass;
+$arr_response = array('response' => array());
 if ($files) {
   foreach($files as $file) {
     $str_file = (string)$file;
@@ -50,7 +51,7 @@ if ($files) {
         $queryArrayKeys = array('CITY','STREET','HOUSE','FLAT','CODE','NAME','PGS_ADDR','OU_OP_ADDR','OU_CODE','DATE_REG','COMENT','UNAME','NET_TYPE','HOUSE_ID');
         //echo $query;
        $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
-        $arr_response = array('response' => array());
+        
         $sumObjectsArray = $retuenedArray;
          foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
           $arr = array(

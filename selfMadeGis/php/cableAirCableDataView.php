@@ -11,14 +11,7 @@ $newDBrequest = new dbConnSetClass;
 $query = "SELECT table_id , cable_progect_link , cable_mount_date ,  cable_type , cable_short_type_description , cable_description ,  progect_number ,  cable_purpose , cubic_start_street , cubic_start_house_num,  cubic_start_house_entrance_num ,    cubic_end_street , cubic_end_house_num ,  cubic_end_house_entrance_num , total_cable_length, CASE WHEN geom_cable IS NULL THEN '-' ELSE '+' END as geom_state   FROM ".$selectedCity.".".$selectedCity."_cable_air WHERE cable_type IS NOT NULL AND cable_short_type_description IS NOT NULL AND  progect_number  IS NOT NULL ORDER BY trim(leading 't_' from table_id)::int;";
 $queryArrayKeys = array('table_id' , 'cable_progect_link' , 'cable_mount_date' ,  'cable_type' , 'cable_short_type_description' , 'cable_description' ,  'progect_number' ,  'cable_purpose' , 'cubic_start_street' , 'cubic_start_house_num',  'cubic_start_house_entrance_num' ,    'cubic_end_street' , 'cubic_end_house_num' ,  'cubic_end_house_entrance_num', 'total_cable_length','geom_state');
 $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
-//print_r($retuenedArray);
-/*$sumObjectsArray = $retuenedArray;
-foreach ($sumObjectsArray as $sumObjectsArrayKey => $$objectArray) {
-   $sumObjectsArray[$sumObjectsArrayKey]['rote_description'] = $sumObjectsArray[$sumObjectsArrayKey]['cubic_start_street'] .",буд.№ ".$sumObjectsArray[$sumObjectsArrayKey]['cubic_start_house_num'].",під.№ ".$sumObjectsArray[$sumObjectsArrayKey]['cubic_start_house_entrance_num']." - ".$sumObjectsArray[$sumObjectsArrayKey]['cubic_end_street'].",буд.№ ".$sumObjectsArray[$sumObjectsArrayKey]['cubic_end_house_num'].",під.№ ".$sumObjectsArray[$sumObjectsArrayKey]['cubic_end_house_entrance_num'];
-   unset($sumObjectsArray[$sumObjectsArrayKey]['cubic_start_street'], $sumObjectsArray[$sumObjectsArrayKey]['cubic_start_house_num'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_start_house_entrance_num'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_end_street'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_end_house_num'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_end_house_entrance_num']);
-}
-//print_r($sumObjectsArray);
-$arr_response['response'] =  $sumObjectsArray;*/
+
 $sumObjectsArray = $retuenedArray;
 //print_r($sumObjectsArray);
 $arr_response = array('response' => array());

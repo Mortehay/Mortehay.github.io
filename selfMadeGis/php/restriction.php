@@ -1,88 +1,51 @@
 <?php
-//('display_errors', 1);
-function postgres_to_php_array($postgresArray) {
-
-   $postgresStr = trim($postgresArray,"{}");
-    $elmts = explode(",",$postgresStr);
-    return $elmts;
-
-  }
-
-$restriction=NULL;
-//$option = '';
+//ini_set('display_errors', 1);
+include('classFunctionStorage.php');
+//$restriction=NULL;
 include('login.php'); 
+if ($_POST['restriction']) {$restriction= $_POST['restriction'];} else {$restriction = $_REQUEST['restriction'];}
+session_start();
+$_SESSION['restriction'] = $restriction;
 $option = '';
 $accordion='';
 $tools ='';
- $restriction = $_GET["restriction"];
- //echo $restriction;
-  if ($restriction != NULL) {
-  $restriction=json_encode($restriction);
-  print "<script type='text/javascript'>console.log(".$restriction.");</script>";
-  }
-  $host        = "host=127.0.0.1";
-           $port        = "port=5432";
-           $dbname      = "dbname=postgres";
-           $credentials = "user=simpleuser password=simplepassword";
-           $city_array = array(); 
-          
-           $db = pg_connect( "$host $port $dbname $credentials"  );
-             if(!$db){
-                echo "Error : Unable to open database\n";
-             } else {
-                //echo "Opened database successfully\n";
-             }
-            $restriction = $_GET["restriction"];
-              if ($restriction != NULL) {
-              
-              //echo $restriction;
-              
-              //echo $sql;
-              if ($restriction =="full" || $restriction =="admin") {
-                $sql = "SELECT id, city, links, links_description, city_eng   FROM public.links WHERE links IS NOT NULL ORDER BY city";
+$city_array = array();
 
-              }
-                           
-
-              if ($restriction == "central" || $restriction =="eastern" || $restriction == "western") {
-                $sql = "SELECT id, city, links, links_description, city_eng, region   FROM public.links WHERE links IS NOT NULL AND region = '$restriction' ORDER BY city";
-              }
-
-              if ($restriction!=="full" && $restriction !== "central" && $restriction !=="eastern" && $restriction !== "western"&& $restriction !== "admin") {
-                $sql = "SELECT id, city, links, links_description, city_eng, prime_city   FROM public.links WHERE links IS NOT NULL AND prime_city = '$restriction' ORDER BY city";
-              }
-              $ret = pg_query($db, $sql);
-              $rows = pg_num_rows($ret);
-
-				//echo $rows . " row(s) returned.\n";
-              
-              if(!$ret){
-                  echo pg_last_error($db);
-              } else {
-                while ($row = pg_fetch_row($ret))  {
-          				
-                      $accordion.='<div class="accordion-section'.(int)$row[0].'">'.'<a class="accordion-section-title" href="#accordion-'.(int)$row[0].'">'.$row[1].'</a>'.'<div id="accordion-'.(int)$row[0].'" class="accordion-section-content">';
-                      $array_names = postgres_to_php_array($row[3]);
-                      $array_links = postgres_to_php_array($row[2]);
-                      //print_r($array_names);
-                      foreach ($array_names as $index => $value) {
-                        $accordion.='<a href="'.$array_links[$index].'">'.$array_names[$index].'</a>';
-                      }
-
-                      $accordion.='</div>'.'</div>';
-                      $city_array[] = $row[4];
-                }
-             }
-             //print_r($city_array);
-             	 if ( count($city_array) > 1) {
-	           	array_unshift($city_array, 'вибери місто');
-	           }
-		foreach ($city_array as $key => $value) {
-		    $option .='<option value="'.$city_array[$key].'">'.$city_array[$key].'</option>';
-		}
-
-
-          } 
+$newDBrequest = new dbConnSetClass;
+if ($restriction != NULL) {
+	jsConsolLog($restriction);
+	if ($restriction =="full" || $restriction =="admin") {
+		$query = "SELECT id, city, links, links_description, city_eng   FROM public.links WHERE links IS NOT NULL ORDER BY city";
+	}
+	if ($restriction == "central" || $restriction =="eastern" || $restriction == "western") {
+		$query = "SELECT id, city, links, links_description, city_eng   FROM public.links WHERE links IS NOT NULL AND region = '$restriction' ORDER BY city";
+	}
+	if ($restriction!=="full" && $restriction !== "central" && $restriction !=="eastern" && $restriction !== "western"&& $restriction !== "admin") {
+		$query = "SELECT id, city, links, links_description, city_eng   FROM public.links WHERE links IS NOT NULL AND prime_city = '$restriction' ORDER BY city";
+	}
+	$queryArrayKeys = array('id', 'city', 'links', 'links_description', 'city_eng');
+	//echo $query;
+	$retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
+	$sumObjectsArray = $retuenedArray;
+	//print_r($sumObjectsArray);
+	     foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
+	     	$accordion.='<div class="accordion-section'.(int)$sumObjectsArray[$sumObjectsArrayKey]['id'].'">'.'<a class="accordion-section-title" href="#accordion-'.(int)$sumObjectsArray[$sumObjectsArrayKey]['id'].'">'.$sumObjectsArray[$sumObjectsArrayKey]['city'].'</a>'.'<div id="accordion-'.(int)$sumObjectsArray[$sumObjectsArrayKey]['id'].'" class="accordion-section-content">';
+	     	$array_names = postgres_to_php_array($sumObjectsArray[$sumObjectsArrayKey]['links_description']);
+	        $array_links = postgres_to_php_array($sumObjectsArray[$sumObjectsArrayKey]['links']);
+	        foreach ($array_names as $index => $value) {
+		        $accordion.='<a href="'.$array_links[$index].'">'.$array_names[$index].'</a>';
+		    } 
+		    $accordion.='</div>'.'</div>';
+		    $city_array[] = $sumObjectsArray[$sumObjectsArrayKey]['city_eng'];
+	    }
+	if ( count($city_array) > 1) {
+	   	array_unshift($city_array, 'вибери місто');
+	}
+	foreach ($city_array as $key => $value) {
+	    $option .='<option value="'.$city_array[$key].'">'.$city_array[$key].'</option>';
+	}
+	//print_r($city_array);
+}
           // tools lbutton list description-----------------------------------------------------------------------------------------------------------------
 	$toolsList = array(
 		array('fullAccess', 'Повний доступ', 
@@ -201,7 +164,7 @@ $tools ='';
 				),
 				array(/*buttons names*/
 					//'Оновлення привязки оптичних муфт',
-					'Вивеси перелік оптичних муфт'
+					'Вивести перелік оптичних муфт'
 				),
 				array(/*seletors ids*/
 					//'city_optical_couplers_data_update_eng',
@@ -289,18 +252,22 @@ $tools ='';
 			array(
 				array(/*id  for buttons*/
 					'etherTopologyUpdate',
+					'etherTopologyNewAdd',
 					'cityStateSwitches'
 				),
 				array(/*buttons names*/
 					'Оновлення топології Ethernet',
+					'Додати нові елементи топології Ethernet',
 					'Оновити стан комутаторів'
 				),
 				array(/*seletors ids*/
 					'ether_city_eng',
+					'ether_city_add_eng',
 					'switches_state_city_eng'
 				),
 				array(/*titles for buttons*/
 					'Оновлює топлогію з файлу CSV(city_ethernet_topology.csv поки не реалізовано), КУБІК(Топологія мережі Ethernet)',
+					'Додає нові елементи з файлу CSV(city_ethernet_topology.csv), КУБІК(Топологія мережі Ethernet)',
 					'Нажати для термінового оновлення стану комутаторів'
 				)
 			)
@@ -380,6 +347,7 @@ $tools ='';
 	}
 	$toolListToString .='</ul>';
 	$newTools .= '<div class="newTools clear">'.$toolListToString.$buttons.'</div>'.'</div></div>';
+	//echo $newTools;
 	//------------------------------------------------------------------------------------------------------------
 	//----------------------------city array--------------------------------------------------------------------
 	$cities = array(

@@ -1,9 +1,10 @@
 <?php
-include('restriction.php'); 
+//include('restriction.php'); 
 include('classFunctionStorage.php');
 ///////////////////////////////////////
-
-//$restriction = $_GET["restriction"];
+session_start();
+$restriction = $_SESSION['restriction'];
+$login_user = $_SESSION['login_user']; 
 ini_set('display_errors', 1);
 $target_dir = "/tmp/";
 $target_file = $target_dir . basename($_FILES["csv_file_upload"]["name"]);
@@ -39,7 +40,7 @@ if ($uploadOk == 0) {
         chmod($target_file, 0666);
         topologyCsvDirCreate($selectedCity, $target_file, $file_name);
 
-       header("location: main_page.php?restriction=admin"); // Redirecting To Other Page
+       header("location: main_page.php?restriction=$restriction&e_mail=$login_user"); // Redirecting To Other Page
     } else {
         $csvUploadReturnRespond .= "Sorry, there was an error uploading your file.";
         echo $csvUploadReturnRespond;

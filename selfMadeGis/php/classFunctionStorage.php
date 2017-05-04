@@ -162,7 +162,15 @@ class dbOrConnSetClass{
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //functions///////////////////////////////////////////////////////////////////////////////////////////////
 //
+////////////////////////////////////////////////////////////
+function postgres_to_php_array($postgresArray) {
 
+   $postgresStr = trim($postgresArray,"{}");
+    $elmts = explode(",",$postgresStr);
+    return $elmts;
+
+  }
+/////////////////////////////////////////////////////////////
 function groupSelect($cubic_name){
       switch ($cubic_name){
         case 'Оптический узел':
@@ -306,12 +314,17 @@ function topologyDirCreate($description, $city){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 function fileDate($folderLink, $checkList, $responseValue){
     $files = scandir($folderLink);
+    $fileDate = '';
     foreach ($files as $fileKey => $filename) {
         if(strpos(mb_convert_case((string)$filename, MB_CASE_LOWER, "UTF-8") , $checkList['check'][array_search($responseValue, $checkList['response'])]) !== false){
            $fileDate = '<br>'.'<span style ="color:blue">'. gmdate("Y-m-d",stat($folderLink.$filename)['mtime']).'</span>';
            //echo $folderLink.$filename.'---'.$fileDate.'<br>';
-        } 
+        }
     }
     return $fileDate;
+}
+///////////////////////////////////////////////////////////////
+function jsConsolLog($message){
+  print "<script type='text/javascript'>console.log(".json_encode($message).");</script>";
 }
 ?>
