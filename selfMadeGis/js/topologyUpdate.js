@@ -201,8 +201,14 @@ let params = {
 		type:'POST',
 		displayResult:true,
 		displayStyle:'table'
+	},
+	ethernetTopologyLoad:{
+		phpFile:'ethernetTopologyLoad',
+		id:'ether_city_add_eng',
+		type:'POST',
+		displayResult: false,
+		displayStyle:'none'
 	}
-
 }
 //-------------------file upload params-------------------------------------------------------------------------------------------------
 let fileUploadParams = {
@@ -235,7 +241,7 @@ let vocabulary ={
 	cableAirCableDataView:['№','id кабеля', 'Посилання на архів','Дата монтажу кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення', 'Довжина, км','Опис маршруту', 'статус'],
 	cityBuildingDublicatesFinder:['№','Вулиця OSM', '№будинку OSM', 'Вулиця CUBIC', '№будинку CUBIC', '"Кубік" HOUSE_ID', 'Тип мережі', 'Координата будинку'],
 	ctvTopologyUpdate:['№', 'Місто', 'Вулиця', '№будинку', 'Квартира', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID'],
-	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під&acute;їзду', '№Поверху', 'Розташування', 'house_id', 'mac_address', 'ip_address', 'serial_number', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни'],
+	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під&acute;їзду', '№Поверху', 'Розташування', 'house_id', 'id комутатора', 'id мат. комутатора','mac_address', 'ip_address', 'serial_number', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни'],
 	ctvToplogyAddFlats:['№',  'Вулиця', '№будинку', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID','Квартири'],
 	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsx','xls','dwg','pdf','png','дата pdf']
 };

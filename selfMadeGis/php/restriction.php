@@ -252,7 +252,7 @@ if ($restriction != NULL) {
 			array(
 				array(/*id  for buttons*/
 					'etherTopologyUpdate',
-					'etherTopologyNewAdd',
+					'ethernetTopologyLoad',
 					'cityStateSwitches'
 				),
 				array(/*buttons names*/
