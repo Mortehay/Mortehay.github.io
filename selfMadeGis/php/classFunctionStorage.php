@@ -1,5 +1,6 @@
 <?php
 //ini_set('display_errors', 1);
+//echo 'im here';
 //usefull variables/////////////////////////////////////////////////////////////////////////
 $connLSetings = array(
     "host"=>"host=127.0.0.1",
@@ -164,15 +165,14 @@ class dbOrConnSetClass{
 //
 ////////////////////////////////////////////////////////////
 function postgres_to_php_array($postgresArray) {
-
    $postgresStr = trim($postgresArray,"{}");
     $elmts = explode(",",$postgresStr);
     return $elmts;
-
-  }
+}
 /////////////////////////////////////////////////////////////
 function groupSelect($cubic_name){
-      switch ($cubic_name){
+      switch (mb_convert_case((string)$cubic_name, MB_CASE_LOWER, "UTF-8")){
+        ////ctv equipment
         case 'Оптический узел':
           $group_value = array('group' =>  1,'color' =>  '#ff9900', 8 ,'value' =>16,'label' => 'nod');
           break;
@@ -191,6 +191,35 @@ function groupSelect($cubic_name){
         case 'Кросс-муфта':
           $group_value = array('group' =>  6,'color' => '#ff0066', 11,'value' => 22,'label' =>  'cc');
           break;
+          ////ethernet equipment
+        case 'корневой коммутатор':
+          $group_value = array('group' =>  4,'color' => '#333399', 18,'value' => 36,'label' => 'ot');
+          break;
+        case 'undef':
+          $group_value = array('group' =>  6,'color' => '#ff0066', 11,'value' => 22,'label' =>  'cc');
+          break;
+        case 'неопределен':
+          $group_value = array('group' =>  6,'color' => '#ff0066', 11,'value' => 22,'label' =>  'cc');
+          break;  
+        case 'agr':
+          $group_value = array('group' =>  3,'color' => '#3333cc', 18,'value' => 36,'label' =>  'mnod');
+          break;
+        case 'коммутатор агрегации':
+          $group_value = array('group' =>  3,'color' => '#3333cc', 18,'value' => 36,'label' =>  'mnod');
+          break;  
+        case 'sbagr':
+          $group_value = array('group' =>  5,'color' => '#ff0000', 15,'value' => 30,'label' =>  'mdod');
+          break;
+          case 'коммутатор суб-агрегации':
+          $group_value = array('group' =>  5,'color' => '#ff0000', 15,'value' => 30,'label' =>  'mdod');
+          break;
+        case 'acc':
+          $group_value = array('group' =>  1,'color' =>  '#ff9900', 8 ,'value' =>16,'label' => 'nod');
+          break;
+        case 'коммутатор доступа':
+          $group_value = array('group' =>  1,'color' =>  '#ff9900', 8 ,'value' =>16,'label' => 'nod');
+          break;  
+          ////default
         default:
           $group_value = array('group' =>  0,'color' =>  '#DC143C', 1 ,'value' =>1,'label' => 'not assigned');
           break;

@@ -1,5 +1,5 @@
 <?php
-ini_set('display_errors', 1);
+//ini_set('display_errors', 1);
 include('classFunctionStorage.php');
 if ($_POST['ctv_topology_dataView_city_eng']) {$selectedCity= $_POST['ctv_topology_dataView_city_eng'];} else {$selectedCity = $_REQUEST["ctv_topology_dataView_city_eng"];}
 $arr_response = array('nodes' => array(),'links' => array(),'mdods' => array()); 

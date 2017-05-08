@@ -208,7 +208,16 @@ let params = {
 		type:'POST',
 		displayResult: false,
 		displayStyle:'none'
-	}
+	},
+	ethernetTopologyDataViewVis:{
+		phpFile:'ethernetTopologyDataViewVis',
+		id:'ethernet_topology_dataView_city_eng',
+		type:'POST',
+		displayResult: true,
+		displayStyle:'window',
+		displayCss: '../css/ctvTopologyDataView.css',
+		displayCode:'../js/ctvTopologyDataView.js'
+	},
 }
 //-------------------file upload params-------------------------------------------------------------------------------------------------
 let fileUploadParams = {

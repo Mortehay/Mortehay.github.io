@@ -2,7 +2,7 @@
 <?php
 ini_set('display_errors', 1);
 include('restriction.php');
-include('classFunctionStorage.php'); 
+//include('classFunctionStorage.php'); 
 //header('Content-type: text/plain; charset=utf-8');
 mb_internal_encoding("UTF-8");
 //downloading data from Cubic to our server and sore it in csv files
