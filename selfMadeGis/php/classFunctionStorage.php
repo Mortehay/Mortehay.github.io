@@ -193,35 +193,35 @@ function groupSelect($cubic_name){
           break;
           ////ethernet equipment
         case 'корневой коммутатор':
-          $group_value = array('group' =>  4,'color' => '#333399', 18,'value' => 36,'label' => 'ot');
+          $group_value = array('group' =>  4,'color' => '#333399', 18,'value' => 36,'label' => 'core');
           break;
         case 'undef':
-          $group_value = array('group' =>  6,'color' => '#ff0066', 11,'value' => 22,'label' =>  'cc');
+          $group_value = array('group' =>  6,'color' => '#999966', 11,'value' => 22,'label' =>  'undef');
           break;
         case 'неопределен':
-          $group_value = array('group' =>  6,'color' => '#ff0066', 11,'value' => 22,'label' =>  'cc');
+          $group_value = array('group' =>  6,'color' => '#999966', 11,'value' => 22,'label' =>  'undef');
           break;  
         case 'agr':
-          $group_value = array('group' =>  3,'color' => '#3333cc', 18,'value' => 36,'label' =>  'mnod');
+          $group_value = array('group' =>  3,'color' => '#3333cc', 18,'value' => 36,'label' =>  'agr');
           break;
         case 'коммутатор агрегации':
-          $group_value = array('group' =>  3,'color' => '#3333cc', 18,'value' => 36,'label' =>  'mnod');
+          $group_value = array('group' =>  3,'color' => '#3333cc', 18,'value' => 36,'label' =>  'agr');
           break;  
         case 'sbagr':
-          $group_value = array('group' =>  5,'color' => '#ff0000', 15,'value' => 30,'label' =>  'mdod');
+          $group_value = array('group' =>  5,'color' => '#ff0000', 15,'value' => 30,'label' =>  'sbagr');
           break;
           case 'коммутатор суб-агрегации':
-          $group_value = array('group' =>  5,'color' => '#ff0000', 15,'value' => 30,'label' =>  'mdod');
+          $group_value = array('group' =>  5,'color' => '#ff0000', 15,'value' => 30,'label' =>  'sbagr');
           break;
         case 'acc':
-          $group_value = array('group' =>  1,'color' =>  '#ff9900', 8 ,'value' =>16,'label' => 'nod');
+          $group_value = array('group' =>  1,'color' =>  '#ff9900', 8 ,'value' =>16,'label' => 'acc');
           break;
         case 'коммутатор доступа':
-          $group_value = array('group' =>  1,'color' =>  '#ff9900', 8 ,'value' =>16,'label' => 'nod');
+          $group_value = array('group' =>  1,'color' =>  '#ff9900', 8 ,'value' =>16,'label' => 'acc');
           break;  
           ////default
         default:
-          $group_value = array('group' =>  0,'color' =>  '#DC143C', 1 ,'value' =>1,'label' => 'not assigned');
+          $group_value = array('group' =>  0,'color' =>  '#666633', 1 ,'value' =>1,'label' => 'not assigned');
           break;
       }
   return $group_value;

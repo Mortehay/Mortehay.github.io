@@ -37,7 +37,7 @@ foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
   );
   array_push($arr_response['links'], $arr ); 
 }
-$query = "SELECT DISTINCT cubic_city, cubic_street, cubic_house_num, cubic_switch_role, cubic_switch_id, cubic_parent_switch_id, cubic_inventary_state FROM ".$selectedCity.".".$selectedCity."_switches WHERE cubic_switch_role IN('agr', 'Коммутатор ядра', 'Корневой коммутатор');";
+$query = "SELECT DISTINCT cubic_city, cubic_street, cubic_house_num, cubic_switch_role, cubic_switch_id, cubic_parent_switch_id, cubic_inventary_state FROM ".$selectedCity.".".$selectedCity."_switches WHERE cubic_switch_role IN('agr');";
 //echo $query;
 $queryArrayKeys = array('cubic_city', 'cubic_street', 'cubic_house_num', 'cubic_switch_role', 'cubic_switch_id', 'cubic_parent_switch_id', 'cubic_inventary_state');
 $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
