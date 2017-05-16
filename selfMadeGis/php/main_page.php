@@ -78,7 +78,7 @@ include('rotatingArrows.php');
       echo $rotatingArrows;
       ?>
       <?php
-        echo'<script type="text/javascript">let restriction = "'.$restriction.'";localStorage.setItem("tempRestriction", restriction);</script>';
+        echo'<script type="text/javascript">let restriction = "'.$restriction.'"; let cityArray = '.json_encode($city_array).';localStorage.setItem("tempRestriction", restriction);localStorage.setItem("tempCityArray", cityArray);</script>';
       ?>
 
     <script type="text/javascript" src="../js/accordion.js"></script>

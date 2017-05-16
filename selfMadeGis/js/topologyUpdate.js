@@ -231,6 +231,16 @@ let fileUploadParams = {
 		enctype:'multipart/form-data',
 		submitName:'csvSubmit'
 	},
+	csvDownload:{
+		phpFile:'csvDownload',
+		fileId:'csv_file_download',
+		formId:'csvDownloadForm',
+		fileName:'csv_file_download',
+		formValueUpload:'Зкачати CSV',
+		method:'POST',
+		enctype:'multipart/form-data',
+		submitName:'csvSubmitDownload'
+	},
 	qgsUpload:{
 		phpFile:'qgsUpload',
 		fileId:'qgs_file_upload',
@@ -602,6 +612,8 @@ $(document).ready(function(){
 	//----------------------------------file upload------------------------------------------------------------------------------
 	//$('#fullAccess_holder').fileUploadToTmp(fileUploadParams.csvUpload,'#fullAccess_holder');
 	$('#filesUpload_holder').fileUploadToTmpAll(fileUploadParams.csvUpload,'#filesUpload_holder');
+	$('#filesUpload_holder').fileUploadToTmpAll(fileUploadParams.csvDownload,'#filesUpload_holder');
+	//---------------------------------------------------------------------------------------------------------------------------
 	$('#ctv_holder').addSheList('ctv_holder'); 
 	$('#opticalCouplers_holder').addSheList('opticalCouplers_holder');
 	
@@ -704,10 +716,21 @@ $.fn.fileUploadToTmp = function(params, target){
 //-----------add file upload not for ful access----------------------------------------------------------
 $.fn.fileUploadToTmpAll = function(params, target){
 	console.log('target', target);
-	$(target).find('ul').append('<li><form id="'+params.formId+'" action="'+params.phpFile+'.php'+'" method="'+params.method+'" enctype="'+params.enctype+'"></form></li>');
-	$('#'+params.formId).append(/*'<label>виберіть файл CSV</label>'*/
-		'<input type="file" name="'+params.fileName+'" id="'+params.fileId+'" class="myToolButton">'+
-		'<input type="submit" value="'+params.formValueUpload+'"name="'+params.submitName+'" class="myToolButton">');
+	let selector = params.phpFile.toLowerCase();
+
+	if( selector.includes('upload')){
+		$(target).find('ul').append('<li><form id="'+params.formId+'" action="'+params.phpFile+'.php'+'" method="'+params.method+'" enctype="'+params.enctype+'"></form></li>');
+		$('#'+params.formId).append(/*'<label>виберіть файл CSV</label>'*/
+			'<input type="file" name="'+params.fileName+'" id="'+params.fileId+'" class="myToolButton">'+
+			'<input type="submit" value="'+params.formValueUpload+'"name="'+params.submitName+'" class="myToolButton">');
+	}
+	else if(selector.includes('download')){
+		$(target).find('ul').append('<li><select id="'+params.csv_file_download+'"></select><select id="csvDownloadType"></select><button class="myToolButton" id="'+params.submitName+'">Зкачати</button></li>');
+		cityArray.forEach(function(item,index){
+			$(target).find('#'+params.csv_file_download).append('<option value="'+item+'">'+item+'</option>')
+		});
+	}
+	
 
 }
 //-------open link in new window-----------------------------------------------------------------------

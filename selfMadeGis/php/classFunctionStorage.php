@@ -173,22 +173,22 @@ function postgres_to_php_array($postgresArray) {
 function groupSelect($cubic_name){
       switch (mb_convert_case((string)$cubic_name, MB_CASE_LOWER, "UTF-8")){
         ////ctv equipment
-        case 'Оптический узел':
+        case 'оптический узел':
           $group_value = array('group' =>  1,'color' =>  '#ff9900', 8 ,'value' =>16,'label' => 'nod');
           break;
-        case 'Оптичний приймач':
+        case 'оптичний приймач':
           $group_value = array('group' => 2,'color' => '#663300', 8,'value' => 16,'label' =>  'op');
           break;
-        case 'Магістральний оптичний вузол':
+        case 'магістральний оптичний вузол':
           $group_value = array('group' =>  3,'color' => '#3333cc', 18,'value' => 36,'label' =>  'mnod');
           break;
-        case 'Передатчик оптический':
+        case 'передатчик оптический':
           $group_value = array('group' =>  4,'color' => '#333399', 18,'value' => 36,'label' => 'ot');
           break;
-        case 'Магистральный распределительный узел':
+        case 'магистральный распределительный узел':
           $group_value = array('group' =>  5,'color' => '#ff0000', 15,'value' => 30,'label' =>  'mdod');
           break;
-        case 'Кросс-муфта':
+        case 'кросс-муфта':
           $group_value = array('group' =>  6,'color' => '#ff0066', 11,'value' => 22,'label' =>  'cc');
           break;
           ////ethernet equipment
