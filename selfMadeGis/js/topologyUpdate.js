@@ -796,6 +796,7 @@ $.fn.openNewWindow = function(data,params,request){
 		let newWindow = window.open("", "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=300,left=200,width=800,height=600");
 		//localStorage.clear();	
 		localStorage.setItem("tempTopologyArray", data);
+		localStorage.setItem("tempParams", params);
 		let obj = JSON.parse(data);
 		let objLength =0; 
 		if (obj.nodes.length <100) {objLength = 20*(obj.nodes.length) } 
@@ -807,10 +808,12 @@ $.fn.openNewWindow = function(data,params,request){
 		newWindow.document.write('<link rel="stylesheet" href="'+params.displayCss+'" type="text/css">');
 		newWindow.document.write('<link rel="stylesheet" href="../css/vis.css" type="text/css">');
 		newWindow.document.write('<script  src="../libs/vis/vis.js"></script>');
-
-
+		let nettype;
+		if((params.id).toLowerCase().includes('ethernet')){ nettype ='ethernet';}
+		else if((params.id).toLowerCase().includes('ctv')){ nettype ='ctv';}
+		else { nettype ='none';}
 		newWindow.document.write('<h4 id="selectedCity">'+request[params.id]+'</h4>');
-		newWindow.document.write('<div id="mynetwork" width="'+objLength+'" height="'+objLength+'"></div>');
+		newWindow.document.write('<div id="mynetwork" data-nettype="'+nettype+'" width="'+objLength+'" height="'+objLength+'"></div>');
 		newWindow.document.write('<script  type="text/javascript" src="../js/rotatingArrows.js"></script>');
 		newWindow.document.write('<script type="text/javascript" src="'+params.displayCode+'"></script>');
 					

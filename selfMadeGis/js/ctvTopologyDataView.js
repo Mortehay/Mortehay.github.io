@@ -2,7 +2,7 @@ let json = localStorage.getItem("tempTopologyArray");
 
 let graph =  JSON.parse(json);
 $('body').prepend(rotatingArrows);
-
+let nettype = $('#mynetwork').data('nettype');
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 function closeSpan(index){
@@ -95,8 +95,10 @@ function doAnimation(nodeParams) {
     };
     function selectorGenerator(data, selectorId){
       let mdodSelector = '<select id="mdodSelector">'+'<option value="select she">select she</option>'+'<option value="all">all</option>';
+      
       for (let i = 0; i < data.length; i++) {
-        mdodSelector +='<option value="'+data[i].she+'">'+data[i].title+'</option>';
+        if(nettype =='ctv'){mdodSelector +='<option value="'+data[i].she+'">'+data[i].title+'</option>';}
+        else if(nettype =='ethernet'){mdodSelector +='<option value="'+data[i].agr+'">'+data[i].title+'</option>';}
       }
        mdodSelector += '</select>'
       $('body').prepend(mdodSelector );
@@ -118,11 +120,20 @@ function doAnimation(nodeParams) {
           //console.log('data',data.nodes);
          // let sortedNodes = data.nodes.filter(function( obj ) { return obj.she == selectedValue;});
           //let sortedEdges = data.edges.filter(function( obj ) { return obj.she == selectedValue;});
+          let sortedData ={};
+          if(nettype =='ctv'){
+            sortedData = {
+                nodes: data.nodes.filter(function( obj ) {return obj.she == selectedValue;}),
+                links: data.links.filter(function( obj ) {return obj.she == selectedValue;})
+            };
+          }
+          else if(nettype =='ethernet'){
+            sortedData = {
+                nodes: data.nodes.filter(function( obj ) {return obj.agr == selectedValue;}),
+                links: data.links.filter(function( obj ) {return obj.agr == selectedValue;})
+            };
+          }
           
-          let sortedData = {
-              nodes: data.nodes.filter(function( obj ) { return obj.she == selectedValue;}),
-              links: data.links.filter(function( obj ) {return obj.she == selectedValue;})
-          };
           //console.log('sortedData', sortedData);
           networkDraw(sortedData, options);
         }
@@ -136,7 +147,9 @@ function doAnimation(nodeParams) {
        let nodesData = networkNodesData.nodes._data;
        console.log('nodesData',nodesData);
           $('#nodes').remove();
-          $('<label for="nodes">choose CTV topology</label><input type="text" name="nodes" id="nodes" list="node_list"  style="width:250px;height:20px;background-color:#FAEBD7;"><datalist id="node_list"></datalist>').insertBefore($('#mynetwork'));
+          $('#node_list').remove();
+          $('label[for=nodes]').remove();
+          $('<label for="nodes">choose '+nettype+' topology element</label><input type="text" name="nodes" id="nodes" list="node_list"  style="width:250px;height:20px;background-color:#FAEBD7;"><datalist id="node_list"></datalist>').insertBefore($('#mynetwork'));
            for (let objKey in nodesCanvasData){
             if ((objKey!=null) || (objKey!='') ) {$('#node_list').append('<option value="'+objKey+'" data-x="'+nodesCanvasData[objKey].x+'" data-y="'+nodesCanvasData[objKey].y+'">'+nodesData[objKey].title+'</option>');}
            }
