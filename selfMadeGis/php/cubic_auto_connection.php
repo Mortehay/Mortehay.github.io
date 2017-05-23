@@ -15,6 +15,11 @@ $cityTopology = new dbOrConnSetClass;
 $cityTopology->setProp('query_type','_ctv_topology');
 $cityTopology->setProp('query',"SELECT * FROM puma_qgis.gis_nodesreestr_noku ");
 $requestcityTopology = $cityTopology->dbOrConnect($cities);
+
+$ethernetTopology = new dbOrConnSetClass;
+$ethernetTopology->setProp('query_type','_switches');
+$ethernetTopology->setProp('query',"SELECT * FROM puma_qgis.gis_ethernet_topology ");
+$requestethernetTopology = $ethernetTopology->dbOrConnect($cities);
 ////////////////////////////////////
 echo 'that is all';
 ?>
