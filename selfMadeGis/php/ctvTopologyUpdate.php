@@ -32,13 +32,6 @@ else {
     'encoding'=>"'windows-1251'"
     ); 
   }
-  
-//echo $linkStorage;
-//echo ('<hr>');
-//print_r($files);
-//echo ('<hr>');
-//print_r(fileExistenceCheckAuto($promeLink, $secondaryLink, $tableType, $selectedCity, $fileExtention));
-//echo ('<hr>');
 $newDBrequest = new dbConnSetClass;
 $arr_response = array('response' => array());
 if ($files) {
@@ -47,7 +40,7 @@ if ($files) {
     if ($str_file !== '.' && $str_file !== '..') {
       //print_r($str_file);
       if ($str_file == $selectedCity.$tableType.$fileExtention) {
-        $query = "CREATE TEMP TABLE temp( ".$queryModificator['var'].");".$deleteNotselectedShe." select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ; UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET cubic_city = temp.CITY, cubic_street = temp.STREET, cubic_house = temp.HOUSE, cubic_flat = temp.FLAT, cubic_code = temp.CODE, cubic_name = temp.NAME, cubic_pgs_addr = temp.PGS_ADDR, cubic_ou_op_addr = temp.OU_OP_ADDR, cubic_ou_code = temp.OU_CODE, cubic_date_reg = temp.DATE_REG, cubic_coment = temp.COMENT, cubic_uname = temp.UNAME, cubic_net_type = temp.NET_TYPE, cubic_house_id = temp.HOUSE_ID FROM  temp WHERE " . $selectedCity.".".$selectedCity."_ctv_topology.cubic_code = temp.CODE; SELECT CITY,STREET,HOUSE,FLAT,CODE,NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID FROM temp WHERE CODE NOT IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL)".$PGS_ADDR.";";
+        $query = "CREATE TEMP TABLE temp( ".$queryModificator['var'].");".$deleteNotselectedShe." select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ; DELETE FROM ".$selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code NOT IN(SELECT DISTINCT CODE FROM temp) ;UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET cubic_city = temp.CITY, cubic_street = temp.STREET, cubic_house = temp.HOUSE, cubic_flat = temp.FLAT, cubic_code = temp.CODE, cubic_name = temp.NAME, cubic_pgs_addr = temp.PGS_ADDR, cubic_ou_op_addr = temp.OU_OP_ADDR, cubic_ou_code = temp.OU_CODE, cubic_date_reg = temp.DATE_REG, cubic_coment = temp.COMENT, cubic_uname = temp.UNAME, cubic_net_type = temp.NET_TYPE, cubic_house_id = temp.HOUSE_ID FROM  temp WHERE " . $selectedCity.".".$selectedCity."_ctv_topology.cubic_code = temp.CODE; SELECT CITY,STREET,HOUSE,FLAT,CODE,NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID FROM temp WHERE CODE NOT IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL)".$PGS_ADDR.";";
         $queryArrayKeys = array('CITY','STREET','HOUSE','FLAT','CODE','NAME','PGS_ADDR','OU_OP_ADDR','OU_CODE','DATE_REG','COMENT','UNAME','NET_TYPE','HOUSE_ID');
         //echo $query;
        $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
@@ -111,8 +104,8 @@ foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
   }
 }
 
-$link_left_part = '"<a href="http://'.$server_address.'/qgis-ck/tmp/archive/';
-$link_right_part = '/" target="_blank">посилання на архів</a>"';
+$link_left_part = /*'"<a href="http://'.$server_address.'/qgis-ck/tmp/archive/'*/'http://'.$server_address.'/qgis-ck/tmp/archive/';
+$link_right_part = /*'/" target="_blank">посилання на архів</a>"'*/'/';
 $query = "UPDATE $selectedCity"."."."$selectedCity"."_ctv_topology SET archive_link = CASE "." WHEN cubic_name like '%Магистральный распределительный узел%' THEN '$link_left_part"."$selectedCity"."/topology/mdod/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Оптический узел%' THEN '$link_left_part"."$selectedCity"."/topology/nod/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Оптичний приймач%' THEN '$link_left_part"."$selectedCity"."/topology/op/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Передатчик оптический%' THEN '$link_left_part"."$selectedCity"."/topology/ot/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Кросс-муфта%' THEN '$link_left_part"."$selectedCity"."/topology/cc/"."'||cubic_code||'"."$link_right_part' "."END ".$selectedSheWhere.";";
 $retuenedArray = $newDBrequest -> dbConnect($query, false, true);
 //-------------------updates such field: she/district/microdistrict
