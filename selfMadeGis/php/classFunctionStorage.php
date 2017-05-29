@@ -64,6 +64,18 @@ class dbConnSetClass{
       pg_close($db); // Closing Connection
     }
   }
+  public function siteLogin($e_mail, $password){
+    $arr_response = self::dbConnect("SELECT e_mail, md5, restriction FROM public.access WHERE e_mail= '".$e_mail."';", array('e_mail', 'md5', 'restriction'), true);
+    if(md5($password)===$arr_response[0]['md5']){
+      self::dbConnect("INSERT INTO public.login(e_mail, login_time) VALUES ('".$e_mail."',now());",false,true);
+      header("location: main_page.php?restriction=".$arr_response[0]['restriction']."&e_mail=".$e_mail); // Redirecting To Other Page
+      return true;
+    } else {
+       $msg = "wrong e-mail or password";
+      header("location: ../index.php?msg=$msg");
+    }
+  }
+
 }
 ////oracle////////////////////////////////////////////////////////////////////////////////////////////////
 class dbOrConnSetClass{
