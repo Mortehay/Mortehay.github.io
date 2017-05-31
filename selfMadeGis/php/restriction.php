@@ -4,8 +4,10 @@ include('classFunctionStorage.php');
 //$restriction=NULL;
 include('login.php'); 
 if ($_POST['restriction']) {$restriction= $_POST['restriction'];} else {$restriction = $_REQUEST['restriction'];}
+if ($_POST['e_mail']) {$e_mail= $_POST['e_mail'];} else {$e_mail = $_REQUEST['e_mail'];}
 session_start();
 $_SESSION['restriction'] = $restriction;
+$_SESSION['e_mail'] = $e_mail;
 $option = '';
 $accordion='';
 $tools ='';
@@ -54,25 +56,30 @@ if ($restriction != NULL) {
 					'userLoginView', 
 					'textexchange',
 					'simpleuserRestrictionUpdate',
-					'cityTablesCreate'
+					'cityTablesCreate',
+					'userTable'
 				), 
 				array(/*buttons names*/
 					'Графік відвідувань', 
 					'Заміна host в qgis файлі',
 					'Апдейт дозволу доступу simpleuser до схем Postgresql',
-					'Додавання комплекту таблиць до міста'
+					'Додавання комплекту таблиць до міста',
+					'Додати користувача'
 				), 
 				array(/*seletors ids*/
 					'NULL',
 					'NULL',
 					'NULL',
-					'tables_create_city_eng'
+					'tables_create_city_eng',
+					'NULL'
 				),
 				array(/*titles for buttons*/
 					'Відображає статистику відвідуваньт вебклієнту',
 					'Нажати після заміни QGIS файлу на сервері'/*Замінює адресу в QGIS файлі на localhost, в іншому разі файл не буде читатись сервером*/,
 					'Нажати після додавання нових таблиць'/*Потрібно запускати після зтворення кожної нової таблички root-користувачем, щоб нею міг користуватись - simpleuser*/,
-					'Додає шаблонний комплет таблиць, фунцій та тригерів до нового міста')
+					'Додає шаблонний комплет таблиць, фунцій та тригерів до нового міста',
+					'Дозволяє додати прибрати користувача'
+				)
 			) 
 		),
 		array('filesUpload', 'Завантаження файлів',

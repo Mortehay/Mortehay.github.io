@@ -218,6 +218,14 @@ let params = {
 		displayCss: '../css/ctvTopologyDataView.css',
 		displayCode:'../js/ctvTopologyDataView.js'
 	},
+	userTable:{
+		phpFile:'userTable',
+		id:'user_table',
+		type:'POST',
+		displayResult:true,
+		displayStyle:'table'
+	},
+
 }
 //-------------------file upload params-------------------------------------------------------------------------------------------------
 let fileUploadParams = {
@@ -262,7 +270,8 @@ let vocabulary ={
 	ctvTopologyUpdate:['№', 'Місто', 'Вулиця', '№будинку', 'Квартира', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID'],
 	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під&acute;їзду', '№Поверху', 'Розташування', 'house_id', 'id комутатора', 'id мат. комутатора','mac_address', 'ip_address', 'serial_number', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни'],
 	ctvToplogyAddFlats:['№',  'Вулиця', '№будинку', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID','Квартири'],
-	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsx','xls','dwg','pdf','png','дата pdf']
+	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsx','xls','dwg','pdf','png','дата pdf'],
+	userTable:['№','E-mail','Доступ','pass','Редагування']
 };
 
 //-----------------unique values from array ------------------------------------
@@ -645,6 +654,7 @@ $.fn.phpRequest = function(params) {
 		console.log('phpFile',$(this).attr('id'));
 		request[params.id] = $('#'+params.id).val();
 		request['she'] = $('#sheSelection').val();
+		if(request[params.id] == undefined ){ request['buttonId'] =params.id}
 		if ($('#'+params.id).val() !=='вибери місто') {
 
 			$('.curtenScripStatus').show();
@@ -666,6 +676,7 @@ $.fn.phpRequest = function(params) {
 								displayTableData('displayResult'+attributId, 'container', data, vocabulary[attributId]);
 								closeSpan('displayResult'+attributId);
 								$('button.mapWindow').openNewMapWindow(params);
+								$('button#addNewUser').newUser('addNewUser');
 							}
 							if( params.displayStyle == 'graph'){
 								statistcsDraw(data);
@@ -694,7 +705,26 @@ $.fn.phpRequest = function(params) {
 	//})
   	
 };
-
+//------------new user-----------------------------------------------------------------------------------------
+$.fn.newUser = function(buttonId){
+	$(this).on('click', function(){
+		let request = {
+			'buttonId':buttonId,
+			'Email':$('#'+buttonId+'Email').val(),
+			'Password':$('#'+buttonId+'Password').val(),
+			'Restriction':$('#'+buttonId+'Restriction').val()
+		};
+		//console.log(request);
+		$.ajax({
+			url: buttonId+'.php', //This is the current doc
+			type: 'POST',
+			data: (request),
+			success: function(data){
+				//console.log(data);
+			}
+		})
+	})
+}
 //--------------troll tools display----------------------------------------------------------------------------
 
 $.fn.visibility = function(selfTagId) {
