@@ -23,14 +23,13 @@ if ($restriction === 'admin')  {
         'e_mail' => $sumObjectsArray[$sumObjectsArrayKey]['e_mail'],
         'restriction' => $sumObjectsArray[$sumObjectsArrayKey]['restriction'],
         'pass' => '---',
-        'edit' => '<button data-mail="'.$sumObjectsArray[$sumObjectsArrayKey]['e_mail'].'">редагувати</button>'
+        'edit' => '<button class="invisible deleteUser" data-mail="'.$sumObjectsArray[$sumObjectsArrayKey]['e_mail'].'">видалити</button>'.'<input type="checkbox" class="deleteUser" data-mail="'.$sumObjectsArray[$sumObjectsArrayKey]['e_mail'].'">'
       );
       array_push($arr_response['response'], $arr ); 
     }
     print json_encode($arr_response);
 
   }
-  
 }
 
 

@@ -676,7 +676,12 @@ $.fn.phpRequest = function(params) {
 								displayTableData('displayResult'+attributId, 'container', data, vocabulary[attributId]);
 								closeSpan('displayResult'+attributId);
 								$('button.mapWindow').openNewMapWindow(params);
-								$('button#addNewUser').newUser('addNewUser');
+								$('input[type="checkbox"].deleteUser').click(function() {
+								    //console.log($(this).data('mail'));
+								    $('button[data-mail="' + $(this).data('mail')+'"]').toggle(this.checked);
+								});
+								$('button#addNewUser').newUser('addNewUser','addNewUser');
+								$('button.deleteUser').newUser('addNewUser','deleteUser');
 							}
 							if( params.displayStyle == 'graph'){
 								statistcsDraw(data);
@@ -706,17 +711,26 @@ $.fn.phpRequest = function(params) {
   	
 };
 //------------new user-----------------------------------------------------------------------------------------
-$.fn.newUser = function(buttonId){
+$.fn.newUser = function(url,buttonId){
 	$(this).on('click', function(){
-		let request = {
-			'buttonId':buttonId,
-			'Email':$('#'+buttonId+'Email').val(),
-			'Password':$('#'+buttonId+'Password').val(),
-			'Restriction':$('#'+buttonId+'Restriction').val()
-		};
+		let request = {};
+		if(buttonId =='addNewUser'){
+			request ={
+				'buttonId':buttonId,
+				'Email':$('#'+buttonId+'Email').val(),
+				'Password':$('#'+buttonId+'Password').val(),
+				'Restriction':$('#'+buttonId+'Restriction').val()
+			};
+		} else if(buttonId =='deleteUser'){
+			request ={
+				'buttonId':buttonId,
+				'Email':$(this).data('mail'),
+			}
+		}
+		
 		//console.log(request);
 		$.ajax({
-			url: buttonId+'.php', //This is the current doc
+			url: url+'.php', //This is the current doc
 			type: 'POST',
 			data: (request),
 			success: function(data){
