@@ -90,7 +90,14 @@ class fileUpload {
     }
     chmod($target_file, 0666);
     copy($target_file, $newDirPath . $file_name);
+    self::textExchange('10.112.129.170','127.0.0.1',$newDirPath . $file_name);
     //echo $dirPath;
+    return true;
+  }
+  public function textExchange($oldText,$newText,$targeFile){
+    $str=file_get_contents($targeFile);
+    $str=str_replace($oldText, $newText,$str);
+    file_put_contents($targeFile, $str);
     return true;
   }
   public function upload($restriction,$login_user,$button_id){
