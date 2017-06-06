@@ -77,6 +77,76 @@ class dbConnSetClass{
   }
 
 }
+///file UPLOAD////////////////////////////////////////////////////////////////////////////////////////////
+class fileUpload {
+  private $restriction = 'none';
+  public function dirCreate($city, $target_file, $file_name,$fileType){
+    if($fileType =='csv'){ $newDirPath = '/var/www/QGIS-Web-Client-master/site/csv/archive/'.$city.'/';}        
+    if($fileType =='qgs'){ $newDirPath = '/var/www/QGIS-Web-Client-master/projects/';}  
+    if (!file_exists($newDirPath )) {
+      $oldmask = umask(0);
+          mkdir($newDirPath , 0777, true);
+          umask($oldmask);
+    }
+    chmod($target_file, 0666);
+    copy($target_file, $newDirPath . $file_name);
+    //echo $dirPath;
+    return true;
+  }
+  public function upload($restriction,$login_user,$button_id){
+    $target_dir = "/tmp/";
+    $target_file = $target_dir . basename($_FILES[$button_id]['name']);
+    $file_name = $_FILES[$button_id]['name'];
+    if(substr($file_name,0,stripos($file_name, '_'))!='qgis'){
+      $selectedCity = substr($file_name,0,stripos($file_name, '_'));
+    } else {
+      $selectedCity = substr(substr($file_name,5));
+    }
+    
+    //$uploadOk = 1;
+    $fileType = pathinfo($target_file,PATHINFO_EXTENSION);
+    $uploadReturnRespond ='';
+    //$fileTypes = array('csv','qgs');
+    $file_logger = new dbConnSetClass;
+    // Check file size
+    if ($_FILES[$button_id]['size'] <= 512000000) {
+      if($fileType == 'csv'){
+        if (move_uploaded_file($_FILES[$button_id]["tmp_name"], $target_file)) {
+            echo "The file ". basename( $_FILES[$button_id]["name"]). " has been uploaded.";
+            chmod($target_file, 0666);
+            self::dirCreate($selectedCity, $target_file, $file_name, $fileType);
+            $query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
+            $file_logger -> dbConnect($query, false, true);
+
+           header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+        } else {
+            echo "Sorry, there was an error uploading your file.";
+        }
+      } else
+      if($fileType == 'qgs' and $restriction =='admin'){
+        if (move_uploaded_file($_FILES[$button_id]['tmp_name'], $target_file)) {
+            echo "The file ". basename( $_FILES[$button_id]['name']). " has been uploaded.";
+            chmod($target_file, 0666);
+            self::dirCreate($selectedCity, $target_file, $file_name, $fileType);
+            $query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
+            $file_logger -> dbConnect($query, false, true);
+
+           header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+        } else {
+            echo "Sorry, there was an error uploading your file.";
+            //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+        }
+      } else {
+        echo 'your file have restricted type please try qgs or csv';
+        //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+      }
+
+    } else {
+        echo 'Sorry, your file is too big';
+        //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+    }
+  }
+}
 ////oracle////////////////////////////////////////////////////////////////////////////////////////////////
 class dbOrConnSetClass{
   private $dbConnSet = array(

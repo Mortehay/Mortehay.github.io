@@ -229,15 +229,15 @@ let params = {
 }
 //-------------------file upload params-------------------------------------------------------------------------------------------------
 let fileUploadParams = {
-	csvUpload:{
-		phpFile:'csvUpload',
-		fileId:'csv_file_upload',
-		formId:'csvUploadForm',
-		fileName:'csv_file_upload',
-		formValueUpload:'Завантажити CSV',
+	fileUpload:{
+		phpFile:'fileUpload',
+		fileId:'file_upload',
+		formId:'fileUploadForm',
+		fileName:'file_upload',
+		formValueUpload:'Завантажити CSV/QGS',
 		method:'POST',
 		enctype:'multipart/form-data',
-		submitName:'csvSubmit'
+		submitName:'fileSubmit'
 	},
 	csvDownload:{
 		phpFile:'csvDownload',
@@ -621,8 +621,8 @@ $(document).ready(function(){
 	$('.toolsListLabel').visibility('newTools');
 
 	//----------------------------------file upload------------------------------------------------------------------------------
-	//$('#fullAccess_holder').fileUploadToTmp(fileUploadParams.csvUpload,'#fullAccess_holder');
-	$('#filesUpload_holder').fileUploadToTmpAll(fileUploadParams.csvUpload,'#filesUpload_holder');
+	//$('#fullAccess_holder').fileUploadToTmp(fileUploadParams.fileUpload,'#fullAccess_holder');
+	$('#filesUpload_holder').fileUploadToTmpAll(fileUploadParams.fileUpload,'#filesUpload_holder');
 	$('#filesUpload_holder').fileUploadToTmpAll(fileUploadParams.csvDownload,'#filesUpload_holder');
 	//---------------------------------------------------------------------------------------------------------------------------
 	$('#ctv_holder').addSheList('ctv_holder'); 
