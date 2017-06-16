@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# -*- coding: cp1251 -*-
 """
 /***************************************************************************
  pgConnector
@@ -72,6 +73,8 @@ class pgConnector:
         #self.dlg.cc_pit_sign.clicked.connect(self.city_name)
         self.dlg.cableChannelPitsDataUpdate.clicked.connect(lambda: self.postgres_query('cableChannelPitsDataUpdate'))
         self.dlg.cableChannelChannelDataUpdate.clicked.connect(lambda: self.postgres_query('cableChannelChannelDataUpdate'))
+        self.dlg.ctvTopologyLoad.clicked.connect(lambda: self.postgres_query('ctvTopologyLoad'))
+        self.dlg.ctvTopologyUpdate.clicked.connect(lambda: self.postgres_query('ctvTopologyUpdate'))
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
@@ -195,16 +198,44 @@ class pgConnector:
         queryDict = {
             'cableChannelChannelDataUpdate':{
                 'tableExtantion':'_cable_channels_channels',
-                'fileType':'csv'
+                'fileType':'csv',
+                'fileLink':'archive'
             },
             'cableChannelPitsDataUpdate':{
                 'tableExtantion': None,
-                'fileType':None
+                'fileType':None,
+                'fileLink':None
+            },
+            'ctvTopologyLoad':{
+                'tableExtantion':'_ctv_topology',
+                'fileType':'csv',
+                'fileLink':'cubic'
+            },
+            'ctvTopologyUpdate':{
+                'tableExtantion':'_ctv_topology',
+                'fileType':'csv',
+                'fileLink':'cubic'
+            },
+            'ethernetTopologyLoad':{
+                'tableExtantion':'_switches',
+                'fileType':'csv',
+                'fileLink':'cubic'
+            },
+            'etherTopologyUpdate':{
+                'tableExtantion':'_switches',
+                'fileType':'csv',
+                'fileLink':'cubic'
             }
+
         }
+        #----adding link to file if needed---------
         for k, v in queryDict.iteritems():
-            if queryDict[k]['fileType'] != None :
-                queryDict[k]['linkStorage'] = '/var/www/QGIS-Web-Client-master/site/'+queryDict[k]['fileType']+'/archive/'+city+'/'+city + queryDict[k]['tableExtantion'] + '.' + queryDict[k]['fileType']
+            if queryDict[k]['fileLink'] == 'archive' :
+                queryDict[k]['linkStorage'] = '/var/www/QGIS-Web-Client-master/site/'+queryDict[k]['fileType']+'/'+queryDict[k]['fileLink']+'/'+city+'/'+city + queryDict[k]['tableExtantion'] + '.' + queryDict[k]['fileType']
+            elif queryDict[k]['fileLink'] == 'cubic' :
+                queryDict[k]['linkStorage'] = '/var/www/QGIS-Web-Client-master/site/'+queryDict[k]['fileType']+'/'+queryDict[k]['fileLink']+'/'+queryDict[k]['tableExtantion']+'/'+city + queryDict[k]['tableExtantion'] + '.' + queryDict[k]['fileType']
+        #-----adding arrays of postgresql queries------
+        #---cable channels channels part---------------
         queryDict['cableChannelChannelDataUpdate']['queryList'] =  [
             "CREATE TEMP TABLE temp(id serial, pit_id_1 integer, pit_id_2 integer, distance varchar(100));select copy_for_testuser('temp( pit_id_1, pit_id_2, distance)', '"+queryDict['cableChannelChannelDataUpdate']['linkStorage'] +"', ';', 'windows-1251');INSERT INTO "+city+"."+city+"_cable_channels_channels( pit_id_1, pit_id_2, distance) SELECT pit_id_1, pit_id_2, distance FROM temp t WHERE not exists (SELECT 1 FROM "+city+"."+city+"_cable_channels_channels c where t.pit_id_1 = c.pit_id_1 and t.pit_id_2 = c.pit_id_2); ",
             "UPDATE "+city+"."+city+"_cable_channels_channels SET pit_1 = "+city+"_cable_channel_pits.pit_number, she_n_1 = "+city+"_cable_channel_pits.pit_district, microdistrict_1 = "+city+"_cable_channel_pits.microdistrict, pit_1_geom = "+city+"_cable_channel_pits.geom FROM "+city+"."+city+"_cable_channel_pits WHERE pit_id_1 = "+city+"_cable_channel_pits.pit_id ; UPDATE "+city+"."+city+"_cable_channels_channels SET pit_2 = "+city+"_cable_channel_pits.pit_number, she_n_2 = "+city+"_cable_channel_pits.pit_district, microdistrict_2 = "+city+"_cable_channel_pits.microdistrict, pit_2_geom = "+city+"_cable_channel_pits.geom FROM "+city+"."+city+"_cable_channel_pits WHERE pit_id_2 = "+city+"_cable_channel_pits.pit_id; UPDATE "+city+"."+city+"_cable_channels_channels SET channel_geom = ST_MakeLine(pit_1_geom, pit_2_geom) WHERE pit_1_geom IS NOT NULL AND pit_2_geom IS NOT NULL;",
@@ -213,29 +244,53 @@ class pgConnector:
         ]
         queryDict['cableChannelPitsDataUpdate']['queryList'] = [
             "UPDATE "+city+"."+city+"_cable_channel_pits SET microdistrict ="+city+"_microdistricts.micro_district FROM "+city+"."+city+"_microdistricts WHERE ST_Contains("+city+"."+city+"_microdistricts.coverage_geom, "+city+"."+city+"_cable_channel_pits.geom) ;UPDATE "+city+"."+city+"_cable_channel_pits SET district ="+city+"_microdistricts.district FROM "+city+"."+city+"_microdistricts WHERE ST_Contains("+city+"."+city+"_microdistricts.coverage_geom, "+city+"."+city+"_cable_channel_pits.geom) ;UPDATE "+city+"."+city+"_cable_channel_pits SET pit_district ="+city+"_coverage.notes FROM "+city+"."+city+"_coverage WHERE ST_Contains("+city+"."+city+"_coverage.geom_area, "+city+"."+city+"_cable_channel_pits.geom) and "+city+"."+city+"_coverage.geom_area is not null;"
-        ]      
+        ]
+        #-----ctv topology part-----------------------
+        queryDict['ctvTopologyLoad']['queryList'] = [
+            "CREATE TEMP TABLE temp( id serial, CITY character varying(100),STREET character varying(100),HOUSE character varying(100),FLAT character varying(100),CODE character varying(100),NAME character varying(100),PGS_ADDR character varying(100),OU_OP_ADDR character varying(100),DATE_REG character varying(100),COMENT character varying(100),UNAME character varying(100),NET_TYPE character varying(100),OU_CODE character varying(100),HOUSE_ID character varying(100), REPORT_DATE character varying(100)); select copy_for_testuser('temp(CITY, STREET, HOUSE ,FLAT ,CODE ,NAME ,PGS_ADDR ,OU_OP_ADDR ,DATE_REG ,COMENT ,UNAME ,NET_TYPE ,OU_CODE ,HOUSE_ID, REPORT_DATE )', '"+queryDict['ctvTopologyLoad']['linkStorage'] +"', ',', 'utf-8') ; UPDATE "+city+"."+city+"_ctv_topology SET cubic_city = temp.CITY, cubic_street = temp.STREET, cubic_house = temp.HOUSE, cubic_flat = temp.FLAT, cubic_code = temp.CODE, cubic_name = temp.NAME, cubic_pgs_addr = temp.PGS_ADDR, cubic_ou_op_addr = temp.OU_OP_ADDR, cubic_ou_code = temp.OU_CODE, cubic_date_reg = temp.DATE_REG, cubic_coment = temp.COMENT, cubic_uname = temp.UNAME, cubic_net_type = temp.NET_TYPE, cubic_house_id = temp.HOUSE_ID FROM  temp WHERE "+city+"."+city+"_ctv_topology.cubic_code = temp.CODE; INSERT INTO "+city+"."+city+"_ctv_topology(cubic_city, cubic_street, cubic_house, cubic_flat, cubic_code, cubic_name, cubic_pgs_addr, cubic_ou_op_addr, cubic_ou_code, cubic_date_reg, cubic_coment, cubic_uname, cubic_net_type, cubic_house_id) SELECT CITY,STREET,HOUSE,FLAT,CODE,NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID FROM temp WHERE CODE NOT IN(SELECT cubic_code FROM "+city+"."+city+"_ctv_topology WHERE cubic_code IS NOT NULL);"
+        ]
+        queryDict['ctvTopologyUpdate']['queryList'] = [
+            "CREATE TEMP TABLE temp( id serial, CITY character varying(100),STREET character varying(100),HOUSE character varying(100),FLAT character varying(100),CODE character varying(100),NAME character varying(100),PGS_ADDR character varying(100),OU_OP_ADDR character varying(100),DATE_REG character varying(100),COMENT character varying(100),UNAME character varying(100),NET_TYPE character varying(100),OU_CODE character varying(100),HOUSE_ID character varying(100), REPORT_DATE character varying(100)); select copy_for_testuser('temp( CITY, STREET, HOUSE ,FLAT ,CODE ,NAME ,PGS_ADDR ,OU_OP_ADDR ,DATE_REG ,COMENT ,UNAME ,NET_TYPE ,OU_CODE ,HOUSE_ID, REPORT_DATE )', '"+queryDict['ctvTopologyUpdate']['linkStorage'] +"', ',', 'utf-8') ; DELETE FROM "+city+"."+city+"_ctv_topology WHERE cubic_code NOT IN(SELECT DISTINCT CODE FROM temp) ;UPDATE "+city+"."+city+"_ctv_topology SET cubic_city = temp.CITY, cubic_street = temp.STREET, cubic_house = temp.HOUSE, cubic_flat = temp.FLAT, cubic_code = temp.CODE, cubic_name = temp.NAME, cubic_pgs_addr = temp.PGS_ADDR, cubic_ou_op_addr = temp.OU_OP_ADDR, cubic_ou_code = temp.OU_CODE, cubic_date_reg = temp.DATE_REG, cubic_coment = temp.COMENT, cubic_uname = temp.UNAME, cubic_net_type = temp.NET_TYPE, cubic_house_id = temp.HOUSE_ID FROM  temp WHERE " +city+"."+city+"_ctv_topology.cubic_code = temp.CODE; SELECT CITY,STREET,HOUSE,FLAT,CODE,NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID FROM temp WHERE CODE NOT IN(SELECT cubic_code FROM "+city+"."+city+"_ctv_topology WHERE cubic_code IS NOT NULL);",
+            "UPDATE "+city+"."+city+"_ctv_topology SET equipment_geom = CASE WHEN cubic_name LIKE '"+'%Магистральный распределительный узел%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_firstpoint WHEN cubic_name LIKE '"+'%Магістральний оптичний вузол%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_thirdpoint WHEN cubic_name LIKE '"+'%Оптический узел%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_fourthpoint WHEN cubic_name LIKE '"+'%Оптичний приймач%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_firstpoint WHEN cubic_name LIKE '"+'%Передатчик оптический%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_secondpoint WHEN cubic_name LIKE '"+'%Порт ОК%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_secondpoint WHEN cubic_name LIKE '"+'%Домовой узел%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_thirdpoint WHEN cubic_name LIKE '"+'%Ответвитель магистральный%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_fourthpoint WHEN cubic_name LIKE '"+'%Распределительный стояк%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_secondpoint WHEN cubic_name LIKE '"+'%Магистральный узел%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_secondpoint WHEN cubic_name LIKE '"+'%Субмагистральный узел%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_thirdpoint WHEN cubic_name LIKE '"+'%Кросс-муфта%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_fourthpoint END FROM  "+city+"."+city+"_buildings WHERE "+city+"."+city+"_ctv_topology.equipment_geom IS NULL AND "+city+"."+city+"_ctv_topology.cubic_house_id = "+city+"."+city+"_buildings.cubic_house_id;",
+            "CREATE TEMP TABLE tmp AS SELECT cubic_code, equipment_geom, cubic_name, cubic_street, cubic_house FROM "+city+"."+city+"_ctv_topology where cubic_code IN (SELECT cubic_ou_code FROM "+city+"."+city+"_ctv_topology WHERE cubic_ou_code IS NOT NULL); UPDATE "+city+"."+city+"_ctv_topology SET mother_equipment_geom = tmp.equipment_geom,  cubic_ou_name = tmp.cubic_name, cubic_ou_street = tmp.cubic_street, cubic_ou_house = tmp.cubic_house FROM tmp WHERE "+city+"_ctv_topology.cubic_ou_code = tmp.cubic_code; DROP TABLE tmp;  UPDATE "+city+"."+city+"_ctv_topology SET topology_line_geom = ST_MakeLine(mother_equipment_geom, equipment_geom) WHERE "+city+"_ctv_topology.mother_equipment_geom IS NOT null AND "+city+"_ctv_topology.equipment_geom IS NOT NULL;",
+            "CREATE TEMP TABLE tmp AS SELECT cubic_name, cubic_street, cubic_house, cubic_code FROM "+city+"."+city+"_ctv_topology WHERE cubic_code IN (SELECT DISTINCT cubic_ou_code FROM "+city+"."+city+"_ctv_topology WHERE cubic_ou_code IS NOT NULL) ;UPDATE  "+city+"."+city+"_ctv_topology SET cubic_ou_name = tmp.cubic_name, cubic_ou_street = tmp.cubic_name, cubic_ou_house = tmp.cubic_name FROM tmp WHERE "+city+"."+city+"_ctv_topology.cubic_ou_code = tmp.cubic_code; DROP TABLE tmp;",
+            "UPDATE "+city+"."+city+"_ctv_topology SET archive_link = CASE  WHEN cubic_name like '"+'%Магистральный распределительный узел%'.decode('utf-8')+"' THEN 'http://10.112.129.170/qgis-ck/tmp/archive/"+city+"/topology/mdod/'||cubic_code||'/' WHEN cubic_name like '"+'%Оптический узел%'.decode('utf-8')+"' THEN 'http://10.112.129.170/qgis-ck/tmp/archive/"+city+"/topology/nod/'||cubic_code||'/' WHEN cubic_name like '"+'%Оптичний приймач%'.decode('utf-8')+"' THEN 'http://10.112.129.170/qgis-ck/tmp/archive/"+city+"/topology/op/'||cubic_code||'/' WHEN cubic_name like '"+'%Передатчик оптический%'.decode('utf-8')+"' THEN 'http://10.112.129.170/qgis-ck/tmp/archive/"+city+"/topology/ot/'||cubic_code||'/' WHEN cubic_name like '"'%Кросс-муфта%'.decode('utf-8')+"' THEN 'http://10.112.129.170/qgis-ck/tmp/archive/"+city+"/topology/cc/'||cubic_code||'/' END ;",
+            "UPDATE "+city+"."+city+"_ctv_topology SET microdistrict ="+city+"_microdistricts.micro_district FROM "+city+"."+city+"_microdistricts WHERE ST_Contains("+city+"_microdistricts.coverage_geom, "+city+"_ctv_topology.equipment_geom) ;UPDATE "+city+"."+city+"_ctv_topology SET district ="+city+"_microdistricts.district FROM "+city+"."+city+"_microdistricts WHERE ST_Contains("+city+"_microdistricts.coverage_geom, "+city+"_ctv_topology.equipment_geom) ;UPDATE "+city+"."+city+"_ctv_topology SET she_num ="+city+"_coverage.coverage_zone FROM "+city+"."+city+"_coverage WHERE ST_Contains("+city+"_coverage.geom_area, "+city+"_ctv_topology.equipment_geom) and "+city+"."+city+"_coverage.geom_area is not null ;"
+        ]
+        #------ethernet topology part-----------------
+        queryDict['ethernetTopologyLoad']['queryList'] = [
+            ""
+        ]
+        queryDict['etherTopologyUpdate']['queryList'] = [
+            ""
+        ]
         #-----------------------------------
 
         conn = psycopg2.connect("dbname='postgres' host=10.112.129.170 port=5432 user='simpleuser' password='simplepassword'")
         cur = conn.cursor()
-
+        #--- postgres query sender part--------------
         for query in queryDict[button]['queryList']:
             cur.execute(query)
-            conn.commit() 
-
+            conn.commit()
+            if cur.description!= None:
+                result = cur.fetchall()
+                self.dlg.listWidget.clear()
+                for row in result:
+                    self.dlg.listWidget.addItem('--'.join(items if items !=None else '////' for items in row))
+        #-----------------------------------------------
         self.dlg.lineEdit.setText(''.join(queryDict[button]['queryList']))
         
 
         self.dlg.label.setText(button)
 
-        if cur.description!= None:
-            result = cur.fetchall()
-            self.dlg.listWidget.clear()
-            for row in result:
-                self.dlg.listWidget.addItem('--'.join(''.join(items) for items in row))
-        else:
-            cur.close()
-            self.dlg.listWidget.addItem('None')
+        # if cur.description!= None:
+        #     result = cur.fetchall()
+        #     self.dlg.listWidget.clear()
+        #     for row in result:
+        #         self.dlg.listWidget.addItem('--'.join(''.join(items) for items in row))
+        # else:
+        #     cur.close()
+        #     self.dlg.listWidget.addItem('None')
 
     def run(self):
         """Run method that performs all the real work"""

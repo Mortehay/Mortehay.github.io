@@ -5,12 +5,13 @@ $server_address = $_SERVER['SERVER_ADDR'];
 if ($_POST['ctv_city_eng']) {$selectedCity= $_POST['ctv_city_eng'];} else {$selectedCity = $_REQUEST['ctv_city_eng'];}
 if ($_POST['she']) {$selectedShe= $_POST['she'];} else {$selectedShe = $_REQUEST["she"];} 
 if($selectedShe == 'виберіть ПГС') 
-  {$deleteNotselectedShe =''; $selectedShe = ''; $selectedSheWhere = '';} 
+  {$deleteNotselectedShe =''; $selectedShe = ''; $selectedSheWhere = ''; $pgsAdr='';} 
 else {
-  $deleteNotselectedShe= "DELETE FROM tmp  WHERE PGS_ADDR <> '".$selectedShe."'; ";
-  $selectedShe = " AND cubic_pgs_addr  ='".$selectedShe."'  ";
+  $deleteNotselectedShe= "DELETE FROM temp  WHERE PGS_ADDR <> '".$selectedShe."'; ";
   $selectedSheWhere = " Where cubic_pgs_addr  ='".$selectedShe."'  ";
-  $PGS_ADDR = " AND PGS_ADDR  ='".$selectedShe."'  "; 
+  $pgsAdr = " AND PGS_ADDR  ='$selectedShe'"; 
+  $selectedShe = " AND cubic_pgs_addr  ='".$selectedShe."'  ";
+  
 }  
   $promeLink = "/var/www/QGIS-Web-Client-master/site/csv/archive/";
   $secondaryLink = "/var/www/QGIS-Web-Client-master/site/csv/cubic/";
@@ -40,7 +41,7 @@ if ($files) {
     if ($str_file !== '.' && $str_file !== '..') {
       //print_r($str_file);
       if ($str_file == $selectedCity.$tableType.$fileExtention) {
-        $query = "CREATE TEMP TABLE temp( ".$queryModificator['var'].");".$deleteNotselectedShe." select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ; DELETE FROM ".$selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code NOT IN(SELECT DISTINCT CODE FROM temp) ;UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET cubic_city = temp.CITY, cubic_street = temp.STREET, cubic_house = temp.HOUSE, cubic_flat = temp.FLAT, cubic_code = temp.CODE, cubic_name = temp.NAME, cubic_pgs_addr = temp.PGS_ADDR, cubic_ou_op_addr = temp.OU_OP_ADDR, cubic_ou_code = temp.OU_CODE, cubic_date_reg = temp.DATE_REG, cubic_coment = temp.COMENT, cubic_uname = temp.UNAME, cubic_net_type = temp.NET_TYPE, cubic_house_id = temp.HOUSE_ID FROM  temp WHERE " . $selectedCity.".".$selectedCity."_ctv_topology.cubic_code = temp.CODE; SELECT CITY,STREET,HOUSE,FLAT,CODE,NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID FROM temp WHERE CODE NOT IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL)".$PGS_ADDR.";";
+        $query = "CREATE TEMP TABLE temp( ".$queryModificator['var'].");".$deleteNotselectedShe." select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ; DELETE FROM ".$selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code NOT IN(SELECT DISTINCT CODE FROM temp) ;UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET cubic_city = temp.CITY, cubic_street = temp.STREET, cubic_house = temp.HOUSE, cubic_flat = temp.FLAT, cubic_code = temp.CODE, cubic_name = temp.NAME, cubic_pgs_addr = temp.PGS_ADDR, cubic_ou_op_addr = temp.OU_OP_ADDR, cubic_ou_code = temp.OU_CODE, cubic_date_reg = temp.DATE_REG, cubic_coment = temp.COMENT, cubic_uname = temp.UNAME, cubic_net_type = temp.NET_TYPE, cubic_house_id = temp.HOUSE_ID FROM  temp WHERE " . $selectedCity.".".$selectedCity."_ctv_topology.cubic_code = temp.CODE; SELECT CITY,STREET,HOUSE,FLAT,CODE,NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID FROM temp WHERE CODE NOT IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL) ".$pgsAdr.";";
         $queryArrayKeys = array('CITY','STREET','HOUSE','FLAT','CODE','NAME','PGS_ADDR','OU_OP_ADDR','OU_CODE','DATE_REG','COMENT','UNAME','NET_TYPE','HOUSE_ID');
         //echo $query;
        $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
