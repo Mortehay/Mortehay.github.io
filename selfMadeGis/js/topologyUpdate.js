@@ -577,7 +577,7 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		               				row +='<td class="dataCell">'+'<button id="'+rowData['cubic_code']+'" class="wiringShow" data-link="'+rowData[key]+'">схема зварювань</button>'+'</td>';
 		               			}	
 		               		} else if(String(rowData[key]).includes('http://')){
-		               			row +='<td class="dataCell">'+'<a href="'+rowData[key]+'">посилання на архів</a>'+'</td>';
+		               			row +='<td class="dataCell">'+'<a target="_blank" href="'+rowData[key]+'">посилання на архів</a>'+'</td>';
 		               		} else {
 		               			row +='<td class="dataCell" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</td>';	
 		               		}
