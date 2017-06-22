@@ -129,7 +129,7 @@ $tables[18] = 'CREATE TABLE IF NOT EXISTS '.$selectedCity.'.'.$selectedCity.'_mi
 $index_id[18] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_microdistricts'".","."'id'".","."'".$selectedCity."_microdistricts_id'".", 'btree');";
 $index_geom[18] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_microdistricts'".","."'coverage_geom'".","."'".$selectedCity."_microdistricts_gist'".", 'gist');"; 
 //-----------------create  microdistrict coverage------------------------------------------------------------------
-$tables[19] = 'CREATE TABLE IF NOT EXISTS '.$selectedCity.'.'.$selectedCity.'_cable_channels_channels(id serial,pit_1 character varying(100),rm_1 character varying(100),she_1 character varying(100),entry_comment_1 character varying(100),cubic_house_id_1 character varying(100),microdistrict_1 character varying(100),temp_1 character varying(100),pit_2 character varying(100),rm_2 character varying(100),she_2 character varying(100),entry_comment_2 character varying(100),cubic_house_id_2 character varying(100),microdistrict_2 character varying(100),temp_2 character varying(100),distance character varying(100),pit_1_geom geometry,pit_2_geom geometry,channel_geom geometry, pit_id_1 integer, pi_id_2 integer);';
+$tables[19] = 'CREATE TABLE IF NOT EXISTS '.$selectedCity.'.'.$selectedCity.'_cable_channels_channels(id serial,pit_1 character varying(100),rm_1 character varying(100),she_1 character varying(100),entry_comment_1 character varying(100),cubic_house_id_1 character varying(100),microdistrict_1 character varying(100),temp_1 character varying(100),pit_2 character varying(100),rm_2 character varying(100),she_2 character varying(100),entry_comment_2 character varying(100),cubic_house_id_2 character varying(100),microdistrict_2 character varying(100),temp_2 character varying(100),distance character varying(100),pit_1_geom geometry,pit_2_geom geometry,channel_geom geometry, pit_id_1 integer, pi_id_2 integer, channel_id serial, she_n_1 varchar(100), she_n_2 varchar(100));';
 //-----------------------------------------------------------------------------------------------------------------------------
 $index_id[19] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_channels_channels'".","."'id'".","."'".$selectedCity."_cable_channels_channels_id'".", 'btree');";
 $index_geom[19] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_channels_channels'".","."'pit_1_geom'".","."'".$selectedCity."_pit_1_geom_gist'".", 'gist');"."SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_channels_channels'".","."'pit_2_geom'".","."'".$selectedCity."_pit_2_geom_gist'".", 'gist');"."SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_channels_channels'".","."'channel_geom'".","."'".$selectedCity."_channel_geom_gist'".", 'gist');"; 
@@ -159,6 +159,7 @@ $tables_query = '';
 $function_query = '';
 $iterateed_sequence_query = '';
 for ($i=0; $i < $length; $i++) { 
+	
   $tables_query .=$tables[$i].' '.$index_id[$i].' '.$index_geom[$i];
 }
 for ($k=0; $k < $function_count; $k++) { 
