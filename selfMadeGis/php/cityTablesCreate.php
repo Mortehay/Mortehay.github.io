@@ -64,7 +64,7 @@ $tables[7] = 'CREATE TABLE IF NOT EXISTS '.$selectedCity.'.'.$selectedCity.'_cab
  $index_geom[7] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_channels'".","."'geom_cable'".","."'".$selectedCity."_cable_channels_gist'".", 'gist');";
 //-----------------------------------------------------------------------------------------------------------------------------
 //-----------------create  city coverage table----------------------------------------------------------------------
-$tables[8] = 'CREATE TABLE IF NOT EXISTS '.$selectedCity.'.'.$selectedCity.'_coverage(id serial,coverage_zone character varying(100),coverage_description character varying(100),geom_point geometry,geom_area geometry,cubic_house_id character varying(100),notes character varying(200));';
+$tables[8] = 'CREATE TABLE IF NOT EXISTS '.$selectedCity.'.'.$selectedCity.'_coverage(id serial,coverage_zone character varying(100),coverage_description character varying(100),geom_point geometry,geom_area geometry,cubic_house_id character varying(100),notes character varying(200), cubic_cnt varchar(100), cubic_cnt_docsis varchar(100), cubic_cnt_ktv varchar(100), cubic_cnt_atv varchar(100), cubic_cnt_active_contr varchar(100), cubic_cnt_vbb varchar(100),  cubic_cnt_eth varchar(100));';
 //-----------------------------------------------------------------------------------------------------------------------------
  $index_id[8] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_coverage'".","."'id'".","."'".$selectedCity."_coverage_id'".", 'btree');";
  $index_geom[8] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_coverage'".","."'geom_area'".","."'".$selectedCity."_coverage_gist'".", 'gist');";
