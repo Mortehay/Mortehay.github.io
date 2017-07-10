@@ -2,10 +2,14 @@
 # -*- coding: cp1251 -*-
 import psycopg2
 import sys
+import os
+import csv   
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-
-city = 'ukrainka'
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+city = 'khmelnitsky'
 button ='ctvTopologyUpdate'
 #-----------------------------------
 queryDict = {
@@ -94,13 +98,11 @@ data ={}
 for query in queryDict[button]['queryList']:
     cur.execute(query)
     conn.commit()
-
     if cur.description!= None:
         result = cur.fetchall()
         col_names = [desc[0] for desc in cur.description]
         print col_names
         #self.dlg.listWidget.addItem('-query---'+query+'---query-')
-
         for row in result:
            col_array.append(row)
            print '--'.join(items if items !=None else '////' for items in row)
@@ -118,7 +120,23 @@ class MyTable(QTableWidget):
         self.setmydata()
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
-
+    def save_table(self):
+        path=QFileDialog.getSaveFileName(self,'Save csv', os.getenv('HOME'),'CSV(*.csv)')
+        if path[:-4]!=".csv":
+            path+=".csv"
+        with open(path, 'w') as csvfile:
+            writer = csv.writer(csvfile, delimiter=' ',quotechar=' ', quoting=csv.QUOTE_MINIMAL)
+            names=[]
+            for i in col_names:
+                names.append(i+";")
+            writer.writerow(names)
+            for row in range(self.rowCount()):
+                row_data=[]
+                for column in range(self.columnCount()):
+                    item=self.item(row,column)
+                    if item.text()!="":
+                        row_data.append(item.text()+";")   
+                writer.writerow(row_data)
     def setmydata(self):
         row_i = 0
         for row in col_array:
@@ -129,17 +147,19 @@ class MyTable(QTableWidget):
                 item_i +=1
             row_i +=1
         self.setHorizontalHeaderLabels(col_names)
-
+    
 
 def showdialogwindow():
-   d = QDialog()
-   d.setWindowTitle("Information")
-   d.setWindowModality(Qt.ApplicationModal)
-   table = MyTable(col_names,col_array, len(col_array), len(col_names))
-   d.layout = QGridLayout(d)
-   d.layout.addWidget(table,0,0,5,10)
-   d.exec_()
+    d = QDialog()
+    csvButton = QPushButton("Save in csv file",d) 
+    
+    d.setWindowTitle("Information")
+    d.setWindowModality(Qt.ApplicationModal)
+    table = MyTable(col_names,col_array, len(col_array), len(col_names))
+    csvButton.clicked.connect(table.save_table)
+    d.layout = QVBoxLayout(d)
+    d.layout.addWidget(table)
+    d.layout.addWidget(csvButton)
+    d.exec_()
+showdialogwindow()
 
-
-table = MyTable(col_names,col_array, len(col_array), len(col_names))
-table.show()

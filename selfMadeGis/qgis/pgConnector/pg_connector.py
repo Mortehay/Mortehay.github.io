@@ -33,23 +33,49 @@ import resources
 # Import the code for the dialog
 from pg_connector_dialog import pgConnectorDialog
 import os.path
+import csv
 import psycopg2
 import operator
 from qgis.core import QgsProject, QgsMapLayerRegistry
 from qgis.gui import QgsMessageBar
 ##--------------------
 # table generator
-#data = {'col1':['1','2','3'], 'col2':['4','5','6'], 'col3':['7','8','9']}
 class MyTable(QTableWidget):
+    col_names = []
     def __init__(self, col_names,col_array, *args):
+        self.col_names=col_names
         QTableWidget.__init__(self, *args)
         self.setmydata(col_names,col_array)
-        self.setWindowModality(Qt.ApplicationModal)
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
-
+        
+    def save_table(self):
+        def replace_all(text, dic):
+            text = text.text()
+            text = text.encode('windows-1251') if text != None else ''
+            for i, j in dic.iteritems():
+                text = text.replace(i, j)
+            return text
+        path=QFileDialog.getSaveFileName(self,'Save csv', os.getenv('HOME'),'CSV(*.csv)')
+        path+=".csv"
+        with open(path, 'wb') as csvfile:
+            writer = csv.writer(csvfile, delimiter=' ',quotechar=' ', quoting=csv.QUOTE_MINIMAL)
+            names=[]
+            for i in self.col_names:
+                names.append(i+";")
+            writer.writerow(names)
+            reps = {'/':'\\', '-':'\\'}
+            for row in range(self.rowCount()):
+                row_data=[]
+                for column in range(self.columnCount()):
+                    item = replace_all(self.item(row,column),reps)
+                    #item = item.text()
+                    row_data.append(item+";")
+                #row_data.append(len(row_data))
+                if len(row_data) > 1: 
+                    writer.writerow(row_data)
+                
     def setmydata(self,col_names,col_array):
-
         row_i = 0
         for row in col_array:
             item_i = 0
@@ -59,9 +85,7 @@ class MyTable(QTableWidget):
                 item_i +=1
             row_i +=1
         self.setHorizontalHeaderLabels(col_names)
-
-
-
+    
 ##--------------------
 class pgConnector:
     """QGIS Plugin Implementation."""
@@ -103,12 +127,17 @@ class pgConnector:
         self.dlg.label.clear()
 
         #self.dlg.cc_pit_sign.clicked.connect(self.city_name)
+        # cable channel pits---------------------------------------------------------------------------
         self.dlg.cableChannelPitsDataUpdate.clicked.connect(lambda: self.postgres_query('cableChannelPitsDataUpdate'))
         self.dlg.cableChannelChannelDataUpdate.clicked.connect(lambda: self.postgres_query('cableChannelChannelDataUpdate'))
+        # ctv topology----------------------------------------------------------------------------
         self.dlg.ctvTopologyLoad.clicked.connect(lambda: self.postgres_query('ctvTopologyLoad'))
         self.dlg.ctvTopologyUpdate.clicked.connect(lambda: self.postgres_query('ctvTopologyUpdate'))
+        # ethernet topology---------------------------------------------------------------------------
         self.dlg.ethernetTopologyLoad.clicked.connect(lambda: self.postgres_query('ethernetTopologyLoad'))
         self.dlg.etherTopologyUpdate.clicked.connect(lambda: self.postgres_query('etherTopologyUpdate'))
+        # buildings -----------------------------------------------------------------------------
+        self.dlg.cityBuildingDataUpdate.clicked.connect(lambda: self.postgres_query('cityBuildingDataUpdate'))
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
@@ -262,6 +291,11 @@ class pgConnector:
                 'tableExtantion':'_switches',
                 'fileType':'csv',
                 'fileLink':'cubic'
+            },
+            'cityBuildingDataUpdate':{
+                'tableExtantion':'_buildings',
+                'fileType':'csv',
+                'fileLink':'cubic'
             }
 
         }
@@ -270,7 +304,7 @@ class pgConnector:
         with open(project.fileName()) as f:
             content = f.readlines()
         for line in content:
-            if "datasource" in line:
+            if ("datasource" in line) & ("host" in line) &("port" in line) & ("user" in line):
                 print line
                 list_properties = line.split(" ")
                 break
@@ -302,6 +336,16 @@ class pgConnector:
             elif queryDict[k]['fileLink'] == 'cubic' :
                 queryDict[k]['linkStorage'] = '/var/www/QGIS-Web-Client-master/site/'+queryDict[k]['fileType']+'/'+queryDict[k]['fileLink']+'/'+queryDict[k]['tableExtantion']+'/'+city + queryDict[k]['tableExtantion'] + '.' + queryDict[k]['fileType']
         #-----adding arrays of postgresql queries------
+        #----buildings part----------------------------
+        queryDict['cityBuildingDataUpdate']['queryList'] =[
+            "CREATE TEMP TABLE temp(id serial, CITY character varying(100),REGION character varying(100), DISTR_NEW character varying(100), STREET character varying(100),HOUSE character varying(100), COMM text,CSD character varying(100),HOUSE_TYPE character varying(100),USO character varying(100), LNAME character varying(100),LADRESS character varying(100), HPNAME character varying(100),HPADRESS character varying(100), HPCODE character varying(100), FREQ character varying(100),DATE_BUILDING character varying(100), DATE_BUILDING_ETH character varying(100),DATE_CT character varying(100),SEGMENT character varying(100), DIGITAL_SEGMENT character varying(100), DIGITAL_STAGE character varying(100),DIGITAL_DATE character varying(100),SUBDEP character varying(100), BOX_TYPE character varying(100),HOUSE_ID character varying(100), SECTOR_CNT character varying(100),CNT character varying(100), PARNET text, SERV_PARNET text, NETTYPE character varying(100), CNT_ATV character varying(100),CNT_VBB character varying(100), CNT_ETH character varying(100),CNT_DOCSIS character varying(100), CNT_KTV character varying(100), CNT_ACTIVE_CONTR character varying(100),MAX_SPEED_ETHERNET character varying(100), MAX_SPEED_DOCSIS character varying(100), REPORT_DATE character varying(100)); select copy_for_testuser('temp(CITY,REGION,DISTR_NEW,STREET,HOUSE,COMM,CSD, HOUSE_TYPE,USO,LNAME,LADRESS,HPNAME,HPADRESS , HPCODE, FREQ,DATE_BUILDING, DATE_BUILDING_ETH, DATE_CT, SEGMENT, DIGITAL_SEGMENT,DIGITAL_STAGE,DIGITAL_DATE,SUBDEP,BOX_TYPE,HOUSE_ID, SECTOR_CNT, CNT,PARNET, SERV_PARNET,NETTYPE, CNT_ATV, CNT_VBB, CNT_ETH, CNT_DOCSIS, CNT_KTV,CNT_ACTIVE_CONTR, MAX_SPEED_ETHERNET, MAX_SPEED_DOCSIS, REPORT_DATE)', '"+queryDict['cityBuildingDataUpdate']['linkStorage'] +"', ',', 'utf-8') ; UPDATE "+city+"."+city+"_buildings SET cubic_city = temp.CITY, cubic_region = temp.REGION, cubic_distr_new = temp.DISTR_NEW, cubic_street = temp.STREET, cubic_house = temp.HOUSE, cubic_subdep = temp.SUBDEP, cubic_uso = temp.USO, cubic_lname = temp.LNAME, cubic_ladress = temp.LADRESS, cubic_hpname = temp.HPNAME, cubic_hpadress = temp.HPADRESS, cubic_network_type = temp.NETTYPE, cubic_freq = temp.FREQ, cubic_house_type = temp.HOUSE_TYPE, cubic_csd = temp.CSD, cubic_cnt = temp.CNT, cubic_comm = temp.COMM, cubic_cnt_vbb = temp.CNT_VBB, cubic_cnt_eth = temp.CNT_ETH, cubic_cnt_docsis = temp.CNT_DOCSIS, cubic_cnt_ktv = temp.CNT_KTV, cubic_cnt_atv = temp.CNT_ATV, cubic_cnt_active_contr = temp.CNT_ACTIVE_CONTR, cubic_date_building = temp.DATE_BUILDING, cubic_date_building_eth = temp.DATE_BUILDING_ETH, cubic_date_ct = temp.DATE_CT, cubic_segment = temp.SEGMENT, cubic_digital_segment = temp.DIGITAL_SEGMENT, cubic_digital_stage = temp.DIGITAL_STAGE, cubic_digital_date = temp.DIGITAL_DATE, cubic_box_type = temp.BOX_TYPE, cubic_house_id = temp.HOUSE_ID, cubic_parnet = temp.PARNET, cubic_serv_parnet = temp.SERV_PARNET, cubic_sector_cnt = temp.SECTOR_CNT, cubic_hpcode = temp.HPCODE, cubic_max_speed_ethernet = temp.MAX_SPEED_ETHERNET, cubic_max_speed_docsis = temp.MAX_SPEED_DOCSIS FROM  temp WHERE "+city+"."+city+"_buildings.cubic_house_id = temp.HOUSE_ID; drop table temp;",
+            "UPDATE "+city+"."+city+"_buildings SET cubic_city = NULL, cubic_region = NULL, cubic_distr_new = NULL, cubic_street = NULL, cubic_house = NULL, cubic_subdep = NULL, cubic_uso = NULL, cubic_lname = NULL, cubic_ladress = NULL, cubic_hpname = NULL, cubic_hpadress = NULL, cubic_network_type =NULL, cubic_freq = NULL, cubic_house_type = NULL, cubic_csd = NULL, cubic_cnt = NULL, cubic_comm = NULL, cubic_cnt_vbb = NULL, cubic_cnt_eth = NULL, cubic_cnt_docsis = NULL, cubic_cnt_ktv = NULL, cubic_cnt_atv = NULL, cubic_cnt_active_contr = NULL, cubic_date_building = NULL, cubic_date_building_eth = NULL, cubic_date_ct = NULL, cubic_segment = NULL, cubic_digital_segment = NULL, cubic_digital_stage = NULL, cubic_digital_date = NULL, cubic_box_type = NULL, cubic_parnet = NULL, cubic_serv_parnet = NULL, cubic_sector_cnt = NULL, cubic_hpcode = NULL, cubic_max_speed_ethernet = NULL, cubic_max_speed_docsis = NULL  WHERE "+city+"."+city+"_buildings.cubic_house_id IS NULL;",
+            "UPDATE "+city+"."+city+"_buildings SET building_geom_firstpoint  = ST_SetSRID(ST_PointN(ST_LineMerge(ST_GeometryN (ST_Boundary(building_geom),1)),1), 32636) WHERE building_geom_firstpoint IS NULL ;  UPDATE "+city+"."+city+"_buildings SET building_geom_secondpoint  = ST_SetSRID(ST_PointN(ST_LineMerge(ST_GeometryN (ST_Boundary(building_geom),1)),2), 32636) WHERE building_geom_secondpoint IS NULL ; UPDATE "+city+"."+city+"_buildings SET building_geom_thirdpoint  = ST_SetSRID(ST_PointN(ST_LineMerge(ST_GeometryN (ST_Boundary(building_geom),1)),3), 32636) WHERE building_geom_thirdpoint IS NULL ; UPDATE "+city+"."+city+"_buildings SET building_geom_fourthpoint  = ST_SetSRID(ST_PointN(ST_LineMerge(ST_GeometryN (ST_Boundary(building_geom),1)),4), 32636) WHERE building_geom_fourthpoint IS NULL ;",
+            "CREATE TEMP TABLE temp AS SELECT cubic_lname, cubic_ladress,  array_agg(cubic_house_id) as  agg_cubic_house_id, st_astext(ST_ConvexHull(ST_union(ST_makevalid(building_geom)))) as beauty_geom, sum(cubic_cnt::integer) as cubic_cnt, sum(cubic_cnt_docsis::integer) as cubic_cnt_docsis, sum(cubic_cnt_ktv::integer) as cubic_cnt_ktv, sum(cubic_cnt_atv::integer) as cubic_cnt_atv, sum(cubic_cnt_vbb::integer) as cubic_cnt_vbb, sum(cubic_cnt_eth::integer) as cubic_cnt_eth, sum(cubic_cnt_active_contr::integer) as cubic_cnt_active_contr from (select distinct on (cubic_house_id) * from "+city+"."+city+"_buildings ) as city where cubic_lname not in('"+'не опр'.decode('utf-8')+"') group by cubic_lname, cubic_ladress order by cubic_cnt desc; DELETE FROM "+city+"."+city+"_nod_coverage;INSERT INTO "+city+"."+city+"_nod_coverage(cubic_lname, cubic_ladress, cubic_cnt, cubic_cnt_docsis, cubic_cnt_ktv, cubic_cnt_atv, cubic_cnt_vbb, cubic_cnt_eth, cubic_cnt_active_contr, beauty_geom) SELECT cubic_lname, cubic_ladress, cubic_cnt, cubic_cnt_docsis, cubic_cnt_ktv, cubic_cnt_atv, cubic_cnt_vbb, cubic_cnt_eth, cubic_cnt_active_contr, beauty_geom from temp;  drop table temp;",
+            "CREATE TEMP TABLE temp AS SELECT cubic_subdep,  array_agg(cubic_house_id) as  agg_cubic_house_id, st_astext(ST_ConvexHull(ST_union(ST_makevalid(building_geom)))) as beauty_geom, sum(cubic_cnt::integer) as cubic_cnt, sum(cubic_cnt_docsis::integer) as cubic_cnt_docsis, sum(cubic_cnt_ktv::integer) as cubic_cnt_ktv, sum(cubic_cnt_atv::integer) as cubic_cnt_atv, sum(cubic_cnt_vbb::integer) as cubic_cnt_vbb, sum(cubic_cnt_eth::integer) as cubic_cnt_eth, sum(cubic_cnt_active_contr::integer) as cubic_cnt_active_contr from (select distinct on (cubic_house_id) * from "+city+"."+city+"_buildings ) as city where cubic_subdep is not null group by cubic_subdep order by cubic_cnt desc; DELETE FROM "+city+"."+city+"_to_coverage;INSERT INTO "+city+"."+city+"_to_coverage(cubic_subdep, cubic_cnt, cubic_cnt_docsis, cubic_cnt_ktv, cubic_cnt_atv, cubic_cnt_vbb, cubic_cnt_eth, cubic_cnt_active_contr, beauty_geom) SELECT cubic_subdep, cubic_cnt, cubic_cnt_docsis, cubic_cnt_ktv, cubic_cnt_atv, cubic_cnt_vbb, cubic_cnt_eth, cubic_cnt_active_contr, beauty_geom from temp;  drop table temp;",
+            "CREATE TEMP TABLE temp AS SELECT cubic_uso,  array_agg(cubic_house_id) as  agg_cubic_house_id, st_astext(ST_ConvexHull(ST_union(ST_makevalid(building_geom)))) as beauty_geom, sum(cubic_cnt::integer) as cubic_cnt, sum(cubic_cnt_docsis::integer) as cubic_cnt_docsis, sum(cubic_cnt_ktv::integer) as cubic_cnt_ktv, sum(cubic_cnt_atv::integer) as cubic_cnt_atv, sum(cubic_cnt_vbb::integer) as cubic_cnt_vbb, sum(cubic_cnt_eth::integer) as cubic_cnt_eth, sum(cubic_cnt_active_contr::integer) as cubic_cnt_active_contr from (select distinct on (cubic_house_id) * from "+city+"."+city+"_buildings ) as city where cubic_uso is not null group by cubic_uso order by cubic_cnt desc; DELETE FROM "+city+"."+city+"_uso_coverage;INSERT INTO "+city+"."+city+"_uso_coverage(cubic_uso, cubic_cnt, cubic_cnt_docsis, cubic_cnt_ktv, cubic_cnt_atv, cubic_cnt_vbb, cubic_cnt_eth, cubic_cnt_active_contr, beauty_geom) SELECT cubic_uso, cubic_cnt, cubic_cnt_docsis, cubic_cnt_ktv, cubic_cnt_atv, cubic_cnt_vbb, cubic_cnt_eth, cubic_cnt_active_contr, beauty_geom from temp; drop table temp;",
+            "CREATE TEMP TABLE temp(id serial, CITY character varying(100),REGION character varying(100), DISTR_NEW character varying(100), STREET character varying(100),HOUSE character varying(100), COMM text,CSD character varying(100),HOUSE_TYPE character varying(100),USO character varying(100), LNAME character varying(100),LADRESS character varying(100), HPNAME character varying(100),HPADRESS character varying(100), HPCODE character varying(100), FREQ character varying(100),DATE_BUILDING character varying(100), DATE_BUILDING_ETH character varying(100),DATE_CT character varying(100),SEGMENT character varying(100), DIGITAL_SEGMENT character varying(100), DIGITAL_STAGE character varying(100),DIGITAL_DATE character varying(100),SUBDEP character varying(100), BOX_TYPE character varying(100),HOUSE_ID character varying(100), SECTOR_CNT character varying(100),CNT character varying(100), PARNET text, SERV_PARNET text, NETTYPE character varying(100), CNT_ATV character varying(100),CNT_VBB character varying(100), CNT_ETH character varying(100),CNT_DOCSIS character varying(100), CNT_KTV character varying(100), CNT_ACTIVE_CONTR character varying(100),MAX_SPEED_ETHERNET character varying(100), MAX_SPEED_DOCSIS character varying(100), REPORT_DATE character varying(100)); select copy_for_testuser('temp(CITY,REGION,DISTR_NEW,STREET,HOUSE,COMM,CSD, HOUSE_TYPE,USO,LNAME,LADRESS,HPNAME,HPADRESS , HPCODE, FREQ,DATE_BUILDING, DATE_BUILDING_ETH, DATE_CT, SEGMENT, DIGITAL_SEGMENT,DIGITAL_STAGE,DIGITAL_DATE,SUBDEP,BOX_TYPE,HOUSE_ID, SECTOR_CNT, CNT,PARNET, SERV_PARNET,NETTYPE, CNT_ATV, CNT_VBB, CNT_ETH, CNT_DOCSIS, CNT_KTV,CNT_ACTIVE_CONTR, MAX_SPEED_ETHERNET, MAX_SPEED_DOCSIS, REPORT_DATE)', '"+queryDict['cityBuildingDataUpdate']['linkStorage'] +"', ',', 'utf-8') ; SELECT CITY, STREET, HOUSE, HOUSE_ID, CNT FROM temp WHERE HOUSE_ID  NOT IN(SELECT cubic_house_id FROM "+city+"."+city+"_buildings WHERE cubic_house_id IS NOT NULL) IS TRUE AND NETTYPE NOT IN('"+'Off_net SMART HD'.decode('utf-8')+"', '"+'Не подключен'.decode('utf-8')+"', '"+'Off_net SMART HD, 0к, РБ'.decode('utf-8')+"') ORDER BY CNT DESC;"
+        ]
         #---cable channels channels part---------------
         queryDict['cableChannelChannelDataUpdate']['queryList'] =  [
             "CREATE TEMP TABLE temp(id serial, pit_id_1 integer, pit_id_2 integer, distance varchar(100));select copy_for_testuser('temp( pit_id_1, pit_id_2, distance)', '"+queryDict['cableChannelChannelDataUpdate']['linkStorage'] +"', ';', 'windows-1251');INSERT INTO "+city+"."+city+"_cable_channels_channels( pit_id_1, pit_id_2, distance) SELECT pit_id_1, pit_id_2, distance FROM temp t WHERE not exists (SELECT 1 FROM "+city+"."+city+"_cable_channels_channels c where t.pit_id_1 = c.pit_id_1 and t.pit_id_2 = c.pit_id_2); ",
@@ -317,7 +361,12 @@ class pgConnector:
             "CREATE TEMP TABLE temp( id serial, CITY character varying(100),STREET character varying(100),HOUSE character varying(100),FLAT character varying(100),CODE character varying(100),NAME character varying(100),PGS_ADDR character varying(100),OU_OP_ADDR character varying(100),DATE_REG character varying(100),COMENT character varying(100),UNAME character varying(100),NET_TYPE character varying(100),OU_CODE character varying(100),HOUSE_ID character varying(100), REPORT_DATE character varying(100)); select copy_for_testuser('temp(CITY, STREET, HOUSE ,FLAT ,CODE ,NAME ,PGS_ADDR ,OU_OP_ADDR ,DATE_REG ,COMENT ,UNAME ,NET_TYPE ,OU_CODE ,HOUSE_ID, REPORT_DATE )', '"+queryDict['ctvTopologyLoad']['linkStorage'] +"', ',', 'utf-8') ;  INSERT INTO "+city+"."+city+"_ctv_topology(cubic_city, cubic_street, cubic_house, cubic_flat, cubic_code, cubic_name, cubic_pgs_addr, cubic_ou_op_addr, cubic_ou_code, cubic_date_reg, cubic_coment, cubic_uname, cubic_net_type, cubic_house_id) SELECT CITY,STREET,HOUSE,FLAT,CODE,NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID FROM temp WHERE CODE NOT IN(SELECT cubic_code FROM "+city+"."+city+"_ctv_topology WHERE cubic_code IS NOT NULL);CREATE TEMP TABLE alien_cubic_code AS SELECT DISTINCT CODE FROM temp WHERE CODE IS NOT NULL ; DELETE FROM "+city+"."+city+"_ctv_topology WHERE cubic_code NOT IN(SELECT CODE FROM alien_cubic_code) ;"
         ]
         queryDict['ctvTopologyUpdate']['queryList'] = [
-            "CREATE TEMP TABLE temp( id serial, CITY character varying(100),STREET character varying(100),HOUSE character varying(100),FLAT character varying(100),CODE character varying(100),NAME character varying(100),PGS_ADDR character varying(100),OU_OP_ADDR character varying(100),DATE_REG character varying(100),COMENT character varying(100),UNAME character varying(100),NET_TYPE character varying(100),OU_CODE character varying(100),HOUSE_ID character varying(100), REPORT_DATE character varying(100)); select copy_for_testuser('temp( CITY, STREET, HOUSE ,FLAT ,CODE ,NAME ,PGS_ADDR ,OU_OP_ADDR ,DATE_REG ,COMENT ,UNAME ,NET_TYPE ,OU_CODE ,HOUSE_ID, REPORT_DATE )', '"+queryDict['ctvTopologyUpdate']['linkStorage'] +"', ',', 'utf-8') ; UPDATE "+city+"."+city+"_ctv_topology SET cubic_city = temp.CITY, cubic_street = temp.STREET, cubic_house = temp.HOUSE, cubic_flat = temp.FLAT, cubic_code = temp.CODE, cubic_name = temp.NAME, cubic_pgs_addr = temp.PGS_ADDR, cubic_ou_op_addr = temp.OU_OP_ADDR, cubic_ou_code = temp.OU_CODE, cubic_date_reg = temp.DATE_REG, cubic_coment = temp.COMENT, cubic_uname = temp.UNAME, cubic_net_type = temp.NET_TYPE, cubic_house_id = temp.HOUSE_ID FROM  temp WHERE " +city+"."+city+"_ctv_topology.cubic_code = temp.CODE; SELECT CITY,STREET,HOUSE,FLAT,CODE,NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID FROM temp WHERE CODE NOT IN(SELECT cubic_code FROM "+city+"."+city+"_ctv_topology WHERE cubic_code IS NOT NULL);",
+            ("CREATE TEMP TABLE temp( id serial, CITY character varying(100),STREET character varying(100),HOUSE character varying(100),FLAT character varying(100),CODE character varying(100),NAME character varying(100),PGS_ADDR character varying(100),OU_OP_ADDR character varying(100),DATE_REG character varying(100),COMENT character varying(100),UNAME character varying(100),NET_TYPE character varying(100),OU_CODE character varying(100),HOUSE_ID character varying(100), REPORT_DATE character varying(100));"
+                " select copy_for_testuser('temp( CITY, STREET, HOUSE ,FLAT ,CODE ,NAME ,PGS_ADDR ,OU_OP_ADDR ,DATE_REG ,COMENT ,UNAME ,NET_TYPE ,OU_CODE ,HOUSE_ID, REPORT_DATE )', '"+queryDict['ctvTopologyUpdate']['linkStorage'] +"', ',', 'utf-8') ;"
+                " UPDATE "+city+"."+city+"_ctv_topology SET cubic_city = temp.CITY, cubic_street = temp.STREET, cubic_house = temp.HOUSE, cubic_flat = temp.FLAT, cubic_code = temp.CODE, cubic_name = temp.NAME, cubic_pgs_addr = temp.PGS_ADDR, cubic_ou_op_addr = temp.OU_OP_ADDR, cubic_ou_code = temp.OU_CODE, cubic_date_reg = temp.DATE_REG, cubic_coment = temp.COMENT, cubic_uname = temp.UNAME, cubic_net_type = temp.NET_TYPE, cubic_house_id = temp.HOUSE_ID FROM  temp WHERE "+city+"."+city+"_ctv_topology.cubic_code = temp.CODE and "+city+"."+city+"_ctv_topology.cubic_house_id = temp.HOUSE_ID and "+city+"."+city+"_ctv_topology.cubic_name = temp.NAME; "
+                " (SELECT CITY,STREET,HOUSE,FLAT,CODE,NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID , 'missing' as state FROM temp WHERE CODE NOT IN(SELECT cubic_code FROM "+city+"."+city+"_ctv_topology WHERE cubic_code IS NOT NULL)) "
+                " UNION ALL"
+                " (with data(CITY,STREET,HOUSE,FLAT,CODE,NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID)  as (select CITY,STREET,HOUSE,FLAT,CODE,NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID  from temp) select d.CITY, d.STREET, d.HOUSE, d.FLAT, d.CODE, d.NAME, d.PGS_ADDR, d.OU_OP_ADDR, d.OU_CODE, d.DATE_REG, d.COMENT, d.UNAME, d.NET_TYPE, d.HOUSE_ID, 'reused code' as rcode from data d where not exists (select 1 from "+city+"."+city+"_ctv_topology u where u.cubic_code = d.CODE and u.cubic_house_id = d.HOUSE_ID) and CODE IN(SELECT cubic_code FROM "+city+"."+city+"_ctv_topology WHERE cubic_code IS NOT NULL));"),
             "UPDATE "+city+"."+city+"_ctv_topology SET equipment_geom = CASE WHEN cubic_name LIKE '"+'%Магистральный распределительный узел%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_firstpoint WHEN cubic_name LIKE '"+'%Магістральний оптичний вузол%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_thirdpoint WHEN cubic_name LIKE '"+'%Оптический узел%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_fourthpoint WHEN cubic_name LIKE '"+'%Оптичний приймач%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_firstpoint WHEN cubic_name LIKE '"+'%Передатчик оптический%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_secondpoint WHEN cubic_name LIKE '"+'%Порт ОК%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_secondpoint WHEN cubic_name LIKE '"+'%Домовой узел%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_thirdpoint WHEN cubic_name LIKE '"+'%Ответвитель магистральный%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_fourthpoint WHEN cubic_name LIKE '"+'%Распределительный стояк%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_secondpoint WHEN cubic_name LIKE '"+'%Магистральный узел%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_secondpoint WHEN cubic_name LIKE '"+'%Субмагистральный узел%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_thirdpoint WHEN cubic_name LIKE '"+'%Кросс-муфта%'.decode('utf-8')+"' THEN "+city+"."+city+"_buildings.building_geom_fourthpoint END FROM  "+city+"."+city+"_buildings WHERE "+city+"."+city+"_ctv_topology.equipment_geom IS NULL AND "+city+"."+city+"_ctv_topology.cubic_house_id = "+city+"."+city+"_buildings.cubic_house_id;",
             "CREATE TEMP TABLE tmp AS SELECT cubic_code, equipment_geom, cubic_name, cubic_street, cubic_house FROM "+city+"."+city+"_ctv_topology where cubic_code IN (SELECT cubic_ou_code FROM "+city+"."+city+"_ctv_topology WHERE cubic_ou_code IS NOT NULL); UPDATE "+city+"."+city+"_ctv_topology SET mother_equipment_geom = tmp.equipment_geom,  cubic_ou_name = tmp.cubic_name, cubic_ou_street = tmp.cubic_street, cubic_ou_house = tmp.cubic_house FROM tmp WHERE "+city+"_ctv_topology.cubic_ou_code = tmp.cubic_code;  UPDATE "+city+"."+city+"_ctv_topology SET topology_line_geom = ST_MakeLine(mother_equipment_geom, equipment_geom) WHERE "+city+"_ctv_topology.mother_equipment_geom IS NOT null AND "+city+"_ctv_topology.equipment_geom IS NOT NULL; DROP TABLE tmp; ",
             "CREATE TEMP TABLE tmp AS SELECT cubic_name, cubic_street, cubic_house, cubic_code FROM "+city+"."+city+"_ctv_topology WHERE cubic_code IN (SELECT DISTINCT cubic_ou_code FROM "+city+"."+city+"_ctv_topology WHERE cubic_ou_code IS NOT NULL) ;UPDATE  "+city+"."+city+"_ctv_topology SET cubic_ou_name = tmp.cubic_name, cubic_ou_street = tmp.cubic_street, cubic_ou_house = tmp.cubic_house FROM tmp WHERE "+city+"."+city+"_ctv_topology.cubic_ou_code = tmp.cubic_code; DROP TABLE tmp;",
@@ -363,14 +412,17 @@ class pgConnector:
                 #elf.dlg.listWidget.addItem('-query---'+query+'---query-')
                 self.dlg.listWidget.addItem('----nothing to show----')
         if (len(col_names) > 0) and (len(col_array)  > 0) :
-        	d = QDialog()
-       		d.setWindowTitle(button)
-       		d.setWindowModality(Qt.ApplicationModal)
-    		d.resize(len(col_names)*90, 600)
-       		table = MyTable(col_names,col_array, len(col_array), len(col_names))
-       		d.layout = QGridLayout(d)
-       		d.layout.addWidget(table,0,0,5,10)
-       		d.exec_()
+           d = QDialog()
+    	   csvButton = QPushButton("Save in csv file",d)
+    	   d.setWindowTitle("Information")
+    	   d.setWindowModality(Qt.ApplicationModal)
+           d.resize(len(col_names)*100, 600)
+    	   table = MyTable(col_names,col_array, len(col_array), len(col_names))
+           csvButton.clicked.connect(table.save_table)
+       	   d.layout = QVBoxLayout(d)
+       	   d.layout.addWidget(table)
+       	   d.layout.addWidget(csvButton)
+           d.exec_()
 
         #-----------------------------------------------
         self.dlg.lineEdit.setText(''.join(queryDict[button]['queryList']))
