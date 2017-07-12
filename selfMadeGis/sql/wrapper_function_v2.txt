@@ -1,0 +1,11 @@
+DROP FUNCTION IF EXISTS copy_for_testuser_v2(text,text,text,text,text,text);
+create or replace function copy_for_testuser_v2(tablename text, direction text, filepath text, delimiter text, header text, encoding text)
+   returns void
+   security definer
+   as
+   $$
+    declare
+    begin
+         execute 'copy ' || tablename || ' ' || direction ||' ''' || filepath || '''' ||' DELIMITER ''' ||delimiter ||''' ' || header ||' ' || ' encoding ''' || encoding ||'''' ;
+    end;
+   $$ language plpgsql;

@@ -77,6 +77,88 @@ class dbConnSetClass{
   }
 
 }
+//////mail sender/////////////////////////////////////////////////////////////////////////////////////////
+/*class mailSender{
+  private $mails = array();
+  private $cities = array();
+  private $params = array();
+  public function default_mails(){
+    $postgres = new dbConnSetClass;
+    $query = "SELECT DISTINCT e_mail from public.access where restriction = 'admin';";
+    //echo $query.'<hr>';
+    $queryArrayKeys = array('e_mail');
+    $defaultMails = $postgres -> dbConnect($query, $queryArrayKeys, true);
+    return $defaultMails;
+  }
+  public function default_cities(){
+    $postgres = new dbConnSetClass;
+    $query = "SELECT city_eng FROM public.links where links IS NOT NULL;";
+    //echo $query.'<hr>';
+    $queryArrayKeys = array('city_eng');
+    $defaultCities= $postgres -> dbConnect($query, $queryArrayKeys, true);
+    return $defaultCities;
+  }
+  
+  public function restriction_change($path){
+      if (!file_exists($path )) {
+        $oldmask = umask(0);
+        mkdir($path , 0777, true);
+        umask($oldmask);
+    }
+  }
+  public function is_dir_empty($dir) {
+    if (!is_readable($dir)) return NULL; 
+    $handle = opendir($dir);
+    while (false !== ($entry = readdir($handle))) {
+      if ($entry != "." && $entry != "..") {
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+  public function mail_attachment( $to, $from,$subject , $message, $path, $filename){
+   
+    $to = $to;
+    $from = $from;
+    $subject = $subject;
+    $message = $message; //Текст письма
+    $boundary = "---"; //Разделитель
+
+    $headers = "From: $from\nReply-To: $from\n";
+    $headers .= "Content-Type: multipart/mixed; boundary=\"$boundary\"";
+    $body = "--$boundary\n";
+
+    $body .= "Content-type: text/html; charset='utf-8'\n";
+    $body .= "Content-Transfer-Encoding: quoted-printablenn";
+    $body .= "Content-Disposition: attachment; filename==?utf-8?B?".base64_encode($filename)."?=\n\n";
+    $body .= $message."\n";
+    $body .= "--$boundary\n";
+    $file = fopen($path, "r"); //Открываем файл
+    $text = fread($file, filesize($path)); //Считываем весь файл
+    fclose($file); //Закрываем файл
+
+    $body .= "Content-Type: application/octet-stream; name==?utf-8?B?".base64_encode($filename)."?=\n";
+    $body .= "Content-Transfer-Encoding: base64\n";
+    $body .= "Content-Disposition: attachment; filename==?utf-8?B?".base64_encode($filename)."?=\n\n";
+    $body .= chunk_split(base64_encode($text))."\n";
+    $body .= "--".$boundary ."--\n";
+    mail($to, $subject, $body, $headers); //Отправляем письмо
+  }
+  public function setProp($prop,$newValue){
+    if (property_exists($this,$prop)){
+      $this->$prop = $newValue;
+    } else {
+      echo "Setting of Undefined Property";
+    }
+  }
+  public function getProp($prop){
+    if (property_exists($this,$prop)){
+      return $this->$prop;
+    } else {
+      echo "Gettin of Undefined Property";
+    }
+  }
+}*/
 ///file UPLOAD////////////////////////////////////////////////////////////////////////////////////////////
 class fileUpload {
   private $restriction = 'none';
@@ -445,4 +527,70 @@ function fileDate($folderLink, $checkList, $responseValue){
 function jsConsolLog($message){
   print "<script type='text/javascript'>console.log(".json_encode($message).");</script>";
 }
+//////check whether directory is empty/////////////////////////////////
+ function is_dir_empty($dir) {
+  if (!is_readable($dir)) return NULL; 
+  $handle = opendir($dir);
+  while (false !== ($entry = readdir($handle))) {
+    if ($entry != "." && $entry != "..") {
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
+///// sends mail with attachment///////////////////////////////////////
+function mail_attachment( $to, $from,$subject , $message, $path, $filename){
+ 
+  $to = $to;
+  $from = $from;
+  $subject = $subject;
+  $message = $message; //Текст письма
+  $boundary = "---"; //Разделитель
+
+  $headers = "From: $from\nReply-To: $from\n";
+  $headers .= "Content-Type: multipart/mixed; boundary=\"$boundary\"";
+  $body = "--$boundary\n";
+
+  $body .= "Content-type: text/html; charset='utf-8'\n";
+  $body .= "Content-Transfer-Encoding: quoted-printablenn";
+  $body .= "Content-Disposition: attachment; filename==?utf-8?B?".base64_encode($filename)."?=\n\n";
+  $body .= mb_convert_encoding($message, 'UTF-8', 'auto')."\n";
+  $body .= "--$boundary\n";
+  $file = fopen($path, "r"); //Открываем файл
+  $text = fread($file, filesize($path)); //Считываем весь файл
+  fclose($file); //Закрываем файл
+
+  $body .= "Content-Type: application/octet-stream; name==?utf-8?B?".base64_encode($filename)."?=\n";
+  $body .= "Content-Transfer-Encoding: base64\n";
+  $body .= "Content-Disposition: attachment; filename==?utf-8?B?".base64_encode($filename)."?=\n\n";
+  $body .= chunk_split(base64_encode($text))."\n";
+  $body .= "--".$boundary ."--\n";
+  mail($to, $subject, $body, $headers); //Отправляем письмо
+}
+//////////changes restriction to folder///////////////////////////
+function restriction_change($path){
+  if (!file_exists($path )) {
+        $oldmask = umask(0);
+        mkdir($path , 0777, true);
+        umask($oldmask);
+    }
+}
+//////////make dir empty//////////////////////////////////////////
+function make_dir_empty($dirPathMail){
+  foreach(glob($dirPathMail.'*') as $file){ // iterate files
+    if(is_file($file))
+      unlink($file); // delete file
+  }
+}
+//////// zip files in folder//////////////////////////////////////
+function zip_folder($dirPath,$zipFilePath){
+  $zip = new ZipArchive;
+  $zip->open($zipFilePath, ZipArchive::CREATE);
+  foreach (glob($dirPath.'*') as $file) {
+    $new_filename = end(explode('/',$file));
+      $zip->addFile($file,$new_filename);
+  }
+  $zip->close();
+}
+
 ?>

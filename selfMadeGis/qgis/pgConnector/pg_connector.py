@@ -415,7 +415,7 @@ class pgConnector:
            d = QDialog()
     	   csvButton = QPushButton("Save in csv file",d)
     	   d.setWindowTitle("Information")
-    	   d.setWindowModality(Qt.ApplicationModal)
+    	   d.setWindowModality(True)
            d.resize(len(col_names)*100, 600)
     	   table = MyTable(col_names,col_array, len(col_array), len(col_names))
            csvButton.clicked.connect(table.save_table)
