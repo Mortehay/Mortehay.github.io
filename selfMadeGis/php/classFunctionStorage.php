@@ -592,5 +592,11 @@ function zip_folder($dirPath,$zipFilePath){
   }
   $zip->close();
 }
-
+///////size_detaction/////////////////////////////////////////
+function size_detection($file_params){
+  if( $file_params['size'] > filesize($file_params['path'])){
+    $params = array('path'=> $file_params['path'], 'name' => $file_params['name']);
+  } else { $params = array('path' => '/var/www/QGIS-Web-Client-master/site/img/vguh.png', 'name' => 'vguh.png');}
+  return $params;
+}
 ?>

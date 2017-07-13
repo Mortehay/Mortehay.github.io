@@ -61,8 +61,10 @@ if (is_dir_empty($dirPathMail) ){
     //echo $query.'<hr>';
     $queryArrayKeys = array('e_mail');
     $mail_to = $postgres -> dbConnect($query, $queryArrayKeys, true);
+    $file_size = 10*1024*1024;
+    $file_params = array('path' => $mail_file_path, 'name' => $mail_filename, 'size' => $file_size);
     foreach( $mail_to as $mail){
-    	 mail_attachment( $mail['e_mail'], '', $mail_title, $mail_text, $mail_file_path, $mail_filename);
+    	 mail_attachment( $mail['e_mail'], '', $mail_title, $mail_text, size_detection($file_params)['path'], size_detection($file_params)['name']);
     }
 }
 
