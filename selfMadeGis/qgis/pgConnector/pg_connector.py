@@ -48,7 +48,26 @@ class MyTable(QTableWidget):
         self.setmydata(col_names,col_array)
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
-        
+        self.clip = QApplication.clipboard()
+    def keyPressEvent(self, e):
+
+        if (e.modifiers() & QtCore.Qt.ControlModifier):
+            selected = self.selectedRanges()
+
+            if e.key() == Qt.Key_C: #copy
+                s = "\t".join([str(self.horizontalHeaderItem(i).text()) for i in xrange(selected[0].leftColumn(), selected[0].rightColumn()+1)])
+                s = s + '\n'
+
+                for r in xrange(selected[0].topRow(), selected[0].bottomRow()+1):
+                    #s += self.verticalHeaderItem(r).text() + '\t'
+                    for c in xrange(selected[0].leftColumn(), selected[0].rightColumn()+1):
+                        try:
+                            nnnn = self.item(r,c).text()
+                            s +=  nnnn  + "\t"
+                        except AttributeError:
+                            s += "\t"
+                    s = s[:-1] + "\n" #eliminate last '\t'
+                self.clip.setText(s)
     def save_table(self):
         def replace_all(text, dic):
             text = text.text()
@@ -72,9 +91,9 @@ class MyTable(QTableWidget):
                     #item = item.text()
                     row_data.append(item+";")
                 #row_data.append(len(row_data))
-                if len(row_data) > 1: 
+                if len(row_data) > 1:
                     writer.writerow(row_data)
-                
+
     def setmydata(self,col_names,col_array):
         row_i = 0
         for row in col_array:
@@ -85,7 +104,7 @@ class MyTable(QTableWidget):
                 item_i +=1
             row_i +=1
         self.setHorizontalHeaderLabels(col_names)
-    
+
 ##--------------------
 class pgConnector:
     """QGIS Plugin Implementation."""
@@ -371,7 +390,8 @@ class pgConnector:
             "CREATE TEMP TABLE tmp AS SELECT cubic_code, equipment_geom, cubic_name, cubic_street, cubic_house FROM "+city+"."+city+"_ctv_topology where cubic_code IN (SELECT cubic_ou_code FROM "+city+"."+city+"_ctv_topology WHERE cubic_ou_code IS NOT NULL); UPDATE "+city+"."+city+"_ctv_topology SET mother_equipment_geom = tmp.equipment_geom,  cubic_ou_name = tmp.cubic_name, cubic_ou_street = tmp.cubic_street, cubic_ou_house = tmp.cubic_house FROM tmp WHERE "+city+"_ctv_topology.cubic_ou_code = tmp.cubic_code;  UPDATE "+city+"."+city+"_ctv_topology SET topology_line_geom = ST_MakeLine(mother_equipment_geom, equipment_geom) WHERE "+city+"_ctv_topology.mother_equipment_geom IS NOT null AND "+city+"_ctv_topology.equipment_geom IS NOT NULL; DROP TABLE tmp; ",
             "CREATE TEMP TABLE tmp AS SELECT cubic_name, cubic_street, cubic_house, cubic_code FROM "+city+"."+city+"_ctv_topology WHERE cubic_code IN (SELECT DISTINCT cubic_ou_code FROM "+city+"."+city+"_ctv_topology WHERE cubic_ou_code IS NOT NULL) ;UPDATE  "+city+"."+city+"_ctv_topology SET cubic_ou_name = tmp.cubic_name, cubic_ou_street = tmp.cubic_street, cubic_ou_house = tmp.cubic_house FROM tmp WHERE "+city+"."+city+"_ctv_topology.cubic_ou_code = tmp.cubic_code; DROP TABLE tmp;",
             "UPDATE "+city+"."+city+"_ctv_topology SET archive_link = CASE  WHEN cubic_name like '"+'%Магистральный распределительный узел%'.decode('utf-8')+"' THEN 'http://"+final_list[0]+"/qgis-ck/tmp/archive/"+city+"/topology/mdod/'||cubic_code||'/' WHEN cubic_name like '"+'%Оптический узел%'.decode('utf-8')+"' THEN 'http://"+final_list[0]+"/qgis-ck/tmp/archive/"+city+"/topology/nod/'||cubic_code||'/' WHEN cubic_name like '"+'%Оптичний приймач%'.decode('utf-8')+"' THEN 'http://"+final_list[0]+"/qgis-ck/tmp/archive/"+city+"/topology/op/'||cubic_code||'/' WHEN cubic_name like '"+'%Передатчик оптический%'.decode('utf-8')+"' THEN 'http://"+final_list[0]+"/qgis-ck/tmp/archive/"+city+"/topology/ot/'||cubic_code||'/' WHEN cubic_name like '"'%Кросс-муфта%'.decode('utf-8')+"' THEN 'http://"+final_list[0]+"/qgis-ck/tmp/archive/"+city+"/topology/cc/'||cubic_code||'/' END ;",
-            "UPDATE "+city+"."+city+"_ctv_topology SET microdistrict ="+city+"_microdistricts.micro_district FROM "+city+"."+city+"_microdistricts WHERE ST_Contains("+city+"_microdistricts.coverage_geom, "+city+"_ctv_topology.equipment_geom) ;UPDATE "+city+"."+city+"_ctv_topology SET district ="+city+"_microdistricts.district FROM "+city+"."+city+"_microdistricts WHERE ST_Contains("+city+"_microdistricts.coverage_geom, "+city+"_ctv_topology.equipment_geom) ;UPDATE "+city+"."+city+"_ctv_topology SET she_num ="+city+"_coverage.coverage_zone FROM "+city+"."+city+"_coverage WHERE ST_Contains("+city+"_coverage.geom_area, "+city+"_ctv_topology.equipment_geom) and "+city+"."+city+"_coverage.geom_area is not null ;"
+            "UPDATE "+city+"."+city+"_ctv_topology SET microdistrict ="+city+"_microdistricts.micro_district FROM "+city+"."+city+"_microdistricts WHERE ST_Contains("+city+"_microdistricts.coverage_geom, "+city+"_ctv_topology.equipment_geom) ;UPDATE "+city+"."+city+"_ctv_topology SET district ="+city+"_microdistricts.district FROM "+city+"."+city+"_microdistricts WHERE ST_Contains("+city+"_microdistricts.coverage_geom, "+city+"_ctv_topology.equipment_geom) ;UPDATE "+city+"."+city+"_ctv_topology SET she_num ="+city+"_coverage.coverage_zone FROM "+city+"."+city+"_coverage WHERE ST_Contains("+city+"_coverage.geom_area, "+city+"_ctv_topology.equipment_geom) and "+city+"."+city+"_coverage.geom_area is not null ;",
+            "CREATE temp table t1 AS select cubic_ou_name, cubic_ou_code, array_agg(cubic_code) AS children from "+city+"."+city+"_ctv_topology where cubic_name in ('"+'Кросс-муфта'.decode('utf-8')+"', '"+'Магистральный распределительный узел'.decode('utf-8')+"', '"+'Передатчик оптический'.decode('utf-8')+"', '"+'Оптический узел'.decode('utf-8')+"', '"+'Оптичний приймач'.decode('utf-8')+"' , '"+'Оптичний приймач'.decode('utf-8')+"') group by cubic_ou_name, cubic_ou_code; CREATE temp table t2 AS select cubic_code, cubic_ou_code, archive_link ||cubic_code||'_wiring.png' AS archive_link from "+city+"."+city+"_ctv_topology where cubic_code in (select distinct cubic_ou_code from "+city+"."+city+"_ctv_topology where cubic_ou_code is not null);  UPDATE "+city+"."+city+"_ctv_topology SET json_data = tmp.json_data from (select t.id AS cubic_code ,row_to_json(t) AS json_data from (select t1.cubic_ou_name AS name, t2.cubic_ou_code AS parents, t1.cubic_ou_code AS id, t1.children,  t2.archive_link from t1 left join t2  on t1.cubic_ou_code = t2.cubic_code) t) tmp where "+city+"_ctv_topology.cubic_code = tmp.cubic_code;"
         ]
         #------ethernet topology part-----------------<
         queryDict['ethernetTopologyLoad']['queryList'] = [
