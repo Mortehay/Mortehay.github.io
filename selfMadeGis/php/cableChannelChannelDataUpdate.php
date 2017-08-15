@@ -39,9 +39,15 @@ $queryArrayKeys = false;
 echo $query;
 $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
 //this should be at the end
-$retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
+
 $query = "UPDATE ".$selectedCity.".".$selectedCity."_cable_channels_channels SET she_1 ='ПГС№'||".$selectedCity."_coverage.coverage_zone FROM ".$selectedCity.".".$selectedCity."_coverage WHERE ST_Contains(".$selectedCity.".".$selectedCity."_coverage.geom_area, ".$selectedCity.".".$selectedCity."_cable_channels_channels.pit_1_geom) and ".$selectedCity.".".$selectedCity."_coverage.geom_area is not null; UPDATE ".$selectedCity.".".$selectedCity."_cable_channels_channels SET she_2 ='ПГС№'||".$selectedCity."_coverage.coverage_zone FROM ".$selectedCity.".".$selectedCity."_coverage WHERE ST_Contains(".$selectedCity.".".$selectedCity."_coverage.geom_area, ".$selectedCity.".".$selectedCity."_cable_channels_channels.pit_2_geom) and ".$selectedCity.".".$selectedCity."_coverage.geom_area is not null;";
 $queryArrayKeys = false;
+$retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
+//add json data-----------------------
+$query = "create temp table t1 as select distinct on(pit_id) geom, pit_id, archive_link from ".$selectedCity.".".$selectedCity."_cable_channel_pits; create temp table t2 as select pit_1_geom, pit_2_geom, channel_geom, pit_id_1, pit_id_2 from  ".$selectedCity.".".$selectedCity."_cable_channels_channels; create temp table tmp as (select tj1.pit_id as id, tj1.archive_link, tj1.parent, tj2.childrens from (select t1.pit_id, t1.archive_link, array_agg(t2.pit_id_2) as parent from t1  join t2  on t1.pit_id = t2.pit_id_1 where pit_id is not null group by t1.pit_id,t1.archive_link) tj1 join (select t1.pit_id,   array_agg(t2.pit_id_1) as  childrens  from t1 join t2 on t1.pit_id = t2.pit_id_2 where pit_id is not null group by t1.pit_id) tj2 on tj1.pit_id = tj2.pit_id) union (select tj1.pit_id as id, tj1.archive_link, tj1.parent, tj2.childrens from (select t1.pit_id, t1.archive_link, array_agg(t2.pit_id_2) as parent from t1  join t2  on t1.pit_id = t2.pit_id_1 where pit_id is not null group by t1.pit_id, t1.archive_link) tj1 join (select t1.pit_id,  array_agg(t2.pit_id_1) as  childrens  from t1 join t2 on t1.pit_id = t2.pit_id_2 where pit_id is not null group by t1.pit_id) tj2 on tj1.pit_id = tj2.pit_id); update ".$selectedCity.".".$selectedCity."_cable_channel_pits set json_data = row_to_json(tmp) from tmp where tmp.id = ".$selectedCity.".".$selectedCity."_cable_channel_pits.pit_id;";
+$queryArrayKeys = false;
+$retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
+//-------------------------------------
 echo $query;
 ?>
 
