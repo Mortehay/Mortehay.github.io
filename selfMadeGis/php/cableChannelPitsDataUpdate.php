@@ -11,6 +11,27 @@ $query = "UPDATE ".$selectedCity.".".$selectedCity."_cable_channel_pits SET micr
 $queryArrayKeys = false;
 echo $query;
 $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
-
+$query = "SELECT DISTINCT pit_id FROM ".$selectedCity.".".$selectedCity."_cable_channel_pits WHERE pit_id IS NOT NULL;";
+$queryArrayKeys = array('pit_id');
+echo $query;
+$retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
+$sumObjectsArray = $retuenedArray;
+foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
+  //print_r($objectArray);
+  $description = array(
+      'cubic_name' => 'pits',
+      'cubic_code' => $sumObjectsArray[$sumObjectsArrayKey]['pit_id'],
+      'rootDir' => '/var/www/QGIS-Web-Client-master/site/tmp/archive/',
+      'subDirType' => '/topology/'
+    );
+  //print_r($description);
+  if($description['cubic_name'] !==null){
+    //array_push($dir_arr_response, $description );
+    //print_r($description);
+   // echo'<br>';
+    topologyDirCreate($description, $selectedCity);
+    //echo'<hr>';
+  }
+}
 //-------------------------------------
 ?>

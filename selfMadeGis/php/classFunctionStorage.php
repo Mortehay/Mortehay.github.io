@@ -498,9 +498,25 @@ function array_swap($key1, $key2, $array) {
 }
 ///////////////////////////////////////
 //creates directory for topology element/////////////////////////////////////////////////////////////////
-function topologyDirCreate($description, $city){
+/*function topologyDirCreate($description, $city){
   if($description['cubic_name'] !='not assigned'){
     $dirPath = '/var/www/QGIS-Web-Client-master/site/tmp/archive/'.$city.'/topology/'.$description['cubic_name'].'/'.$description['cubic_code'];
+    if (!file_exists($dirPath )) {
+      $oldmask = umask(0);
+          mkdir($dirPath , 0777, true);
+          umask($oldmask);
+    }
+    //echo $dirPath;
+  }            
+  
+  return true;
+}*/
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//$description['rootDir'] = '/var/www/QGIS-Web-Client-master/site/tmp/archive/';
+//$description['subDirType'] = '/topology/';
+function topologyDirCreate($description, $city){
+  if($description['cubic_name'] !='not assigned'){
+    $dirPath = $description['rootDir'].$city.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'];
     if (!file_exists($dirPath )) {
       $oldmask = umask(0);
           mkdir($dirPath , 0777, true);

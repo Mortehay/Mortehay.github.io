@@ -95,6 +95,8 @@ foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
   $description = array(
       'cubic_name' => groupSelect($sumObjectsArray[$sumObjectsArrayKey]['cubic_name'])['label'],
       'cubic_code' => $sumObjectsArray[$sumObjectsArrayKey]['cubic_code'],
+      'rootDir' => '/var/www/QGIS-Web-Client-master/site/tmp/archive/',
+      'subDirType' => '/topology/'
     );
   //print_r($description);
   if($description['cubic_name'] !==null){
