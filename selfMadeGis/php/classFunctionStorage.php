@@ -38,7 +38,7 @@ class dbConnSetClass{
   public function dbConnect($query,$queryArrayKeys,$dbClose){
     $db = pg_connect( implode(" ", $this->dbConnSet));
     if (!$db) {
-      echo "Opened database successfully\n";
+      echo "database Opening failed\n";
     } else {
       $result = pg_query($db, $query);
       if ($queryArrayKeys) {
@@ -52,7 +52,7 @@ class dbConnSetClass{
               array_push($arr_response, $arr );
             }
           } else {
-            $arr[0] =  'no new ethernet equipment';
+            $arr[0] =  'no new data or equipment';
             array_push($arr_response, $arr );
           }
         //print json_encode($arr_response);
@@ -78,72 +78,12 @@ class dbConnSetClass{
 
 }
 //////mail sender/////////////////////////////////////////////////////////////////////////////////////////
-/*class mailSender{
-  private $mails = array();
-  private $cities = array();
+class mailSender{
+  //private $mails = array();
+  //private $cities = array();
   private $params = array();
-  public function default_mails(){
-    $postgres = new dbConnSetClass;
-    $query = "SELECT DISTINCT e_mail from public.access where restriction = 'admin';";
-    //echo $query.'<hr>';
-    $queryArrayKeys = array('e_mail');
-    $defaultMails = $postgres -> dbConnect($query, $queryArrayKeys, true);
-    return $defaultMails;
-  }
-  public function default_cities(){
-    $postgres = new dbConnSetClass;
-    $query = "SELECT city_eng FROM public.links where links IS NOT NULL;";
-    //echo $query.'<hr>';
-    $queryArrayKeys = array('city_eng');
-    $defaultCities= $postgres -> dbConnect($query, $queryArrayKeys, true);
-    return $defaultCities;
-  }
-  
-  public function restriction_change($path){
-      if (!file_exists($path )) {
-        $oldmask = umask(0);
-        mkdir($path , 0777, true);
-        umask($oldmask);
-    }
-  }
-  public function is_dir_empty($dir) {
-    if (!is_readable($dir)) return NULL; 
-    $handle = opendir($dir);
-    while (false !== ($entry = readdir($handle))) {
-      if ($entry != "." && $entry != "..") {
-        return FALSE;
-      }
-    }
-    return TRUE;
-  }
-  public function mail_attachment( $to, $from,$subject , $message, $path, $filename){
-   
-    $to = $to;
-    $from = $from;
-    $subject = $subject;
-    $message = $message; //Текст письма
-    $boundary = "---"; //Разделитель
-
-    $headers = "From: $from\nReply-To: $from\n";
-    $headers .= "Content-Type: multipart/mixed; boundary=\"$boundary\"";
-    $body = "--$boundary\n";
-
-    $body .= "Content-type: text/html; charset='utf-8'\n";
-    $body .= "Content-Transfer-Encoding: quoted-printablenn";
-    $body .= "Content-Disposition: attachment; filename==?utf-8?B?".base64_encode($filename)."?=\n\n";
-    $body .= $message."\n";
-    $body .= "--$boundary\n";
-    $file = fopen($path, "r"); //Открываем файл
-    $text = fread($file, filesize($path)); //Считываем весь файл
-    fclose($file); //Закрываем файл
-
-    $body .= "Content-Type: application/octet-stream; name==?utf-8?B?".base64_encode($filename)."?=\n";
-    $body .= "Content-Transfer-Encoding: base64\n";
-    $body .= "Content-Disposition: attachment; filename==?utf-8?B?".base64_encode($filename)."?=\n\n";
-    $body .= chunk_split(base64_encode($text))."\n";
-    $body .= "--".$boundary ."--\n";
-    mail($to, $subject, $body, $headers); //Отправляем письмо
-  }
+  private $csv_out = array();
+  private $queryModificator = array();
   public function setProp($prop,$newValue){
     if (property_exists($this,$prop)){
       $this->$prop = $newValue;
@@ -158,7 +98,145 @@ class dbConnSetClass{
       echo "Gettin of Undefined Property";
     }
   }
-}*/
+  public function test(){
+    return $this->params;
+  }
+  public function mail_cities_users(){
+      $params = $this->params;
+      $queryModificator = $this->queryModificator;
+      $csv_out = $this->csv_out;
+      $today = self::dateReturn();
+      //print_r($params);
+      $mailToArr = array();
+      self::rrmdir($params['dirPathMail']);
+      if($params['mail_to_query_type'] = 'ctv_tolology_query'){
+
+        $postgres = new dbConnSetClass;
+
+        $query = "(select array_agg(links.city_eng) as city_eng, links.prime_city, access.e_mail as e_mail, access.mail_to as mail_to, access.restriction as restriction from public.links links   right join (select e_mail, restriction, mail_to from public.access) access on access.mail_to = links.prime_city where links.city_eng is not null group by links.prime_city, access.e_mail,access.mail_to, access.restriction) union (select array_agg(links.city_eng)  as city_eng, 'admin' as prime_city, access.e_mail as e_mail,access.mail_to as mail, access.restriction as restriction from public.access access, public.links links where access.mail_to in('admin') group by  access.e_mail, access.mail_to, access.restriction);";
+        echo $query.'<hr>';
+        $queryArrayKeys = array('city_eng', 'prime_city', 'e_mail', 'mail_to', 'restriction');
+        $mailToArr = $postgres -> dbConnect($query, $queryArrayKeys, true);
+        //print_r($mailToArr);
+        foreach ($mailToArr as $mailToArrKey => $mailToArrValue) {
+          $path = $params['dirPathMail'].$mailToArrValue['prime_city'].'/';
+          echo '<hr>'.$path.'<hr>';
+          //print_r(self::postgres_to_php_array($mailToArrValue['city_eng']));
+          $cities = self::postgres_to_php_array($mailToArrValue['city_eng']);
+          self::newDirCreation($path);
+          self::restriction_change($path);
+  
+          foreach ($cities as $selectedCity) {
+            $linkStorage ="'/var/www/QGIS-Web-Client-master/site/csv/cubic/".$params['tableType']."/".$selectedCity.$params['tableType'].$params['fileExtention']."'";
+            $query ="CREATE TEMP TABLE temp( ".$queryModificator['var']."); select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ;  create temp table csvTemp as (SELECT CITY,STREET, HOUSE, FLAT, CODE, NAME ,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID, 'missing' as state FROM temp WHERE CODE NOT IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL) ) UNION ALL (with data(CITY,STREET,HOUSE,FLAT,CODE,NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID)  as (select CITY,STREET, HOUSE, FLAT, CODE, NAME, PGS_ADDR, OU_OP_ADDR, OU_CODE, DATE_REG, COMENT, UNAME, NET_TYPE, HOUSE_ID  from temp) select d.CITY, d.STREET, d.HOUSE, d.FLAT, d.CODE, d.NAME, d.PGS_ADDR, d.OU_OP_ADDR, d.OU_CODE, d.DATE_REG, d.COMENT, d.UNAME, d.NET_TYPE, d.HOUSE_ID, 'reused code' as rcode from data d where not exists (select 1 from ".$selectedCity.".".$selectedCity."_ctv_topology u where u.cubic_code = d.CODE and u.cubic_house_id = d.HOUSE_ID) and CODE IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL) ); update csvTemp set house = replace(house, '/', '\'); select copy_for_testuser_v2('csvTemp','TO','".$path.$selectedCity.$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.$params['fileExtention']."', ';','CSV HEADER','windows-1251') WHERE (select true from csvTemp limit 1); select copy_for_testuser_v2('csvTemp','TO','".$path.$selectedCity.$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.$params['fileExtention']."', ';','CSV HEADER','windows-1251') WHERE (select true from csvTemp limit 1);";;
+            $postgres -> dbConnect($query, false, true);
+          }
+          if (is_dir_empty($params['dirPathMail']) ){
+              echo '<hr>it is empty<hr>';
+            } else {
+  
+              $mail_filename = $mailToArrValue['prime_city'].$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.'.zip';
+              $mail_file_path = $path.$mail_filename;
+              echo '<hr>'.$mail_filename.'<hr>';
+              echo '<hr>'.$mail_file_path.'<hr>';
+              //sleep(12*count($cities));
+              self::restriction_change($path);
+              self::zip_folder($path,$mail_file_path);
+              self::mail_attachment( $mailToArrValue['e_mail'] , '', $mailToArrValue['prime_city'].$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today , $mailToArrValue['prime_city'].$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today, $mail_file_path, $mail_filename);
+          }
+        }
+      } else { $mailToArr = array('answer' => 'empty array');}
+
+    return $mailToArr;
+  }
+  public function dateReturn(){
+    date_default_timezone_set("Europe/Kiev");
+    $today = getdate();
+    $today = $today['hours'].'-'.$today['minutes'].'__'.$today['mday'].'-'.$today['month'].'-'.$today['year'];
+    return $today;
+  }
+  public function newDirCreation($path){
+    if (!file_exists($path )) {
+      $oldmask = umask(0);
+      mkdir($path , 0777, true);
+      umask($oldmask);
+      return true;
+    }
+  }
+  public function postgres_to_php_array($postgresArray) {
+      $postgresStr = trim($postgresArray,"{}");
+      $elmts = explode(",",$postgresStr);
+      return $elmts;
+  }
+  public function csv_creation(){
+    return true;
+  }
+  public function make_dir_empty($dirPathMail){
+    foreach(glob($dirPathMail.'*') as $file){ // iterate files
+      if(is_file($file))
+        unlink($file); // delete file
+    }
+  }
+  public function rrmdir($dir) {
+    if (is_dir($dir)) {
+      $objects = scandir($dir);
+      foreach ($objects as $object) {
+        if ($object != "." && $object != "..") {
+          if (filetype($dir."/".$object) == "dir") 
+             self::rrmdir($dir."/".$object); 
+          else unlink   ($dir."/".$object);
+        }
+      }
+      reset($objects);
+      rmdir($dir);
+    }
+   }
+   public function zip_folder($dirPath,$zipFilePath){
+    $zip = new ZipArchive;
+    $zip->open($zipFilePath, ZipArchive::CREATE);
+    foreach (glob($dirPath.'*') as $file) {
+      $new_filename = end(explode('/',$file));
+        $zip->addFile($file,$new_filename);
+    }
+    $zip->close();
+  }
+  public function restriction_change($path){
+    if (!file_exists($path )) {
+          $oldmask = umask(0);
+          mkdir($path , 0777, true);
+          umask($oldmask);
+      }
+  }
+  public function mail_attachment( $to, $from,$subject , $message, $path, $filename){
+ 
+    $to = $to;
+    $from = $from;
+    $subject = $subject;
+    $message = $message; //Текст письма
+    $boundary = "---"; //Разделитель
+
+    $headers = "From: $from\nReply-To: $from\n";
+    $headers .= "Content-Type: multipart/mixed; boundary=\"$boundary\"";
+    $body = "--$boundary\n";
+
+    $body .= "Content-type: text/html; charset='utf-8'\n";
+    $body .= "Content-Transfer-Encoding: quoted-printablenn";
+    $body .= "Content-Disposition: attachment; filename==?utf-8?B?".base64_encode($filename)."?=\n\n";
+    $body .= mb_convert_encoding($message, 'UTF-8', 'auto')."\n";
+    $body .= "--$boundary\n";
+    $file = fopen($path, "r"); //Открываем файл
+    $text = fread($file, filesize($path)); //Считываем весь файл
+    fclose($file); //Закрываем файл
+
+    $body .= "Content-Type: application/octet-stream; name==?utf-8?B?".base64_encode($filename)."?=\n";
+    $body .= "Content-Transfer-Encoding: base64\n";
+    $body .= "Content-Disposition: attachment; filename==?utf-8?B?".base64_encode($filename)."?=\n\n";
+    $body .= chunk_split(base64_encode($text))."\n";
+    $body .= "--".$boundary ."--\n";
+    mail($to, $subject, $body, $headers); //Отправляем письмо
+  }
+
+}
 ///file UPLOAD////////////////////////////////////////////////////////////////////////////////////////////
 class fileUpload {
   private $restriction = 'none';
@@ -512,8 +590,7 @@ function array_swap($key1, $key2, $array) {
   return true;
 }*/
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-//$description['rootDir'] = '/var/www/QGIS-Web-Client-master/site/tmp/archive/';
-//$description['subDirType'] = '/topology/';
+
 function topologyDirCreate($description, $city){
   if($description['cubic_name'] !='not assigned'){
     $dirPath = $description['rootDir'].$city.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'];
