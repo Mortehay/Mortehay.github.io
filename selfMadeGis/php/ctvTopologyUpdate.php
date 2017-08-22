@@ -84,6 +84,21 @@ $query = "CREATE TEMP TABLE tmp AS SELECT cubic_name, cubic_street, cubic_house,
 $retuenedArray = $newDBrequest -> dbConnect($query, false, true); 	
 //echo $query;
 
+
+
+
+$link_left_part = /*'"<a href="http://'.$server_address.'/qgis-ck/tmp/archive/'*/'http://'.$server_address.'/qgis-ck/tmp/archive/';
+$link_right_part = /*'/" target="_blank">посилання на архів</a>"'*/'/';
+$query = "UPDATE $selectedCity"."."."$selectedCity"."_ctv_topology SET archive_link = CASE "." WHEN cubic_name like '%Магистральный распределительный узел%' THEN '$link_left_part"."$selectedCity"."/topology/mdod/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Оптический узел%' THEN '$link_left_part"."$selectedCity"."/topology/nod/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Оптичний приймач%' THEN '$link_left_part"."$selectedCity"."/topology/op/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Передатчик оптический%' THEN '$link_left_part"."$selectedCity"."/topology/ot/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Кросс-муфта%' THEN '$link_left_part"."$selectedCity"."/topology/cc/"."'||cubic_code||'"."$link_right_part' "."END ".$selectedSheWhere.";";
+$retuenedArray = $newDBrequest -> dbConnect($query, false, true);
+//-------------------updates such field: she/district/microdistrict
+$query = "UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET microdistrict =".$selectedCity."_microdistricts.micro_district FROM ".$selectedCity.".".$selectedCity."_microdistricts WHERE ST_Contains(".$selectedCity."_microdistricts.coverage_geom, ".$selectedCity."_ctv_topology.equipment_geom) ".$selectedShe.";".  "UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET district =".$selectedCity."_microdistricts.district FROM ".$selectedCity.".".$selectedCity."_microdistricts WHERE ST_Contains(".$selectedCity."_microdistricts.coverage_geom, ".$selectedCity."_ctv_topology.equipment_geom) ".$selectedShe.";" .  "UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET she_num =".$selectedCity."_coverage.coverage_zone FROM ".$selectedCity.".".$selectedCity."_coverage WHERE ST_Contains(".$selectedCity."_coverage.geom_area, ".$selectedCity."_ctv_topology.equipment_geom) and kiev.kiev_coverage.geom_area is not null ".$selectedShe.";";
+$retuenedArray = $newDBrequest -> dbConnect($query, false, true);
+//echo $query;
+//json field generation
+$query = "CREATE temp table t1 AS select cubic_ou_name, cubic_ou_code, array_agg(cubic_code) AS children from ".$selectedCity.".".$selectedCity."_ctv_topology where cubic_ou_name in ('Кросс-муфта', 'Магистральный распределительный узел', 'Передатчик оптический', 'Оптический узел', 'Оптичний приймач' , 'Оптичний приймач') group by cubic_ou_name, cubic_ou_code; CREATE temp table t2 AS select cubic_code, cubic_ou_code, archive_link from ".$selectedCity.".".$selectedCity."_ctv_topology where cubic_code in (select distinct cubic_ou_code from ".$selectedCity.".".$selectedCity."_ctv_topology where cubic_ou_code is not null);  UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET json_data = tmp.json_data from (select t.id AS cubic_code ,row_to_json(t) AS json_data from (select t1.cubic_ou_name AS name, t2.cubic_ou_code AS parents, t1.cubic_ou_code AS id, t1.children,  t2.archive_link from t1 left join t2  on t1.cubic_ou_code = t2.cubic_code) t) tmp where ".$selectedCity."_ctv_topology.cubic_code = tmp.cubic_code AND ".$selectedCity."_ctv_topology.archive_link is not null;";
+$retuenedArray = $newDBrequest -> dbConnect($query, false, true);
+//-----------------------------------------------------------------------------------
 $query = "SELECT  cubic_name, cubic_code, json_data  FROM ".$selectedCity.".".$selectedCity."_ctv_topology".$selectedSheWhere.";";
 $queryArrayKeys = array('cubic_name', 'cubic_code', 'json_data');
 //echo $query;
@@ -118,22 +133,8 @@ foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
 }
 if ($file_names_values != ''){
   $query = "CREATE TEMP TABLE tmp(cubic_code varchar(100), json_data text); INSERT INTO tmp VALUES ".$file_names_values.";UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET json_data = tmp.json_data FROM tmp WHERE tmp.cubic_code = ".$selectedCity."_ctv_topology.cubic_code ;";
-  echo $query;
+  //echo $query;
   $newDBrequest -> dbConnect($query, false, true);
 }
-
-
-$link_left_part = /*'"<a href="http://'.$server_address.'/qgis-ck/tmp/archive/'*/'http://'.$server_address.'/qgis-ck/tmp/archive/';
-$link_right_part = /*'/" target="_blank">посилання на архів</a>"'*/'/';
-$query = "UPDATE $selectedCity"."."."$selectedCity"."_ctv_topology SET archive_link = CASE "." WHEN cubic_name like '%Магистральный распределительный узел%' THEN '$link_left_part"."$selectedCity"."/topology/mdod/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Оптический узел%' THEN '$link_left_part"."$selectedCity"."/topology/nod/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Оптичний приймач%' THEN '$link_left_part"."$selectedCity"."/topology/op/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Передатчик оптический%' THEN '$link_left_part"."$selectedCity"."/topology/ot/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Кросс-муфта%' THEN '$link_left_part"."$selectedCity"."/topology/cc/"."'||cubic_code||'"."$link_right_part' "."END ".$selectedSheWhere.";";
-$retuenedArray = $newDBrequest -> dbConnect($query, false, true);
-//-------------------updates such field: she/district/microdistrict
-$query = "UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET microdistrict =".$selectedCity."_microdistricts.micro_district FROM ".$selectedCity.".".$selectedCity."_microdistricts WHERE ST_Contains(".$selectedCity."_microdistricts.coverage_geom, ".$selectedCity."_ctv_topology.equipment_geom) ".$selectedShe.";".  "UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET district =".$selectedCity."_microdistricts.district FROM ".$selectedCity.".".$selectedCity."_microdistricts WHERE ST_Contains(".$selectedCity."_microdistricts.coverage_geom, ".$selectedCity."_ctv_topology.equipment_geom) ".$selectedShe.";" .  "UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET she_num =".$selectedCity."_coverage.coverage_zone FROM ".$selectedCity.".".$selectedCity."_coverage WHERE ST_Contains(".$selectedCity."_coverage.geom_area, ".$selectedCity."_ctv_topology.equipment_geom) and kiev.kiev_coverage.geom_area is not null ".$selectedShe.";";
-$retuenedArray = $newDBrequest -> dbConnect($query, false, true);
-//echo $query;
-//json field generation
-$query = "CREATE temp table t1 AS select cubic_ou_name, cubic_ou_code, array_agg(cubic_code) AS children from ".$selectedCity.".".$selectedCity."_ctv_topology where cubic_ou_name in ('Кросс-муфта', 'Магистральный распределительный узел', 'Передатчик оптический', 'Оптический узел', 'Оптичний приймач' , 'Оптичний приймач') group by cubic_ou_name, cubic_ou_code; CREATE temp table t2 AS select cubic_code, cubic_ou_code, archive_link ||cubic_code||'_wiring.png' AS archive_link from ".$selectedCity.".".$selectedCity."_ctv_topology where cubic_code in (select distinct cubic_ou_code from ".$selectedCity.".".$selectedCity."_ctv_topology where cubic_ou_code is not null);  UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET json_data = tmp.json_data from (select t.id AS cubic_code ,row_to_json(t) AS json_data from (select t1.cubic_ou_name AS name, t2.cubic_ou_code AS parents, t1.cubic_ou_code AS id, t1.children,  t2.archive_link from t1 left join t2  on t1.cubic_ou_code = t2.cubic_code) t) tmp where ".$selectedCity."_ctv_topology.cubic_code = tmp.cubic_code AND ".$selectedCity."_ctv_topology.archive_link is not null;";
-$retuenedArray = $newDBrequest -> dbConnect($query, false, true);
-
 //echo $query;
 ?>

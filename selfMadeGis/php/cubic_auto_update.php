@@ -46,7 +46,17 @@ echo $city['city_eng'].'<hr>';
 	$query = "CREATE TEMP TABLE tmp AS SELECT cubic_name, cubic_street, cubic_house, cubic_code FROM ".$selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IN (SELECT DISTINCT cubic_ou_code FROM ".$selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_ou_code IS NOT NULL) ;UPDATE  ".$selectedCity.".".$selectedCity."_ctv_topology SET cubic_ou_name = tmp.cubic_name, cubic_ou_street = tmp.cubic_street, cubic_ou_house = tmp.cubic_house FROM tmp WHERE ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_ou_code = tmp.cubic_code; DROP TABLE tmp;";
 	$postgresCtvTopology -> dbConnect($query, false, true); 	
 	echo $query.'<hr>';
-	$dir_arr_response = array();
+
+	$link_left_part = 'http://'.$server_address.'/qgis-ck/tmp/archive/';
+	$link_right_part = '/';
+	$query = "UPDATE $selectedCity"."."."$selectedCity"."_ctv_topology SET archive_link = CASE "." WHEN cubic_name like '%Магистральный распределительный узел%' THEN '$link_left_part"."$selectedCity"."/topology/mdod/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Оптический узел%' THEN '$link_left_part"."$selectedCity"."/topology/nod/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Оптичний приймач%' THEN '$link_left_part"."$selectedCity"."/topology/op/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Передатчик оптический%' THEN '$link_left_part"."$selectedCity"."/topology/ot/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Кросс-муфта%' THEN '$link_left_part"."$selectedCity"."/topology/cc/"."'||cubic_code||'"."$link_right_part' "."END ;";
+	$postgresCtvTopology -> dbConnect($query, false, true);
+	echo $query.'<hr>';
+
+	//json field generation
+	$query = "CREATE temp table t1 AS select cubic_ou_name, cubic_ou_code, array_agg(cubic_code) AS children from ".$selectedCity.".".$selectedCity."_ctv_topology where cubic_ou_name in ('Кросс-муфта', 'Магистральный распределительный узел', 'Передатчик оптический', 'Оптический узел', 'Оптичний приймач' , 'Оптичний приймач') group by cubic_ou_name, cubic_ou_code; CREATE temp table t2 AS select cubic_code, cubic_ou_code, archive_link  from ".$selectedCity.".".$selectedCity."_ctv_topology where cubic_code in (select distinct cubic_ou_code from ".$selectedCity.".".$selectedCity."_ctv_topology where cubic_ou_code is not null);  UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET json_data = tmp.json_data from (select t.id AS cubic_code ,row_to_json(t) AS json_data from (select t1.cubic_ou_name AS name, t2.cubic_ou_code AS parents, t1.cubic_ou_code AS id, t1.children,  t2.archive_link from t1 left join t2  on t1.cubic_ou_code = t2.cubic_code) t) tmp where ".$selectedCity."_ctv_topology.cubic_code = tmp.cubic_code AND ".$selectedCity."_ctv_topology.archive_link is not null;";
+	$postgresCtvTopology -> dbConnect($query, false, true);
+	echo $query;
 	$query = "SELECT  cubic_name, cubic_code  FROM ".$selectedCity.".".$selectedCity."_ctv_topology;";
 	$queryArrayKeys = array('cubic_name', 'cubic_code');
 	//echo $query;
@@ -85,18 +95,6 @@ echo $city['city_eng'].'<hr>';
 	  echo $query;
 	  $postgresCtvTopology -> dbConnect($query, false, true);
 	}
-
-	$link_left_part = 'http://'.$server_address.'/qgis-ck/tmp/archive/';
-	$link_right_part = '/';
-	$query = "UPDATE $selectedCity"."."."$selectedCity"."_ctv_topology SET archive_link = CASE "." WHEN cubic_name like '%Магистральный распределительный узел%' THEN '$link_left_part"."$selectedCity"."/topology/mdod/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Оптический узел%' THEN '$link_left_part"."$selectedCity"."/topology/nod/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Оптичний приймач%' THEN '$link_left_part"."$selectedCity"."/topology/op/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Передатчик оптический%' THEN '$link_left_part"."$selectedCity"."/topology/ot/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Кросс-муфта%' THEN '$link_left_part"."$selectedCity"."/topology/cc/"."'||cubic_code||'"."$link_right_part' "."END ;";
-	$postgresCtvTopology -> dbConnect($query, false, true);
-	echo $query.'<hr>';
-
-	//json field generation
-	$query = "CREATE temp table t1 AS select cubic_ou_name, cubic_ou_code, array_agg(cubic_code) AS children from ".$selectedCity.".".$selectedCity."_ctv_topology where cubic_ou_name in ('Кросс-муфта', 'Магистральный распределительный узел', 'Передатчик оптический', 'Оптический узел', 'Оптичний приймач' , 'Оптичний приймач') group by cubic_ou_name, cubic_ou_code; CREATE temp table t2 AS select cubic_code, cubic_ou_code, archive_link ||cubic_code||'_wiring.png' AS archive_link from ".$selectedCity.".".$selectedCity."_ctv_topology where cubic_code in (select distinct cubic_ou_code from ".$selectedCity.".".$selectedCity."_ctv_topology where cubic_ou_code is not null);  UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET json_data = tmp.json_data from (select t.id AS cubic_code ,row_to_json(t) AS json_data from (select t1.cubic_ou_name AS name, t2.cubic_ou_code AS parents, t1.cubic_ou_code AS id, t1.children,  t2.archive_link from t1 left join t2  on t1.cubic_ou_code = t2.cubic_code) t) tmp where ".$selectedCity."_ctv_topology.cubic_code = tmp.cubic_code AND ".$selectedCity."_ctv_topology.archive_link is not null;";
-	$postgresCtvTopology -> dbConnect($query, false, true);
-	echo $query;
-
     ////////////////////
     //////buildings tables update
     $queryModificator = array(
