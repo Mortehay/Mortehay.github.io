@@ -11,27 +11,57 @@ $query = "UPDATE ".$selectedCity.".".$selectedCity."_cable_channel_pits SET micr
 $queryArrayKeys = false;
 echo $query;
 $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
-$query = "SELECT DISTINCT pit_id FROM ".$selectedCity.".".$selectedCity."_cable_channel_pits WHERE pit_id IS NOT NULL;";
-$queryArrayKeys = array('pit_id');
+$query = "SELECT DISTINCT pit_id, json_data FROM ".$selectedCity.".".$selectedCity."_cable_channel_pits WHERE pit_id IS NOT NULL;";
+$queryArrayKeys = array('pit_id', 'json_data');
 echo $query;
 $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
 $sumObjectsArray = $retuenedArray;
+$separator = $file_names_values = '';
+//$file_names ='';
+//$json = null;
 foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
   //print_r($objectArray);
   $description = array(
       'cubic_name' => 'pits',
       'cubic_code' => $sumObjectsArray[$sumObjectsArrayKey]['pit_id'],
       'rootDir' => '/var/www/QGIS-Web-Client-master/site/tmp/archive/',
-      'subDirType' => '/topology/'
+      'subDirType' => '/topology/',
+      'json_data' => json_decode($sumObjectsArray[$sumObjectsArrayKey]['json_data'])
     );
+  //if($sumObjectsArray[$sumObjectsArrayKey]['json'] !=null) {
+    //$json = json_decode($sumObjectsArray[$sumObjectsArrayKey]['json_data']);
+    //echo $json;
+  //}
+  
   //print_r($description);
   if($description['cubic_name'] !==null){
     //array_push($dir_arr_response, $description );
     //print_r($description);
    // echo'<br>';
     topologyDirCreate($description, $selectedCity);
-    //echo'<hr>';
+    //echo dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/');
+    //echo '<hr>'.$description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/';
+    if($description['json_data'] !== null){
+        if(dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/') ){ $file_names = dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/');
+        $description['json_data']->file_names = $file_names;
+        $file_names_values .= $separator."('".$description['cubic_code']."','".json_encode($description['json_data'] )."')";  
+        $separator =",";
+      }
+    }
+    if($description['json_data'] !== null){
+      if(dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/') ){ $file_names = dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/');
+        if($description['json_data']->file_names != $file_names){
+          $description['json_data']->file_names = $file_names;
+          $file_names_values .= $separator."('".$description['cubic_code']."','".json_encode($description['json_data'] )."')";  
+          $separator =",";
+        }  
+      }
+    }
   }
 }
+$query = "CREATE TEMP TABLE tmp(pit_id varchar(100), json_data text); INSERT INTO tmp VALUES ".$file_names_values.";UPDATE ".$selectedCity.".".$selectedCity."_cable_channel_pits SET json_data = tmp.json_data FROM tmp WHERE tmp.pi_id = ".$selectedCity."_ctv_topology.cubic_code ;";
+echo $query;
+$newDBrequest -> dbConnect($query, false, true);
+
 //-------------------------------------
 ?>

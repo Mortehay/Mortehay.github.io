@@ -692,4 +692,13 @@ function size_detection($file_params){
   } else { $params = array('path' => '/var/www/QGIS-Web-Client-master/site/img/vguh.png', 'name' => 'vguh.png');}
   return $params;
 }
+//////file name array in dir//////////////////////
+function dir_files_names($dir_path){
+  if(file_exists($dir_path)){
+    if(count(scandir($dir_path)) == 2){
+      return false;
+    } else {return array_values(array_diff(scandir($dir_path),['.','..']));}
+  }
+  
+}
 ?>
