@@ -83,12 +83,11 @@ $retuenedArray = $newDBrequest -> dbConnect($query, false, true);
 $query = "CREATE TEMP TABLE tmp AS SELECT cubic_name, cubic_street, cubic_house, cubic_code FROM ".$selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IN (SELECT DISTINCT cubic_ou_code FROM ".$selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_ou_code IS NOT NULL) ".$selectedShe.";UPDATE  ".$selectedCity.".".$selectedCity."_ctv_topology SET cubic_ou_name = tmp.cubic_name, cubic_ou_street = tmp.cubic_name, cubic_ou_house = tmp.cubic_name FROM tmp WHERE ".$selectedCity.".".$selectedCity."_ctv_topology.cubic_ou_code = tmp.cubic_code; DROP TABLE tmp;";
 $retuenedArray = $newDBrequest -> dbConnect($query, false, true); 	
 //echo $query;
-$dir_arr_response = array();
+
 $query = "SELECT  cubic_name, cubic_code, json_data  FROM ".$selectedCity.".".$selectedCity."_ctv_topology".$selectedSheWhere.";";
 $queryArrayKeys = array('cubic_name', 'cubic_code', 'json_data');
 //echo $query;
 $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
-$dir_arr_response = array();
 $sumObjectsArray = $retuenedArray;
 $separator = $file_names_values = '';
 foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
@@ -102,33 +101,27 @@ foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
     );
   //print_r($description);
   if($description['cubic_name'] !==null){
-    array_push($dir_arr_response, $description );
+    
     //print_r($description);
    // echo'<br>';
     topologyDirCreate($description, $selectedCity);
     if($description['json_data'] !== null){
         if(dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/') ){ $file_names = dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/');
-        //$description['json_data']['file_names'] = $file_names;
-        //echo $description['json_data'];
-        //echo '<hr>';print_r($description['json_data']);echo '<hr>';
-        //echo '<hr>';print_r($file_names);echo '<hr>';
-        $description['json_data']->file_names = $file_names;
-        //$description['json_data']['file_names'] = $file_names;
-        //echo '<hr>';print_r($description['json_data']);echo '<hr>';
-        $file_names_values .= $separator."('".$description['cubic_code']."','".json_encode($description['json_data'] )."')";  
-        $separator =",";
-        //$query = "CREATE TEMP TABLE tmp(cubic_code varchar(100), json_data text)";
-        //$query = "UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET json_data = '".json_encode($description['json_data'] )."' WHERE cubic_code = '".$description['cubic_code']."';";
-        //echo $query;
-        //$newDBrequest -> dbConnect($query, false, true);
+        if($description['json_data']->file_names != $file_names){
+          $description['json_data']->file_names = $file_names;
+          $file_names_values .= $separator."('".$description['cubic_code']."','".json_encode($description['json_data'] )."')";  
+          $separator =",";
+        }
       }
     }
-    //echo'<hr>';
   }
 }
-$query = "CREATE TEMP TABLE tmp(cubic_code varchar(100), json_data text); INSERT INTO tmp VALUES ".$file_names_values.";UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET json_data = tmp.json_data FROM tmp WHERE tmp.cubic_code = ".$selectedCity."_ctv_topology.cubic_code ;";
-echo $query;
-$newDBrequest -> dbConnect($query, false, true);
+if ($file_names_values != ''){
+  $query = "CREATE TEMP TABLE tmp(cubic_code varchar(100), json_data text); INSERT INTO tmp VALUES ".$file_names_values.";UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET json_data = tmp.json_data FROM tmp WHERE tmp.cubic_code = ".$selectedCity."_ctv_topology.cubic_code ;";
+  echo $query;
+  $newDBrequest -> dbConnect($query, false, true);
+}
+
 
 $link_left_part = /*'"<a href="http://'.$server_address.'/qgis-ck/tmp/archive/'*/'http://'.$server_address.'/qgis-ck/tmp/archive/';
 $link_right_part = /*'/" target="_blank">посилання на архів</a>"'*/'/';

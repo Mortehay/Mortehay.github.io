@@ -53,22 +53,37 @@ echo $city['city_eng'].'<hr>';
 	$retuenedArray = $postgresCtvTopology -> dbConnect($query, $queryArrayKeys, true);
 
 	$sumObjectsArray = $retuenedArray;
+	$separator = $file_names_values = '';
 	foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
 	  //print_r($objectArray);
 	  $description = array(
 	      'cubic_name' => groupSelect($sumObjectsArray[$sumObjectsArrayKey]['cubic_name'])['label'],
 	      'cubic_code' => $sumObjectsArray[$sumObjectsArrayKey]['cubic_code'],
 	      'rootDir' => '/var/www/QGIS-Web-Client-master/site/tmp/archive/',
-      	  'subDirType' => '/topology/'
+	      'subDirType' => '/topology/',
+	      'json_data' => json_decode($sumObjectsArray[$sumObjectsArrayKey]['json_data'])
 	    );
 	  //print_r($description);
 	  if($description['cubic_name'] !==null){
-	    array_push($dir_arr_response, $description );
+	    
 	    //print_r($description);
 	   // echo'<br>';
 	    topologyDirCreate($description, $selectedCity);
-	    //echo'<hr>';
+	    if($description['json_data'] !== null){
+	        if(dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/') ){ $file_names = dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/');
+	        if($description['json_data']->file_names != $file_names){
+	          $description['json_data']->file_names = $file_names;
+	          $file_names_values .= $separator."('".$description['cubic_code']."','".json_encode($description['json_data'] )."')";  
+	          $separator =",";
+	        }
+	      }
+	    }
 	  }
+	}
+	if ($file_names_values != ''){
+	  $query = "CREATE TEMP TABLE tmp(cubic_code varchar(100), json_data text); INSERT INTO tmp VALUES ".$file_names_values.";UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET json_data = tmp.json_data FROM tmp WHERE tmp.cubic_code = ".$selectedCity."_ctv_topology.cubic_code ;";
+	  echo $query;
+	  $postgresCtvTopology -> dbConnect($query, false, true);
 	}
 
 	$link_left_part = 'http://'.$server_address.'/qgis-ck/tmp/archive/';
@@ -187,7 +202,9 @@ echo $city['city_eng'].'<hr>';
 	echo $query;
 	$retuenedArray = $postgresCableChannels-> dbConnect($query, $queryArrayKeys, true);
 	$sumObjectsArray = $retuenedArray;
+	$separator = $file_names_values = '';
 	foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
+	  //print_r($objectArray);
 	  $description = array(
 	      'cubic_name' => 'pits',
 	      'cubic_code' => $sumObjectsArray[$sumObjectsArrayKey]['pit_id'],
@@ -196,18 +213,22 @@ echo $city['city_eng'].'<hr>';
 	      'json_data' => json_decode($sumObjectsArray[$sumObjectsArrayKey]['json_data'])
 	    );
 	  if($description['cubic_name'] !==null){
-
 	    topologyDirCreate($description, $selectedCity);
-
 	    if($description['json_data'] !== null){
-	        if(dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/') ){ $file_names = array_values(dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/'));
-	        $description['json_data']->file_names = $file_names;
-	        $query = "UPDATE ".$selectedCity.".".$selectedCity."_cable_channel_pits SET json_data = '".json_encode($description['json_data'] )."' WHERE pit_id = ".$description['cubic_code'].";";
-	        echo $query;
-	        $postgresCableChannels-> dbConnect($query, false, true);
+	      if(dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/') ){ $file_names = dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/');
+	        if($description['json_data']->file_names != $file_names){
+	          $description['json_data']->file_names = $file_names;
+	          $file_names_values .= $separator."('".$description['cubic_code']."','".json_encode($description['json_data'] )."')";  
+	          $separator =",";
+	        }  
 	      }
 	    }
 	  }
+	}
+	if ($file_names_values != ''){
+	  $query = "CREATE TEMP TABLE tmp(pit_id varchar(100), json_data text); INSERT INTO tmp VALUES ".$file_names_values.";UPDATE ".$selectedCity.".".$selectedCity."_cable_channel_pits SET json_data = tmp.json_data FROM tmp WHERE tmp.pit_id::int8 = ".$selectedCity."_cable_channel_pits.pit_id ;";
+	  echo $query;
+	  $postgresCableChannels -> dbConnect($query, false, true);
 	}
 
 //-------------------------------------
