@@ -98,6 +98,7 @@ $retuenedArray = $newDBrequest -> dbConnect($query, false, true);
 //json field generation
 $query = "CREATE temp table t1 AS select cubic_ou_name, cubic_ou_code, array_agg(cubic_code) AS children from ".$selectedCity.".".$selectedCity."_ctv_topology where cubic_ou_name in ('Кросс-муфта', 'Магистральный распределительный узел', 'Передатчик оптический', 'Оптический узел', 'Оптичний приймач' , 'Оптичний приймач') group by cubic_ou_name, cubic_ou_code; CREATE temp table t2 AS select cubic_code, cubic_ou_code, archive_link from ".$selectedCity.".".$selectedCity."_ctv_topology where cubic_code in (select distinct cubic_ou_code from ".$selectedCity.".".$selectedCity."_ctv_topology where cubic_ou_code is not null);  UPDATE ".$selectedCity.".".$selectedCity."_ctv_topology SET json_data = tmp.json_data from (select t.id AS cubic_code ,row_to_json(t) AS json_data from (select t1.cubic_ou_name AS name, t2.cubic_ou_code AS parents, t1.cubic_ou_code AS id, t1.children,  t2.archive_link from t1 left join t2  on t1.cubic_ou_code = t2.cubic_code) t) tmp where ".$selectedCity."_ctv_topology.cubic_code = tmp.cubic_code AND ".$selectedCity."_ctv_topology.archive_link is not null;";
 $retuenedArray = $newDBrequest -> dbConnect($query, false, true);
+echo $query;
 //-----------------------------------------------------------------------------------
 $query = "SELECT  cubic_name, cubic_code, json_data  FROM ".$selectedCity.".".$selectedCity."_ctv_topology".$selectedSheWhere.";";
 $queryArrayKeys = array('cubic_name', 'cubic_code', 'json_data');
@@ -122,11 +123,9 @@ foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
     topologyDirCreate($description, $selectedCity);
     if($description['json_data'] !== null){
         if(dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/') ){ $file_names = dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/');
-        if($description['json_data']->file_names != $file_names){
           $description['json_data']->file_names = $file_names;
           $file_names_values .= $separator."('".$description['cubic_code']."','".json_encode($description['json_data'] )."')";  
           $separator =",";
-        }
       }
     }
   }

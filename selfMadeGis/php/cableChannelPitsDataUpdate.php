@@ -30,15 +30,14 @@ foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
     topologyDirCreate($description, $selectedCity);
     if($description['json_data'] !== null){
       if(dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/') ){ $file_names = dir_files_names($description['rootDir'].$selectedCity.$description['subDirType'].$description['cubic_name'].'/'.$description['cubic_code'].'/');
-        if($description['json_data']->file_names != $file_names){
           $description['json_data']->file_names = $file_names;
           $file_names_values .= $separator."('".$description['cubic_code']."','".json_encode($description['json_data'] )."')";  
-          $separator =",";
-        }  
+          $separator =","; 
       }
     }
   }
 }
+//echo '<hr>'.$file_names_values.'<hr>';
 if ($file_names_values != ''){
   $query = "CREATE TEMP TABLE tmp(pit_id varchar(100), json_data text); INSERT INTO tmp VALUES ".$file_names_values.";UPDATE ".$selectedCity.".".$selectedCity."_cable_channel_pits SET json_data = tmp.json_data FROM tmp WHERE tmp.pit_id::int8 = ".$selectedCity."_cable_channel_pits.pit_id ;";
   echo $query;

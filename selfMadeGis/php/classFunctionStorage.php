@@ -101,51 +101,73 @@ class mailSender{
   public function test(){
     return $this->params;
   }
-  public function mail_cities_users(){
-      $params = $this->params;
-      $queryModificator = $this->queryModificator;
-      $csv_out = $this->csv_out;
+  public function mail_cities_users($_params){
+
       $today = self::dateReturn();
-      //print_r($params);
+      
       $mailToArr = array();
-      self::rrmdir($params['dirPathMail']);
-      if($params['mail_to_query_type'] = 'ctv_tolology_query'){
+      self::rrmdir($_params['mail_params']['dirPathMail']);
 
-        $postgres = new dbConnSetClass;
+      $postgres = new dbConnSetClass;
 
-        $query = "(select array_agg(links.city_eng) as city_eng, links.prime_city, access.e_mail as e_mail, access.mail_to as mail_to, access.restriction as restriction from public.links links   right join (select e_mail, restriction, mail_to from public.access) access on access.mail_to = links.prime_city where links.city_eng is not null group by links.prime_city, access.e_mail,access.mail_to, access.restriction) union (select array_agg(links.city_eng)  as city_eng, 'admin' as prime_city, access.e_mail as e_mail,access.mail_to as mail, access.restriction as restriction from public.access access, public.links links where access.mail_to in('admin') group by  access.e_mail, access.mail_to, access.restriction);";
-        echo $query.'<hr>';
-        $queryArrayKeys = array('city_eng', 'prime_city', 'e_mail', 'mail_to', 'restriction');
-        $mailToArr = $postgres -> dbConnect($query, $queryArrayKeys, true);
-        //print_r($mailToArr);
-        foreach ($mailToArr as $mailToArrKey => $mailToArrValue) {
-          $path = $params['dirPathMail'].$mailToArrValue['prime_city'].'/';
-          echo '<hr>'.$path.'<hr>';
-          //print_r(self::postgres_to_php_array($mailToArrValue['city_eng']));
-          $cities = self::postgres_to_php_array($mailToArrValue['city_eng']);
-          self::newDirCreation($path);
-          self::restriction_change($path);
-  
-          foreach ($cities as $selectedCity) {
-            $linkStorage ="'/var/www/QGIS-Web-Client-master/site/csv/cubic/".$params['tableType']."/".$selectedCity.$params['tableType'].$params['fileExtention']."'";
-            $query ="CREATE TEMP TABLE temp( ".$queryModificator['var']."); select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ;  create temp table csvTemp as (SELECT CITY,STREET, HOUSE, FLAT, CODE, NAME ,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID, 'missing' as state FROM temp WHERE CODE NOT IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL) ) UNION ALL (with data(CITY,STREET, HOUSE, FLAT, CODE, NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID)  as (select CITY,STREET, HOUSE, FLAT, CODE, NAME, PGS_ADDR, OU_OP_ADDR, OU_CODE, DATE_REG, COMENT, UNAME, NET_TYPE, HOUSE_ID  from temp) select d.CITY, d.STREET, d.HOUSE, d.FLAT, d.CODE, d.NAME, d.PGS_ADDR, d.OU_OP_ADDR, d.OU_CODE, d.DATE_REG, d.COMENT, d.UNAME, d.NET_TYPE, d.HOUSE_ID, 'reused code' as rcode from data d where not exists (select 1 from ".$selectedCity.".".$selectedCity."_ctv_topology u where u.cubic_code = d.CODE and u.cubic_house_id = d.HOUSE_ID) and CODE IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL) ); update csvTemp set house = replace(house, '/', '\'); select copy_for_testuser_v2('csvTemp','TO','".$path.$selectedCity.$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.$params['fileExtention']."', ';','CSV HEADER','windows-1251') WHERE (select true from csvTemp limit 1); select copy_for_testuser_v2('csvTemp','TO','".$path.$selectedCity.$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.$params['fileExtention']."', ';','CSV HEADER','windows-1251') WHERE (select true from csvTemp limit 1);";;
-            $postgres -> dbConnect($query, false, true);
-          }
-          if (is_dir_empty($params['dirPathMail']) ){
-              echo '<hr>it is empty<hr>';
-            } else {
-  
-              $mail_filename = $mailToArrValue['prime_city'].$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.'.zip';
-              $mail_file_path = $path.$mail_filename;
-              echo '<hr>'.$mail_filename.'<hr>';
-              echo '<hr>'.$mail_file_path.'<hr>';
-              //sleep(12*count($cities));
-              self::restriction_change($path);
-              self::zip_folder($path,$mail_file_path);
-              self::mail_attachment( $mailToArrValue['e_mail'] , '', $mailToArrValue['prime_city'].$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today , $mailToArrValue['prime_city'].$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today, $mail_file_path, $mail_filename);
+      $query = "(select array_agg(links.city_eng) as city_eng, links.prime_city, access.e_mail as e_mail, access.mail_to as mail_to, access.restriction as restriction from public.links links   right join (select e_mail, restriction, mail_to from public.access) access on access.mail_to = links.prime_city where links.city_eng is not null group by links.prime_city, access.e_mail,access.mail_to, access.restriction) union (select array_agg(links.city_eng)  as city_eng, 'admin' as prime_city, access.e_mail as e_mail,access.mail_to as mail, access.restriction as restriction from public.access access, public.links links where access.mail_to in('admin') group by  access.e_mail, access.mail_to, access.restriction);";
+      echo $query.'<hr>';
+      $queryArrayKeys = array('city_eng', 'prime_city', 'e_mail', 'mail_to', 'restriction');
+      $mailToArr = $postgres -> dbConnect($query, $queryArrayKeys, true);
+      //print_r($mailToArr);
+      foreach ($mailToArr as $mailToArrKey => $mailToArrValue) {
+        $path = $_params['mail_params']['dirPathMail'].$mailToArrValue['prime_city'].'/';
+        echo '<hr>'.$path.'<hr>';
+        //print_r(self::postgres_to_php_array($mailToArrValue['city_eng']));
+        $cities = self::postgres_to_php_array($mailToArrValue['city_eng']);
+        self::newDirCreation($path);
+        self::restriction_change($path);
+
+        foreach ($cities as $selectedCity) {
+
+          foreach($_params['query'] as $paramsKey =>$allParams) {
+
+
+            
+            if($paramsKey = '_ctv_topology'){
+              $params = $_params['query'][$paramsKey]['query_params'];
+              $queryModificator = $_params['query'][$paramsKey]['queryModificator'];
+              $reserveDirPath = '/var/www/QGIS-Web-Client-master/site/csv/cubic/'.$paramsKey.'_daily_updates/'.$selectedCity.'/';
+              self::newDirCreation($reserveDirPath);
+              self::restriction_change($reserveDirPath);
+              $linkStorage ="'/var/www/QGIS-Web-Client-master/site/csv/cubic/".$params['tableType']."/".$selectedCity.$params['tableType'].$params['fileExtention']."'";
+              $query ="CREATE TEMP TABLE temp( ".$queryModificator['var']."); select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ;  create temp table csvTemp as (SELECT CITY,STREET, HOUSE, FLAT, CODE, NAME ,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID, 'missing' as state FROM temp WHERE CODE NOT IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL) ) UNION ALL (with data(CITY,STREET, HOUSE, FLAT, CODE, NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID)  as (select CITY,STREET, HOUSE, FLAT, CODE, NAME, PGS_ADDR, OU_OP_ADDR, OU_CODE, DATE_REG, COMENT, UNAME, NET_TYPE, HOUSE_ID  from temp) select d.CITY, d.STREET, d.HOUSE, d.FLAT, d.CODE, d.NAME, d.PGS_ADDR, d.OU_OP_ADDR, d.OU_CODE, d.DATE_REG, d.COMENT, d.UNAME, d.NET_TYPE, d.HOUSE_ID, 'reused code' as rcode from data d where not exists (select 1 from ".$selectedCity.".".$selectedCity."_ctv_topology u where u.cubic_code = d.CODE and u.cubic_house_id = d.HOUSE_ID) and CODE IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL) ); update csvTemp set house = replace(house, '/', '\'); select copy_for_testuser_v2('csvTemp','TO','".$path.$selectedCity.$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.$params['fileExtention']."', ';','CSV HEADER','windows-1251') WHERE (select true from csvTemp limit 1); select copy_for_testuser_v2('csvTemp','TO','".$reserveDirPath.$selectedCity.$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.$params['fileExtention']."', ';','CSV HEADER','windows-1251') WHERE (select true from csvTemp limit 1);";
+              echo $query.'<hr>';
+              $postgres -> dbConnect($query, false, true);
+            }
+            if($paramsKey = '_switches'){
+              $params = $_params['query'][$paramsKey]['query_params'];
+              $queryModificator = $_params['query'][$paramsKey]['queryModificator'];
+              $linkStorage ="'/var/www/QGIS-Web-Client-master/site/csv/cubic/".$params['tableType']."/".$selectedCity.$params['tableType'].$params['fileExtention']."'";
+              $reserveDirPath = '/var/www/QGIS-Web-Client-master/site/csv/cubic/'.$paramsKey.'_daily_updates/'.$selectedCity.'/';
+              self::newDirCreation($reserveDirPath);
+              self::restriction_change($reserveDirPath);
+              $query ="CREATE TEMP TABLE temp( ".$queryModificator['var']."); select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ;  create temp table csvTemp as (SELECT ID, MAC_ADDRESS,IP_ADDRESS, SERIAL_NUMBER,HOSTNAME, DEV_FULL_NAME, VENDOR_MODEL, SW_MODEL, SW_ROLE, HOUSE_ID,DOORWAY,LOCATION,FLOOR, SW_MON_TYPE, SW_INV_STATE,VLAN, DATE_CREATE, DATE_CHANGE, IS_CONTROL, IS_OPT82,PARENT_ID,PARENT_MAC, PARENT_PORT, CHILD_ID, CHILD_MAC, CHILD_PORT,PORT_NUMBER, PORT_STATE, CONTRACT_CNT, CONTRACT_ACTIVE_CNT, GUEST_VLAN, CITY_ID, CITY, CITY_CODE, REPORT_DATE, 'missing' as state FROM temp WHERE ID NOT IN(SELECT cubic_switch_id FROM ". $selectedCity.".".$selectedCity."_switches WHERE cubic_switch_id IS NOT NULL) ) UNION ALL (with data(ID,MAC_ADDRESS,IP_ADDRESS,SERIAL_NUMBER,HOSTNAME,DEV_FULL_NAME,VENDOR_MODEL,SW_MODEL,SW_ROLE,HOUSE_ID,DOORWAY,LOCATION,FLOOR,SW_MON_TYPE,SW_INV_STATE,VLAN,DATE_CREATE,DATE_CHANGE,IS_CONTROL,IS_OPT82,PARENT_ID,PARENT_MAC,PARENT_PORT, CHILD_ID, CHILD_MAC, CHILD_PORT,PORT_NUMBER, PORT_STATE, CONTRACT_CNT, CONTRACT_ACTIVE_CNT, GUEST_VLAN, CITY_ID, CITY, CITY_CODE, REPORT_DATE)  as (select ID,MAC_ADDRESS,IP_ADDRESS,SERIAL_NUMBER,HOSTNAME,DEV_FULL_NAME,VENDOR_MODEL,SW_MODEL,SW_ROLE,HOUSE_ID,DOORWAY,LOCATION,FLOOR,SW_MON_TYPE,SW_INV_STATE,VLAN,DATE_CREATE,DATE_CHANGE,IS_CONTROL,IS_OPT82,PARENT_ID,PARENT_MAC,PARENT_PORT, CHILD_ID, CHILD_MAC, CHILD_PORT,PORT_NUMBER, PORT_STATE, CONTRACT_CNT, CONTRACT_ACTIVE_CNT, GUEST_VLAN, CITY_ID, CITY, CITY_CODE, REPORT_DATE  from temp) select d.ID, d.MAC_ADDRESS, d.IP_ADDRESS, d.SERIAL_NUMBER, d.HOSTNAME, d.DEV_FULL_NAME, d.VENDOR_MODEL, d.SW_MODEL, d.SW_ROLE, d.HOUSE_ID, d.DOORWAY, d.LOCATION, d.FLOOR, d.SW_MON_TYPE, d.SW_INV_STATE, d.VLAN, d.DATE_CREATE, d.DATE_CHANGE, d.IS_CONTROL, d.IS_OPT82, d.PARENT_ID, d.PARENT_MAC, d.PARENT_PORT, d.CHILD_ID, d.CHILD_MAC, d.CHILD_PORT,d.PORT_NUMBER, d.PORT_STATE, d.CONTRACT_CNT, d.CONTRACT_ACTIVE_CNT, d.GUEST_VLAN, d.CITY_ID, d.CITY, d.CITY_CODE, d.REPORT_DATE, 'reused code' as rcode from data d where not exists (select 1 from ".$selectedCity.".".$selectedCity."_switches u where u.cubic_switch_id = d.ID and u.cubic_house_id = d.HOUSE_ID) and ID IN(SELECT cubic_switch_id FROM ". $selectedCity.".".$selectedCity."_switches WHERE cubic_switch_id IS NOT NULL) ); select copy_for_testuser_v2('csvTemp','TO','".$path.$selectedCity.$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.$params['fileExtention']."', ';','CSV HEADER','windows-1251') WHERE (select true from csvTemp limit 1); select copy_for_testuser_v2('csvTemp','TO','".$reserveDirPath.$selectedCity.$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.$params['fileExtention']."', ';','CSV HEADER','windows-1251') WHERE (select true from csvTemp limit 1);";
+              echo $query.'<hr>';
+              $postgres -> dbConnect($query, false, true);
+            }
           }
         }
-      } else { $mailToArr = array('answer' => 'empty array');}
+        if (is_dir_empty($path) ){
+            echo '<hr>it is empty<hr>';
+          } else {
+
+            $mail_filename = $mailToArrValue['prime_city'].'_'.$params['tableTypeSufix'].'_'.$today.'.zip';
+            $mail_file_path = $path.$mail_filename;
+            echo '<hr>'.$mail_filename.'<hr>';
+            echo '<hr>'.$mail_file_path.'<hr>';
+            //sleep(12*count($cities));
+            self::restriction_change($path);
+            self::zip_folder($path,$mail_file_path);
+            self::mail_attachment( $mailToArrValue['e_mail'] , '', $mailToArrValue['prime_city'].'_'.$params['tableTypeSufix'].'_'.$today , $mailToArrValue['prime_city'].'_'.$params['tableTypeSufix'].'_'.$today, $mail_file_path, $mail_filename);
+        }
+      }
+    
 
     return $mailToArr;
   }
