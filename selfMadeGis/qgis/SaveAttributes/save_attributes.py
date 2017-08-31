@@ -198,7 +198,7 @@ class SaveAttributes:
         layer_list = []
         for layer in layers:
                 layer_list.append(layer.name())
-            
+        self.dlg.comboBox.clear()    
         self.dlg.comboBox.addItems(layer_list)
         # show the dialog
         self.dlg.show()
