@@ -227,7 +227,10 @@ echo $query;
 	  echo $query;
 	  $postgresCableChannels -> dbConnect($query, false, true);
 	}
-
+	//update cable channel channel data
+	$query = "UPDATE ".$selectedCity.".".$selectedCity."_cable_channels_channels SET pit_1 = ".$selectedCity."_cable_channel_pits.pit_number, she_n_1 = ".$selectedCity."_cable_channel_pits.pit_district, microdistrict_1 = ".$selectedCity."_cable_channel_pits.microdistrict, pit_1_geom = ".$selectedCity."_cable_channel_pits.geom FROM ".$selectedCity.".".$selectedCity."_cable_channel_pits WHERE pit_id_1 = ".$selectedCity."_cable_channel_pits.pit_id ; UPDATE ".$selectedCity.".".$selectedCity."_cable_channels_channels SET pit_2 = ".$selectedCity."_cable_channel_pits.pit_number, she_n_2 = ".$selectedCity."_cable_channel_pits.pit_district, microdistrict_2 = ".$selectedCity."_cable_channel_pits.microdistrict, pit_2_geom = ".$selectedCity."_cable_channel_pits.geom FROM ".$selectedCity.".".$selectedCity."_cable_channel_pits WHERE pit_id_2 = ".$selectedCity."_cable_channel_pits.pit_id; UPDATE ".$selectedCity.".".$selectedCity."_cable_channels_channels SET channel_geom = ST_MakeLine(pit_1_geom, pit_2_geom), map_distance = round( CAST(st_distance(pit_1_geom, pit_2_geom) as numeric),2) WHERE pit_1_geom IS NOT NULL AND pit_2_geom IS NOT NULL;";
+	echo $query.'<hr>';
+	$postgresCableChannels -> dbConnect($query, false, true);
 //-------------------------------------
 
 }

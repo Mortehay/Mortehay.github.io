@@ -282,6 +282,62 @@ class fileUpload {
     file_put_contents($targeFile, $str);
     return true;
   }
+  public function fileReplace($fromDir,$toDir){
+    scandir($fromDir);
+  }
+  public function newDirCreation($path){
+    if (!file_exists($path )) {
+      $oldmask = umask(0);
+      mkdir($path , 0777, true);
+      umask($oldmask);
+      return true;
+    }
+  }
+  public function unArchive($path, $fileName, $fileType , $cities, $tableTypes){
+    $fileName = explode('.',$fileName)[0];
+    echo '<hr>'.$fileName.'<hr>';
+    if(explode('_',$fileName)){
+      $fileNameArr = explode('_',$fileName);
+      print_r($fileNameArr);
+      if(array_intersect($cities,$fileNameArr) and array_intersect($tableTypes,$fileNameArr)){
+        $city = $fileNameArr[0];
+        array_shift($fileNameArr);
+        $tableType = '_'.implode('_',$fileNameArr);
+        echo $city.$tableType;
+        if ($fileType == 'zip'){
+          $zip = new ZipArchive;
+          $res = $zip -> open($path.$fileName.'.'.$fileType);
+          if ( $res === true ) {
+            $zip -> extractTo($path.$fileName);
+            $zip -> close();
+          }
+          chmod($path.$fileName, 0777);
+        } else if ($fileType == 'rar'){
+          echo '<hr>'.$path.$fileName.'.'.$fileType.'<hr>';
+          $rar_file = RarArchive::open($path.$fileName.'.'.$fileType) or die('broken archive');
+          $entries = rar_list($rar_file);
+          //print_r($entries);
+          foreach ($entries as $entry) {
+            //$unrarFileName = $entry->getName();   
+            //echo 'Файл: ' . $entry->getName() . "\n";
+            echo 'Файл______: ' . $path.$fileName . "\n";
+            //echo 'Размер сжатого элемента: ' . $entry->getPackedSize() . "\n";
+            //echo 'Размер в распакованном состоянии: ' . $entry->getUnpackedSize() . "\n";
+            $entry->extract($path.$fileName);
+          }
+          rar_close($rar_file);
+          chmod($path.$fileName, 0777);
+
+        } else {echo 'error on on unarchive';}
+      } 
+      else 'wrong file name, file name should be like - "city"."tableType".".zip/.rar"';
+    }
+    
+    
+
+
+   /* */
+  }
   public function upload($restriction,$login_user,$button_id){
     $target_dir = "/tmp/";
     $target_file = $target_dir . basename($_FILES[$button_id]['name']);
@@ -311,8 +367,7 @@ class fileUpload {
         } else {
             echo "Sorry, there was an error uploading your file.";
         }
-      } else
-      if($fileType == 'qgs' and $restriction =='admin'){
+      } else if(strtolower($fileType) == 'qgs' and strtolower($restriction) =='admin'){
         if (move_uploaded_file($_FILES[$button_id]['tmp_name'], $target_file)) {
             echo "The file ". basename( $_FILES[$button_id]['name']). " has been uploaded.";
             chmod($target_file, 0666);
@@ -321,6 +376,32 @@ class fileUpload {
             $file_logger -> dbConnect($query, false, true);
 
            header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+        } else {
+            echo "Sorry, there was an error uploading your file.";
+            //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+        }
+      } else if(strtolower($fileType) == 'zip' or strtolower($fileType) == 'rar'){
+        if (move_uploaded_file($_FILES[$button_id]['tmp_name'], $target_file)) {
+            echo "The file ". basename( $_FILES[$button_id]['name']). " has been uploaded.";
+            chmod($target_file, 0666);
+            $postgres = new dbConnSetClass;
+            $query = "select nspname from pg_catalog.pg_namespace where nspname not like '%pg_%' and nspname not in('information_schema', '_city_hlam', 'topology','public');";
+            $queryArrayKeys = array('nspname');
+            //echo $query;
+            $cities = array();
+            $sumObjectsArray = $postgres -> dbConnect($query, $queryArrayKeys, true);
+            foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
+              array_push($cities, $objectArray['nspname']);
+            }
+            $tableTypes = array('ctv','topology', 'switches','cable','channels','air');
+
+            //print_r($cities);print_r($tableTypes);
+            self::unArchive('/tmp/',  basename( $_FILES[$button_id]['name']), $fileType , $cities, $tableTypes);
+            //self::dirCreate($selectedCity, $target_file, $file_name, $fileType);
+            //$query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
+            //$file_logger -> dbConnect($query, false, true);
+
+           //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
         } else {
             echo "Sorry, there was an error uploading your file.";
             //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
@@ -722,5 +803,124 @@ function dir_files_names($dir_path){
     } else {return array_values(array_diff(scandir($dir_path),['.','..']));}
   }
   
+}
+///functions for xml's
+function stateUpdateInDatabase($stateArray, $city, $stateArrayType){
+  echo '<hr>'.$stateArrayType.'<hr>'.$city.'<hr>';
+  //echo '<hr>';
+  //  print_r($stateArray);
+  //  echo '<hr>';
+  $postgres = new dbConnSetClass;
+  if($stateArrayType == 'ports'){
+    $tmpCreate = "CREATE TEMP TABLE tmp(tid serial, id  varchar(100), port varchar(100),switch_local varchar(100),switch_remote varchar(100),type varchar(100),update_time varchar(100),up_time varchar(100),down_time varchar(100),alarm_state varchar(100),port_state varchar(100),errs_in varchar(100),errs_out varchar(100),ip_addr varchar(100),mac varchar(100),dev_state varchar(100),inventary_state varchar(100),to_num varchar(100));";
+    $tmpInsert = 'INSERT INTO tmp(id , port ,switch_local ,switch_remote ,type ,update_time ,up_time , down_time ,alarm_state ,port_state ,errs_in ,errs_out ,ip_addr ,mac ,dev_state ,inventary_state,to_num) ';
+      $tmpInsertValues = 'VALUES ';
+      foreach ($stateArray as $arr) {
+        $tmpInsertValues .= '('." '".$arr ['id']."',"." '".$arr ['port']."',"." '".$arr ['switch_local']."',"." '".$arr ['switch_remote']."',"." '".$arr ['type']."',"." '".$arr ['update_time']."',"." '".$arr ['up_time']."',"." '".$arr ['down_time']."',"." '".$arr ['alarm_state']."',"." '".$arr ['port_state']."',"." '".$arr ['errs_in']."',"." '".$arr ['errs_out']."',"." '".$arr ['ip_addr']."',"." '".$arr ['mac']."',"." '".$arr ['dev_state']."',"." '".$arr ['inventary_state']."',"." '".$arr ['to_num']."'".')';
+        if (next($stateArray )) {
+          $tmpInsertValues .= ','; // Add comma for all elements instead of last
+        }
+      
+      }
+    $tmpInsertValues .= ';'; 
+    $tmpCityUpdate = "UPDATE ".$city.".".$city."_switches set   update_time =tmp.update_time, up_time =tmp.up_time, down_time = tmp.down_time , alarm_state = tmp.alarm_state , port_state = tmp.port_state, errs_in =tmp.errs_in , errs_out = tmp.errs_out , dev_state = tmp.dev_state , inventary_state = tmp.inventary_state , to_num = tmp.to_num from tmp where tmp.ip_addr = ".$city."_switches.cubic_ip_address;";
+    $query = $tmpCreate.' '.$tmpInsert.' '.$tmpInsertValues.' '.$tmpCityUpdate;
+
+  } else if ($stateArrayType =='switches'){
+    //echo '<hr>';
+    //print_r($stateArray);
+    //echo '<hr>';
+    $tmpCreate = "CREATE TEMP TABLE tmp(tid serial,  ip_addr varchar(100),  calc_switches_cnt varchar(100),  mon_traffic_state varchar(100),  mon_ports_state varchar(100),  update_time varchar(100) ,  up_time varchar(100),  down_time varchar(100),  last_down_time_subst varchar(100),  to_num varchar(100),  mon_ping_state varchar(100),  mon_ping_ignore varchar(100));";
+    $tmpInsert = 'INSERT INTO tmp(ip_addr,calc_switches_cnt,mon_traffic_state,mon_ports_state,update_time,up_time,down_time,last_down_time_subst,to_num,mon_ping_state,mon_ping_ignore) ';
+    $tmpInsertValues = 'VALUES ';
+    foreach ($stateArray as $arr) {
+      $tmpInsertValues .= '('." '".$arr ['ip_addr']."',"." '".$arr ['calc_switches_cnt']."',"." '".$arr ['mon_traffic_state']."',"." '".$arr ['mon_ports_state']."',"." '".$arr ['update_time']."',"." '".$arr ['up_time']."',"." '".$arr ['down_time']."',"." '".$arr ['last_down_time_subst']."',"." '".$arr ['to_num']."',"." '".$arr ['mon_ping_state']."',"." '".$arr ['mon_ping_ignore']."'".')';
+      if (next($stateArray )) {
+        $tmpInsertValues .= ','; // Add comma for all elements instead of last
+      }
+    
+    }
+    $tmpInsertValues .= ';'; 
+    $tmpCityUpdate = "UPDATE ".$city.".".$city."_switches set calc_switches_cnt = null, mon_traffic_state = null, mon_ports_state = null ,switch_update_time= null, switch_up_time = null , switch_down_time = null , switch_last_down_time_subst = null, to_num = null, mon_ping_state = null, mon_ping_ignore = null;UPDATE ".$city.".".$city."_switches set calc_switches_cnt = tmp.calc_switches_cnt, mon_traffic_state = tmp.mon_traffic_state, mon_ports_state = tmp.mon_ports_state ,switch_update_time= tmp.update_time, switch_up_time = tmp.up_time , switch_down_time = tmp.down_time , switch_last_down_time_subst = tmp.last_down_time_subst, to_num =tmp.to_num, mon_ping_state = tmp.mon_ping_state, mon_ping_ignore = tmp.mon_ping_ignore  from tmp where tmp.ip_addr = ".$city."_switches.cubic_ip_address;";
+    $query = $tmpCreate.' '.$tmpInsert.' '.$tmpInsertValues.' '.$tmpCityUpdate;
+  }
+  
+  
+  echo $query.'<hr>';
+  $postgres -> dbConnect($query, false, true);
+}
+function xmlPrint($xml, $city, $stateArrayType) {
+  $stateArray = array();
+  //echo '<hr>';
+  //echo '<hr>'.$stateArrayType.'<hr>';
+  foreach($xml->children() as $child)
+    {
+    //echo $child->getName() . ": " . $child . "<br>";
+      foreach($child->children() as $child_inner)
+      {
+        $arr = array();
+      //echo $child_inner->getName() . ": " . $child_inner. "<br>";
+        foreach($child_inner->children() as $child_inner_inner)
+        {
+          $arr [$child_inner_inner->getName() ] = strtolower( $child_inner_inner.'');
+
+          //echo $child_inner_inner->getName() . ": " . $child_inner_inner. "<br>";
+        }
+        //print_r($arr);
+        array_push($stateArray , $arr );
+      }
+    }
+    //echo '<hr>';
+   if (!empty($stateArray)) {
+    //echo '<br>'.$city.'<br>';
+    //echo '<hr>';
+    //print_r($stateArray);
+    //echo '<br>';
+    //echo '<hr>';
+    stateUpdateInDatabase($stateArray, $city, $stateArrayType);
+  }
+}
+function csvFromXml($xml, $city, $type){
+  date_default_timezone_set('Europe/Kiev');
+  $date = date('Y-m-d_h-i-sa');
+  $dirPath = '/tmp/alerts/'.$city;
+  if (!file_exists($dirPath )) {
+    $oldmask = umask(0);
+        mkdir($dirPath , 0777, true);
+        umask($oldmask);
+  }
+  $filePath = '/tmp/alerts/'.$city.'/'.$city.'_'.$type.'_alerts_'.$date.'.csv';
+  touch($filePath);
+  chmod($filePath, 0666);
+  $file = fopen($filePath, 'w');
+   $headers = array(); 
+    // loop through the first set of fields to get names
+    foreach($xml->children() as $child)
+    {
+      foreach($child->children() as $child_inner)
+      {
+        if ($child_inner->getName() =='key_0') {
+          foreach($child_inner->children() as $field)
+        {
+        // put the field name into array
+                  $headers[] = $field->getName();
+         }  
+        }
+        
+      }
+    }
+    // print headers to CSV
+      fputcsv($file, $headers, ',', '"');
+    foreach($xml->children() as $child)
+      {
+      foreach($child->children() as $child_inner)
+      {
+
+              fputcsv($file, get_object_vars($child_inner), ',', '"');
+      }
+    }
+  fclose($file);
+
+  return true;
 }
 ?>

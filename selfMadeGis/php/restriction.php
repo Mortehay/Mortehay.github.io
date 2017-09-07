@@ -260,13 +260,13 @@ if ($restriction != NULL) {
 				array(/*id  for buttons*/
 					'etherTopologyUpdate',
 					'ethernetTopologyLoad',
-					'cityStateSwitches',
+					//'cityStateSwitches',
 					'ethernetTopologyDataViewVis'
 				),
 				array(/*buttons names*/
 					'Оновлення топології Ethernet',
 					'Додати нові елементи топології Ethernet',
-					'Оновити стан комутаторів',
+					//'Оновити стан комутаторів',
 					'Відображення топології Ethernet'
 				),
 				array(/*seletors ids*/
@@ -278,7 +278,7 @@ if ($restriction != NULL) {
 				array(/*titles for buttons*/
 					'Оновлює топлогію з файлу CSV(city_ethernet_topology.csv поки не реалізовано), КУБІК(Топологія мережі Ethernet)',
 					'Додає нові елементи з файлу CSV(city_ethernet_topology.csv), КУБІК(Топологія мережі Ethernet)',
-					'Нажати для термінового оновлення стану комутаторів',
+					//'Нажати для термінового оновлення стану комутаторів',
 					'Нажати для відображення топології міста'
 				)
 			)

@@ -258,7 +258,17 @@ let fileUploadParams = {
 		method:'POST',
 		enctype:'multipart/form-data',
 		submitName:'qgsSubmit'
-	}
+	},
+	//	filesUpload:{
+	//	phpFile:'filesUpload',
+	//	fileId:'files_upload',
+	//	formId:'filesUploadForm',
+	//	fileName:'files_upload[]',
+	//	formValueUpload:'Завантажити файли',
+	//	method:'POST',
+	//	enctype:'multipart/form-data',
+	//	submitName:'filesSubmit'
+	//}
 }
 //----------vocabulars----------------------------------------------------------------------------------------------------------------------
 let vocabulary ={
@@ -624,6 +634,7 @@ $(document).ready(function(){
 	//$('#fullAccess_holder').fileUploadToTmp(fileUploadParams.fileUpload,'#fullAccess_holder');
 	$('#filesUpload_holder').fileUploadToTmpAll(fileUploadParams.fileUpload,'#filesUpload_holder');
 	$('#filesUpload_holder').fileUploadToTmpAll(fileUploadParams.csvDownload,'#filesUpload_holder');
+	//$('#cableChannelCables_holder').fileUploadToTmpAll(fileUploadParams.filesUpload,'#cableChannelCables_holder');
 	//---------------------------------------------------------------------------------------------------------------------------
 	$('#ctv_holder').addSheList('ctv_holder'); 
 	$('#opticalCouplers_holder').addSheList('opticalCouplers_holder');
@@ -764,7 +775,7 @@ $.fn.fileUploadToTmpAll = function(params, target){
 	console.log('target', target);
 	let selector = params.phpFile.toLowerCase();
 
-	if( selector.includes('upload')){
+	if( selector.includes('fileupload')){
 		$(target).find('ul').append('<li><form id="'+params.formId+'" action="'+params.phpFile+'.php'+'" method="'+params.method+'" enctype="'+params.enctype+'"></form></li>');
 		$('#'+params.formId).append(/*'<label>виберіть файл CSV</label>'*/
 			'<input type="file" name="'+params.fileName+'" id="'+params.fileId+'" class="myToolButton">'+
@@ -776,6 +787,12 @@ $.fn.fileUploadToTmpAll = function(params, target){
 			$(target).find('#'+params.csv_file_download).append('<option value="'+item+'">'+item+'</option>')
 		});
 	}
+	//else if (selector.includes('filesupload')){
+	//	$(target).find('ul').append('<li><div id="'+params.formId+'" ></div></li>');
+	//	$('#'+params.formId).append(/*'<label>виберіть файл CSV</label>'*/
+	//		'<input type="file" name="'+params.fileName+'" id="'+params.fileId+'" class="myToolButton" multiple="multiple" />'+
+	//		'<input type="submit" value="'+params.formValueUpload+'"name="'+params.submitName+'" class="myToolButton">');
+	//}
 	
 
 }
