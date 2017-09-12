@@ -13,18 +13,14 @@ if ($_POST['city_roads_OSM_data_eng']) {
   $files = fileExistenceCheck($promeLink, $secondaryLink, $selectedCity, $fileExtention)['files'];
   $linkStorage = fileExistenceCheck($promeLink, $secondaryLink, $selectedCity, $fileExtention)['linkStorage'];
 if ($files) {
-  foreach($files as $file) {
-    $str_file = (string)$file;
-    if ($str_file !== '.' && $str_file !== '..') {
-      //print_r($str_file);
-      if ($str_file == $selectedCity.$fileExtention) {
+  if (in_array($selectedCity.$fileExtention, $files)) {
+
         $newDBrequest = new dbConnSetClass;
         $query = "CREATE temp TABLE tmp (id serial, wkt_geom text, geom geometry, osm_id varchar(100),  name varchar(100), highway varchar(100), maxspeed varchar(100), surface varchar(100), oneway varchar(100), bridge varchar(100), lanes varchar(100)); select copy_for_testuser('tmp (wkt_geom, osm_id,  name, highway, maxspeed, surface, oneway, bridge, lanes)', ".$linkStorage.", ';', 'windows-1251') ;  UPDATE tmp SET geom = ST_GeomFromText(wkt_geom, 32636); INSERT INTO ".$selectedCity.".".$selectedCity."_roads(geom, osm_id,  name, highway, maxspeed, surface, oneway, bridge, lanes) SELECT geom, osm_id,  name, highway, maxspeed, surface, oneway, bridge, lanes FROM tmp WHERE osm_id NOT IN(SELECT osm_id FROM ".$selectedCity.".".$selectedCity."_roads WHERE osm_id IS NOT NULL);DROP TABLE tmp;";
         $queryArrayKeys = false;
-        //echo $query;
+        echo $query;
+        $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
       }
-    } 
-  }
 }  
 ?>
 

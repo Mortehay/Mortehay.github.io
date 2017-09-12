@@ -13,12 +13,7 @@ if ($_POST['building_entrance_OSM_data_update_city_eng']) {
   $files = fileExistenceCheck($promeLink, $secondaryLink, $selectedCity, $fileExtention)['files'];
   $linkStorage = fileExistenceCheck($promeLink, $secondaryLink, $selectedCity, $fileExtention)['linkStorage'];
 if ($files) {
-  foreach($files as $file) {
-    $str_file = (string)$file;
-    if ($str_file !== '.' && $str_file !== '..') {
-      //print_r($str_file);
-      if ($str_file == $selectedCity.$fileExtention) {
-        $newDBrequest = new dbConnSetClass;
+  if (in_array($selectedCity.$fileExtention, $files)) {
         $query = "CREATE temp TABLE tmp (id serial, openstreet_wkt text,openstreet_id_rel varchar(100),openstreet_entrance varchar(100),openstreet_addr_flats varchar(100),openstreet_entrance_ref varchar(100)); select copy_for_testuser('tmp (openstreet_wkt, openstreet_id_rel, openstreet_entrance, openstreet_addr_flats,openstreet_entrance_ref)', ".$linkStorage.", ';', 'windows-1251') ;  INSERT INTO ".$selectedCity.".".$selectedCity."_entrances(openstreet_wkt, openstreet_id_rel, openstreet_entrance, openstreet_addr_flats,openstreet_entrance_ref) SELECT openstreet_wkt, openstreet_id_rel, openstreet_entrance, openstreet_addr_flats,openstreet_entrance_ref FROM tmp WHERE openstreet_id_rel NOT IN(SELECT openstreet_id_rel FROM ".$selectedCity.".".$selectedCity."_entrances WHERE openstreet_id_rel IS NOT NULL);DROP TABLE tmp;";
         $queryArrayKeys = false;
         //echo $query;
@@ -35,8 +30,7 @@ if ($files) {
         $queryArrayKeys = false;
         //echo $query;
         $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
-      }
-    } 
+
   }
 }  
 ?>
