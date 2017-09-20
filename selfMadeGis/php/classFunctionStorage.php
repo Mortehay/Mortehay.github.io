@@ -110,7 +110,7 @@ class mailSender{
 
       $postgres = new dbConnSetClass;
 
-      $query = "(select array_agg(links.city_eng) as city_eng, links.prime_city, access.e_mail as e_mail, access.mail_to as mail_to, access.restriction as restriction from public.links links   right join (select e_mail, restriction, mail_to from public.access) access on access.mail_to = links.prime_city where links.city_eng is not null group by links.prime_city, access.e_mail,access.mail_to, access.restriction) union (select array_agg(links.city_eng)  as city_eng, 'admin' as prime_city, access.e_mail as e_mail,access.mail_to as mail, access.restriction as restriction from public.access access, public.links links where access.mail_to in('admin') group by  access.e_mail, access.mail_to, access.restriction);";
+      $query = "(select array_agg(links.city_eng) as city_eng, links.prime_city, access.e_mail as e_mail, access.mail_to as mail_to, access.restriction as restriction from public.links links   right join (select e_mail, restriction, mail_to from public.access) access on access.mail_to = links.prime_city where links.city_eng is not null group by links.prime_city, access.e_mail,access.mail_to, access.restriction) union (select array_agg(links.city_eng)  as city_eng, 'admin' as prime_city, access.e_mail as e_mail,access.mail_to as mail, access.restriction as restriction from public.access access, public.links links where access.mail_to in('admin') group by  access.e_mail, access.mail_to, access.restriction) union (select array_agg(links.city_eng) as city_eng, links.region as prime_city, access.e_mail as e_mail, access.mail_to as mail_to, access.restriction as restriction from public.links links   right join (select e_mail, restriction, mail_to from public.access) access on access.mail_to = links.region where links.city_eng is not null group by links.region,  access.e_mail,access.mail_to, access.restriction);";
       echo $query.'<hr>';
       $queryArrayKeys = array('city_eng', 'prime_city', 'e_mail', 'mail_to', 'restriction');
       $mailToArr = $postgres -> dbConnect($query, $queryArrayKeys, true);
@@ -136,7 +136,7 @@ class mailSender{
               self::newDirCreation($reserveDirPath);
               self::restriction_change($reserveDirPath);
               $linkStorage ="'/var/www/QGIS-Web-Client-master/site/csv/cubic/".$params['tableType']."/".$selectedCity.$params['tableType'].$params['fileExtention']."'";
-              $query ="CREATE TEMP TABLE temp( ".$queryModificator['var']."); select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ;  create temp table csvTemp as (SELECT CITY,STREET, HOUSE, FLAT, CODE, NAME ,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID, 'missing' as state FROM temp WHERE CODE NOT IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL) ) UNION ALL (with data(CITY,STREET, HOUSE, FLAT, CODE, NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID)  as (select CITY,STREET, HOUSE, FLAT, CODE, NAME, PGS_ADDR, OU_OP_ADDR, OU_CODE, DATE_REG, COMENT, UNAME, NET_TYPE, HOUSE_ID  from temp) select d.CITY, d.STREET, d.HOUSE, d.FLAT, d.CODE, d.NAME, d.PGS_ADDR, d.OU_OP_ADDR, d.OU_CODE, d.DATE_REG, d.COMENT, d.UNAME, d.NET_TYPE, d.HOUSE_ID, 'reused code' as rcode from data d where not exists (select 1 from ".$selectedCity.".".$selectedCity."_ctv_topology u where u.cubic_code = d.CODE and u.cubic_house_id = d.HOUSE_ID) and CODE IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL) ); update csvTemp set house = replace(house, '/', '\'); select copy_for_testuser_v2('csvTemp','TO','".$path.$selectedCity.$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.$params['fileExtention']."', ';','CSV HEADER','windows-1251') WHERE (select true from csvTemp limit 1); select copy_for_testuser_v2('csvTemp','TO','".$reserveDirPath.$selectedCity.$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.$params['fileExtention']."', ';','CSV HEADER','windows-1251') WHERE (select true from csvTemp limit 1);";
+              $query ="CREATE TEMP TABLE temp( ".$queryModificator['var']."); select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ;  create temp table csvTemp as (SELECT CITY,STREET, HOUSE, FLAT, CODE, NAME ,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID, 'missing' as state FROM temp WHERE CODE NOT IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL) ) UNION ALL (with data(CITY,STREET, HOUSE, FLAT, CODE, NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID)  as (select CITY,STREET, HOUSE, FLAT, CODE, NAME, PGS_ADDR, OU_OP_ADDR, OU_CODE, DATE_REG, COMENT, UNAME, NET_TYPE, HOUSE_ID  from temp) select d.CITY, d.STREET, d.HOUSE, d.FLAT, d.CODE, d.NAME, d.PGS_ADDR, d.OU_OP_ADDR, d.OU_CODE, d.DATE_REG, d.COMENT, d.UNAME, d.NET_TYPE, d.HOUSE_ID, 'reused code' as rcode from data d where not exists (select 1 from ".$selectedCity.".".$selectedCity."_ctv_topology u where u.cubic_code = d.CODE and u.cubic_house_id = d.HOUSE_ID  and u.cubic_name = d.NAME) and CODE IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL) ); update csvTemp set house = replace(house, '/', '\'); select copy_for_testuser_v2('csvTemp','TO','".$path.$selectedCity.$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.$params['fileExtention']."', ';','CSV HEADER','windows-1251') WHERE (select true from csvTemp limit 1); select copy_for_testuser_v2('csvTemp','TO','".$reserveDirPath.$selectedCity.$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.$params['fileExtention']."', ';','CSV HEADER','windows-1251') WHERE (select true from csvTemp limit 1);";
               echo $query.'<hr>';
               $postgres -> dbConnect($query, false, true);
             }
@@ -293,6 +293,65 @@ class fileUpload {
       return true;
     }
   }
+  public function maps_link_reloader(){
+    include_once('cityVocabulary.php');
+    $postgres = new dbConnSetClass;
+    $fileNames = dir_files_names('/var/www/QGIS-Web-Client-master/projects/');
+    $links =array('linkText' => array(), 'linkLink' => array(), 'city' => array());
+    //print_r($fileNames);
+    $insert_values = '';
+    foreach ($cities as $city) {
+      $linkText = '{';
+      $linkLink = '{';
+      foreach ($fileNames as $value) {
+        if(strpos($value, $city[1]) !== false){
+          
+          if(substr_count($value,'_') == 1 ){
+            if(substr($linkText, -1) != '{'){ $linkText .= ',';}
+            $linkText .='"'.'Повна карта міста - '.' '.$city[2].'"';
+            if(substr($linkLink, -1) != '{'){ $linkLink .= ',';}
+            $linkLink .='qgiswebclient.html?map=/var/www/QGIS-Web-Client-master/projects/'.$value;
+            //echo 'Повна карта міста '.' '.$city[2].'<hr>';
+          } else if((substr_count($value,'_') >1 ) and (strpos($value, 'coverage') !== false) ){
+            if(substr($linkText, -1) != '{'){ $linkText .= ',';}
+            $linkText .='"'.'Карта покриття міста - '.' '.$city[2].'"';
+            if(substr($linkLink, -1) != '{'){ $linkLink .= ',';}
+            $linkLink .='qgiswebclient.html?map=/var/www/QGIS-Web-Client-master/projects/'.$value;
+            //echo 'Повна карта міста '.' '.$city[2].' - покриття'.'<hr>';
+          } else if((substr_count($value,'_') >1 ) and (strpos($value, 'customer_heatmap') !== false) ){
+            if(substr($linkText, -1) != '{'){ $linkText .= ',';}
+            $linkText .='"'.'Карта heatmap міста - '.' '.$city[2].'"';
+            if(substr($linkLink, -1) != '{'){ $linkLink .= ',';}
+            $linkLink .='qgiswebclient.html?map=/var/www/QGIS-Web-Client-master/projects/'.$value;
+            //echo 'Повна карта міста '.' '.$city[2].' - покриття heatmap'.'<hr>';
+          } else if((substr_count($value,'_') >1 ) and (strpos($value, 'luch') !== false) ){
+            if(substr($linkText, -1) != '{'){ $linkText .= ',';}
+            $linkText .='"'.'Карта лінійно-кабельного обліку міста -'.' '.$city[2].'"';
+            if(substr($linkLink, -1) != '{'){ $linkLink .= ',';}
+            $linkLink .='qgiswebclient.html?map=/var/www/QGIS-Web-Client-master/projects/'.$value;
+            //echo 'Повна карта міста '.' '.$city[2].' - лініно-кабельний облік'.'<hr>';
+          }
+        }
+      }
+      if(substr($linkText, -1) != '{'){
+        if(substr($linkText, -1) == ','){ $linkText = rtrim($linkText, ','); $linkText .= '}';} else { $linkText .= '}';}
+        if(substr($linkLink, -1) == ','){ $linkText = rtrim($linkLink, ','); $linkLink .= '}';} else { $linkLink .= '}';}
+        array_push($links['linkText'], $linkText); array_push($links['linkLink'], $linkLink); array_push($links['city'], $city[1]);
+        $insert_values .="('".$city[1]."','".$linkLink."','".$linkText."'),";
+      }
+    }
+    //echo '<hr>'.substr($insert_values, -1).'<hr>';
+    if(substr($insert_values, -1) == ','){ $insert_values = rtrim($insert_values, ',');}
+    //echo $linkText.'<hr>';
+    //print_r($links);
+    //echo '<hr>'.$insert_values.'<hr>';
+    //query creation---------------------------------------------------------------------------------------------
+    $query = 'CREATE TEMP TABLE tmp(city varchar(50), links text[], links_description text[]);'.'INSERT INTO tmp(city, links,links_description) VALUES '.$insert_values.';UPDATE public.links SET links = NULL, links_description = NULL; UPDATE public.links SET links = CASE WHEN tmp.city IS NOT NULL THEN tmp.links ELSE NULL END, links_description = CASE WHEN tmp.city IS NOT NULL THEN tmp.links_description ELSE NULL END FROM tmp WHERE tmp.city = links.city_eng;';
+
+    //echo '<hr>'.$query;
+    $postgres -> dbConnect($query, false, true);
+    return true;
+  }
   public function unArchive($path, $fileName, $fileType , $cities, $tableTypes){
     $fileName = explode('.',$fileName)[0];
     echo '<hr>'.$fileName.'<hr>';
@@ -374,7 +433,7 @@ class fileUpload {
             self::dirCreate($selectedCity, $target_file, $file_name, $fileType);
             $query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
             $file_logger -> dbConnect($query, false, true);
-
+            self::maps_link_reloader();
            header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
         } else {
             echo "Sorry, there was an error uploading your file.";

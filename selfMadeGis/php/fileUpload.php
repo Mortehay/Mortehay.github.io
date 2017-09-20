@@ -1,6 +1,7 @@
 <?php
 //include('restriction.php'); 
 include('classFunctionStorage.php');
+
 ///////////////////////////////////////
 session_start();
 $restriction = $_SESSION['restriction'];
@@ -9,4 +10,5 @@ ini_set('display_errors', 1);
 
 $fileLoader = new fileUpload;
 $fileLoader->upload($restriction,$login_user,'file_upload');
+
 ?>
