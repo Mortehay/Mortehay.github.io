@@ -44,7 +44,7 @@ include('rotatingArrows.php');
  <body>
     <div class="container">
       <div class="span-18">
-        <h1>VOLIA GIS - The Future is Now!</h1>
+        <h1>VOLIA GIS - The Truth Is Out There!</h1>
         <h2 class="alt">Volia QGIS Web Client</h2> 
       </div>
       <div class="span-6 last">
