@@ -80,7 +80,7 @@ include('rotatingArrows.php');
       <?php
         echo'<script type="text/javascript">let restriction = "'.$restriction.'"; let cityArray = '.json_encode($city_array).';localStorage.setItem("tempRestriction", restriction);localStorage.setItem("tempCityArray", cityArray);</script>';
       ?>
-
+    <div id="back-to-top" title="Back to top">&uarr;</div>
     <script type="text/javascript" src="../js/accordion.js"></script>
     <script type="text/javascript" src="../js/whois.js"></script>
     <script type="text/javascript" src="../js/topologyUpdate.js"></script>

@@ -638,6 +638,9 @@ $(document).ready(function(){
 	//---------------------------------------------------------------------------------------------------------------------------
 	$('#ctv_holder').addSheList('ctv_holder'); 
 	$('#opticalCouplers_holder').addSheList('opticalCouplers_holder');
+	//---------------------------------------
+
+	$('body').pageUpScroll($(document).scrollTop());
 	
 	
 });
@@ -721,6 +724,21 @@ $.fn.phpRequest = function(params) {
 	//})
   	
 };
+//---------scrollUp--------------------------------------------------------------------------------------------
+$.fn.pageUpScroll = function(documentHeight){
+	$( window ).scroll(function() {
+		if( $('body').scrollTop() > documentHeight){
+			$('#back-to-top').addClass('show');
+		} else { try {$('#back-to-top').removeClass('show');} catch(err) { console.log(err); }}
+	});
+	$('#back-to-top').on('click', function(e){
+		$('#back-to-top').removeClass('show');
+        e.preventDefault();
+        $('html,body').animate({
+            scrollTop: 0
+        }, 700);
+	})
+}
 //------------new user-----------------------------------------------------------------------------------------
 $.fn.newUser = function(url,buttonId){
 	$(this).on('click', function(){
