@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+  <head>
+    <title>Volia QGIS Mapserver Client</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <!-- Framework CSS --> 
+
+    <link rel="stylesheet" href="css/tools.css" type="text/css">  
+
+    <script   src="https://code.jquery.com/jquery-1.12.4.min.js"   integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="   crossorigin="anonymous"></script>
+
+  </head>
+
+ <body>
+  <div class="container">
+    
+     <ul class="table">
+      <li>
+        <h4>Geschlecht</h4><input type="radio" id="geschleht1" name="gen"><h6>Mannlich</h6><input type="radio" id="geschleht2" name="gen"><h6>Weiblich</h6><div class="checker"></div>
+      </li>
+      <li>
+        <h4>Alter</h4>
+        <input type="text" id="alter">
+        <div class="checker">  
+        </div>
+      </li>
+      <li>
+        <h4>Producte</h4>
+        <input type="list" list="list" id="producte">
+        <datalist id="list">
+          <option value="one">one</option>
+          <option value="two">two</option>
+        </datalist>
+        <div class="checker"></div>
+      </li>
+      <li>
+        <h4>Monatliche Kosten</h4>
+        <input type="text" id="monatliche_kosten">
+        <div class="checker"></div>
+      </li>
+      <li>
+        <h4>Bewertung</h4>
+        <div class="stars" id="bewertung"></div>
+      </li>
+      <li>
+        <h4>Wonhort</h4>
+        <input type="text" id="wonhort">
+        <div class="checker"></div>
+      </li>
+     </ul>
+    
+    <button id="submit" class="myButton">Absenden</button>  
+  </div>
+    <script type="text/javascript" src="js/checker.js"></script>
+
+  </body>
+</html>

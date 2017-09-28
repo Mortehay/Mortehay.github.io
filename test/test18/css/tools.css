@@ -1,0 +1,60 @@
+*{
+	margin:0;
+	padding: 0;
+}
+li {
+	list-style-type: none;
+	height: 40px;
+}
+input[type="text"], input[type="list"]{
+	width: 250px;
+}
+.myButton{
+	background: #3498db;
+  background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+  background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+  background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+  background-image: -o-linear-gradient(top, #3498db, #2980b9);
+  background-image: linear-gradient(to bottom, #3498db, #2980b9);
+  -webkit-border-radius: 6;
+  -moz-border-radius: 6;
+  border-radius: 6px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 18px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+.myButton:hover{
+	background: #3cb0fd;
+  background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+  text-decoration: none;
+}
+input{
+	display: block;
+}
+.checker{
+	width: 20px;
+  height: 20px;
+}
+.checker, .table input[type="text"], .table input[type="list"]{
+	float: right;
+}
+.container{
+	width: 510px;
+	margin: 0 auto;
+}
+.table{
+	width: 500px;
+	margin: 0 auto;
+}
+.table h6, .table h4{
+	display: inline-block;
+}
+.table h4,.table h6, .table input[type="radio"]{
+	float:left;
+} 

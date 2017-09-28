@@ -272,7 +272,7 @@ let fileUploadParams = {
 }
 //----------vocabulars----------------------------------------------------------------------------------------------------------------------
 let vocabulary ={
-	cableChannelCableDataView:['№','Технічні умови','Договір', 'Додаткова угода','Акт прийомки','Затверджена картограма','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС', 'статус'],
+	cableChannelCableDataView:['№','Технічні умови','ту-дата','Договір', 'дог.дата', 'Додаткова угода','дод.дата','Акт прийомки', 'акт-дата','Затверджена картограма','карт.дата','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС', 'статус'],
 	cityBuildingDataUpdate:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
 	cityBuildingDataUpdateAuto:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
 	cableAirCableDataView:['№','id кабеля', 'Посилання на архів','Дата монтажу кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення', 'Довжина, км','Опис маршруту', 'статус'],
@@ -542,6 +542,7 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		               	let pathIndexPKP;
 		               	let pathIndexCC;
 		               	let fileState=[];
+		               	let fileDate =[];
 		               	let imgLink;
 		               	if(vocabulary.findIndex(y => y =='Опис маршруту') >-1){
 		               		pathIndexCC = 'summ_route_description';
@@ -554,6 +555,9 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		               	}
 		               	if((vocabulary.findIndex(y => y =='xlsx') >-1) || (vocabulary.findIndex(y => y =='xls') >-1) || (vocabulary.findIndex(y => y =='dwg') >-1) || (vocabulary.findIndex(y => y =='png') >-1) ){
 		               		fileState = ['xlsxFile','xlsFile','dwgFile','imgFile','pdfFile'];
+		               	}
+		               	if((vocabulary.findIndex(y => y =='summ_tu_date') >-1) || (vocabulary.findIndex(y => y =='summ_contract_sum_date') >-1) || (vocabulary.findIndex(y => y =='summ_sub_contract_date') >-1) || (vocabulary.findIndex(y => y =='summ_acceptance_act_date') >-1)  || (vocabulary.findIndex(y => y =='summ_approval_cartogram_date') >-1)){
+		               		fileDate = ['summ_tu_date','summ_contract_sum_date','summ_sub_contract_date','summ_acceptance_act_date','summ_approval_cartogram_date'];
 		               	}
 		               	//console.log('rowData', rowData);
 		               	for (let key in rowData) {
@@ -579,6 +583,8 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		               			} else {
 		               				row +='<td class="dataCell '+'fileNotDefinedState'+'" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</td>';
 		               			}
+		               		} else if ( String(key).includes('_date')) {
+		               			row +='<td class="dataCell '+'filePresent'+'" data-city="'+$('#'+params.id).val()+'"><span style ="color:blue">'+rowData[key]+'</span></td>';
 		               		} else if(key == imgLink) {
 		               			$('.wiringShow').imgLinkShow();
 		               			if (rowData[key] == '-') {

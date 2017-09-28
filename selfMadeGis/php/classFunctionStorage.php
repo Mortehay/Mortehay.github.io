@@ -372,20 +372,18 @@ class fileUpload {
           }
           chmod($path.$fileName, 0777);
         } else if ($fileType == 'rar'){
-          echo '<hr>'.$path.$fileName.'.'.$fileType.'<hr>';
-          $rar_file = RarArchive::open($path.$fileName.'.'.$fileType) or die('broken archive');
-          $entries = rar_list($rar_file);
-          //print_r($entries);
-          foreach ($entries as $entry) {
-            //$unrarFileName = $entry->getName();   
-            //echo 'Файл: ' . $entry->getName() . "\n";
-            echo 'Файл______: ' . $path.$fileName . "\n";
-            //echo 'Размер сжатого элемента: ' . $entry->getPackedSize() . "\n";
-            //echo 'Размер в распакованном состоянии: ' . $entry->getUnpackedSize() . "\n";
-            $entry->extract($path.$fileName);
+          echo '<script type="text/javascript">alert("please use zip archive, rar archive is not supported :(");</script>';
+         /* echo '<hr>'.$path.$fileName.'.'.$fileType.'<hr>';
+          $rar_file = rar_open($path.$fileName.'.'.$fileType) or die("Failed to open Rar archive");
+          $list = rar_list($rar_file);
+          foreach($list as $file) {
+              $entry = rar_entry_get($rar_file, $file->getName()) or die("Failed to find such entry");
+              echo $file->getName().'<hr>';
+              $entry->extract($path.$fileName); // extract to the current dir
           }
-          rar_close($rar_file);
-          chmod($path.$fileName, 0777);
+          
+          rar_close($rar_file);*/
+          
 
         } else {echo 'error on on unarchive';}
       } 
@@ -460,7 +458,7 @@ class fileUpload {
             //$query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
             //$file_logger -> dbConnect($query, false, true);
 
-           //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+           header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
         } else {
             echo "Sorry, there was an error uploading your file.";
             //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
@@ -772,7 +770,8 @@ function fileDate($folderLink, $checkList, $responseValue){
     $fileDate = '';
     foreach ($files as $fileKey => $filename) {
         if(strpos(mb_convert_case((string)$filename, MB_CASE_LOWER, "UTF-8") , $checkList['check'][array_search($responseValue, $checkList['response'])]) !== false){
-           $fileDate = '<br>'.'<span style ="color:blue">'. gmdate("Y-m-d",stat($folderLink.$filename)['mtime']).'</span>';
+           //$fileDate = '<br>'.'<span style ="color:blue">'. gmdate("Y-m-d",stat($folderLink.$filename)['mtime']).'</span>';
+            $fileDate = gmdate("Y-m-d",stat($folderLink.$filename)['mtime']);
            //echo $folderLink.$filename.'---'.$fileDate.'<br>';
         }
     }
