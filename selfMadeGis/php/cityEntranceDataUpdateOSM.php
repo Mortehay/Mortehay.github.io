@@ -23,15 +23,15 @@ if ($files) {
         $queryArrayKeys = false;
         //echo $query;
         $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
-        $query = 'UPDATE '.$selectedCity.'.'.$selectedCity.'_entrances SET cubic_house_id = '.$selectedCity.'_buildings.cubic_house_id FROM '.$selectedCity.'.'.$selectedCity.'_buildings WHERE '.$selectedCity.'_entrances.cubic_house_id IS NULL AND ST_Contains(ST_Buffer('.$selectedCity.'_buildings.building_geom,0.5), '.$selectedCity.'_entrances.geom) is true and '.$selectedCity.'_buildings.cubic_house_id IN (SELECT cubic_house_id FROM '.$selectedCity.'.'.$selectedCity.'_buildings WHERE building_geom IS NOT NULL AND cubic_house_id IS NOT NULL);';
-        $queryArrayKeys = false;
-        //echo $query;
-        $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
         $query = "UPDATE ".$selectedCity.".".$selectedCity."_entrances SET cubic_entrance_id = cubic_house_id||'p'||openstreet_entrance_ref WHERE cubic_house_id IS NOT NULL  AND  cubic_entrance_id  IS NULL;";
         $queryArrayKeys = false;
         //echo $query;
         $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
-
+        $query = 'UPDATE '.$selectedCity.'.'.$selectedCity.'_entrances SET cubic_house_id = '.$selectedCity.'_buildings.cubic_house_id FROM '.$selectedCity.'.'.$selectedCity.'_buildings WHERE '.$selectedCity.'_entrances.cubic_house_id IS NULL AND ST_Contains(ST_Buffer('.$selectedCity.'_buildings.building_geom,0.5), '.$selectedCity.'_entrances.geom) is true and '.$selectedCity.'_buildings.cubic_house_id IN (SELECT cubic_house_id FROM '.$selectedCity.'.'.$selectedCity.'_buildings WHERE building_geom IS NOT NULL AND cubic_house_id IS NOT NULL);';
+        $queryArrayKeys = false;
+        //echo $query;
+        $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
+       
   }
 }  
 ?>
