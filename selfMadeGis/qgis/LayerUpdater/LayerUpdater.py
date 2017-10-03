@@ -34,6 +34,7 @@ from threading import Timer
 # Import the code for the dialog
 from LayerUpdater_dialog import LayerUpdaterDialog
 import os.path
+import time
 
 
 class LayerUpdater:
@@ -48,12 +49,12 @@ class LayerUpdater:
         :type iface: QgsInterface
         """
         # Save reference to the QGIS interface
-        nammme = "комутатори".decode('utf-8')
-        l = QgsMapLayerRegistry.instance().mapLayersByName(nammme)
+        # nammme = "комутатори".decode('utf-8')
+        # l = QgsMapLayerRegistry.instance().mapLayersByName(nammme)
 
-        self.layer = l
-        for r in l:
-            self.switches_all = filter(lambda i: True, r.getFeatures())
+        # self.layer = l
+        # for r in l:
+        #     self.switches_all = filter(lambda i: True, r.getFeatures())
         self.iface = iface
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
@@ -169,12 +170,12 @@ class LayerUpdater:
         self.actions.append(action)
 
 
-        if self.layer == []:
-            self.msg = QMessageBox()
-            self.msg.setIcon(QMessageBox.Critical)
-            self.msg.setText(u"Layer \"комутатори\" is not found")
-            #self.setInformativeText("This is additional information")
-            self.msg.setWindowTitle("Error")
+        # if self.layer == []:
+        #     self.msg = QMessageBox()
+        #     self.msg.setIcon(QMessageBox.Critical)
+        #     self.msg.setText(u"Layer \"комутатори\" is not found")
+        #     #self.setInformativeText("This is additional information")
+        #     self.msg.setWindowTitle("Error")
         return action
 
     def initGui(self):
@@ -186,6 +187,15 @@ class LayerUpdater:
             text=self.tr(u''),
             callback=self.run,
             parent=self.iface.mainWindow())
+
+    def waiter(self):
+        while self.tt > 0:
+            self.dlg.stateLabel.setText("working..." + str(self.tt) + " sec")
+            time.sleep(1.00)
+            self.tt = self.tt -1
+        self.tt = 0
+        return True
+        ###############
 
     def dbData(self):
         city = None
@@ -249,9 +259,17 @@ class LayerUpdater:
             if lyr.name() == "комутатори".decode('utf-8'):
                 layer = lyr
                 layer.triggerRepaint()
+
         if self.stop:
-            self.dlg.stateLabel.setText("working...")
-            self.t = Timer(295.0, self.dbData)
+            self.dlg.stateLabel.setText("reloading...")
+            self.tt = 295
+            # while self.tt > 0:
+            #     self.dlg.stateLabel.setText("working..." + str(self.tt) + " sec")
+            #     time.sleep(1.0)
+            #     self.tt = self.tt -1.0
+            
+            if self.waiter() == True:
+                self.t = Timer(5.0, self.dbData)
             self.t.start()
 
     '''def changeLayer(arg):
@@ -268,16 +286,19 @@ class LayerUpdater:
 
     def stopSlot(self):
         self.stop = False
+        self.tt = 0
         self.dlg.stateLabel.setText("stoped.")
+        self.dlg.objectBrowser.clear()
         try:
             self.t.cancel()
         except:
             pass
     def startSlot(self):
-        self.dlg.stateLabel.setText("working...")
-        self.stop = True
         #self.dlg.stateLabel.setText("working...")
+        self.stop = True
+        
         self.t = Timer(5.0, self.dbData)
+        #self.dlg.stateLabel.setText("working...")
         self.t.start()
 
     def onMapSlot(self,action):
@@ -290,27 +311,36 @@ class LayerUpdater:
 
 
     def run(self):
+        nammme = "комутатори".decode('utf-8')
+        l = QgsMapLayerRegistry.instance().mapLayersByName(nammme)
+
+        self.layer = l
+        for r in l:
+            self.switches_all = filter(lambda i: True, r.getFeatures())
         """Run method that performs all the real work"""
         # show the dialog
         #self.s = sched.scheduler(time.time(), time.sleep)
         #s.enter(0, 300)
 
         self.stop = True
-        self.dlg.objectBrowser.itemClicked.connect(self.onMapSlot)
+        
 
         #self.s.run()
         self.dlg.stopButton.clicked.connect(self.stopSlot)
         self.dlg.startButton.clicked.connect(self.startSlot)
         self.dlg.comboBox.clear()
+        #plugin is only for switches alerts:) this selection is fake
         for i in self.iface.legendInterface().layers():
             self.dlg.comboBox.addItem(unicode(i.name()))
-
+        self.dlg.comboBox.setVisible(False)
+        self.dlg.objectBrowser.itemClicked.connect(self.onMapSlot)
+        ##---------------------------------------------------------
         # Run the dialog event loop
-        if self.layer == []:
-            result = self.msg.exec_()
-        else:
-            self.dlg.setWindowModality(True)
-            result = self.dlg.exec_()
+        # if self.layer == []:
+        #     result = self.msg.exec_()
+        # else:
+        self.dlg.setWindowModality(True)
+        result = self.dlg.exec_()
         # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and
