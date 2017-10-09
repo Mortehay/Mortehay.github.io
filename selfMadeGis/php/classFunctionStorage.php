@@ -239,22 +239,29 @@ class mailSender{
 
     $headers = "From: $from\nReply-To: $from\n";
     $headers .= "Content-Type: multipart/mixed; boundary=\"$boundary\"";
-    $body = "--$boundary\n";
+   
+    if(($path !='') or ($filename !='')){
+      $body = "--$boundary\n";
 
-    $body .= "Content-type: text/html; charset='utf-8'\n";
-    $body .= "Content-Transfer-Encoding: quoted-printablenn";
-    $body .= "Content-Disposition: attachment; filename==?utf-8?B?".base64_encode($filename)."?=\n\n";
-    $body .= mb_convert_encoding($message, 'UTF-8', 'auto')."\n";
-    $body .= "--$boundary\n";
-    $file = fopen($path, "r"); //Открываем файл
-    $text = fread($file, filesize($path)); //Считываем весь файл
-    fclose($file); //Закрываем файл
+      $body .= "Content-type: text/html; charset='utf-8'\n";
+      $body .= "Content-Transfer-Encoding: quoted-printablenn";
+      $body .= "Content-Disposition: attachment; filename==?utf-8?B?".base64_encode($filename)."?=\n\n";
+      $body .= mb_convert_encoding($message, 'UTF-8', 'auto')."\n";
+      $body .= "--$boundary\n";
+      $file = fopen($path, "r"); //Открываем файл
+      $text = fread($file, filesize($path)); //Считываем весь файл
+      fclose($file); //Закрываем файл
+      $body .= "Content-Type: application/octet-stream; name==?utf-8?B?".base64_encode($filename)."?=\n";
+      $body .= "Content-Transfer-Encoding: base64\n";
+      $body .= "Content-Disposition: attachment; filename==?utf-8?B?".base64_encode($filename)."?=\n\n";
+      $body .= chunk_split(base64_encode($text))."\n";
+      $body .= "--".$boundary ."--\n";
+    } else {
+      $body = $message;
+    }
+    
 
-    $body .= "Content-Type: application/octet-stream; name==?utf-8?B?".base64_encode($filename)."?=\n";
-    $body .= "Content-Transfer-Encoding: base64\n";
-    $body .= "Content-Disposition: attachment; filename==?utf-8?B?".base64_encode($filename)."?=\n\n";
-    $body .= chunk_split(base64_encode($text))."\n";
-    $body .= "--".$boundary ."--\n";
+    
     mail($to, $subject, $body, $headers); //Отправляем письмо
   }
 

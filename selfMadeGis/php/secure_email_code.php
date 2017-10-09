@@ -1,5 +1,7 @@
 <?php
-ini_set('display_errors', 1);
+//ini_set('display_errors', 1);
+include_once('classFunctionStorage.php');
+$emailer = new mailSender;
 if(isset($_POST["mail"])){
 	// Checking For Blank Fields..
 	if($_POST["vname"]==""||$_POST["vemail"]==""||$_POST["sub"]==""||$_POST["msg"]==""){
@@ -24,7 +26,8 @@ if(isset($_POST["mail"])){
 			// Message lines should not exceed 70 characters (PHP rule), so wrap it
 			$message = wordwrap($message, 70);
 			// Send Mail By PHP Mail Function
-			mail("yurii.shpylovyi@volia.com", $subject, $message, $headers);
+			//mail("yurii.shpylovyi@volia.com", $subject, $message, $headers);
+			$emailer ->mail_attachment('yurii.shpylovyi@volia.com','website',$email2.' -- '.$subject , $message, '', ''); //( $to, $from,$subject , $message, $path, $filename)
 			#mail("oleksandr.sadovnik@volia.com", $subject, $message, $headers);
 			$mailmsg = "Your mail has been sent successfuly ! Thank you for your feedback";
 			header("location: ../index.php?msg=$mailmsg");
@@ -33,4 +36,5 @@ if(isset($_POST["mail"])){
 		}
 	}
 }
+
 ?>
