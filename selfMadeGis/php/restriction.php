@@ -361,7 +361,7 @@ if ($restriction != NULL) {
 	$newTools .= '<div class="newTools clear">'.$toolListToString.$buttons.'</div>'.'</div></div>';
 	//echo $newTools;
 	//------------------------------------------------------------------------------------------------------------
-
+	$newFeedBack = '<div class="feedback" id="feedback"></div>';
 	//echo $toolListToString;
 	//echo $buttons;
 	//echo $newTools;

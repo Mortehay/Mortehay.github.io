@@ -16,7 +16,7 @@ include('rotatingArrows.php');
     <!-- Framework CSS --> 
     <link rel="stylesheet" href="../css/blueprint/screen.css" type="text/css" media="screen, projection">
     <link rel="stylesheet" href="../css/blueprint/print.css" type="text/css" media="print">
-
+    <link rel="stylesheet" href="../css/feedback.css" type="text/css" >
 
     <!--[if lt IE 8]><link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]--> 
     
@@ -42,6 +42,10 @@ include('rotatingArrows.php');
   </head>
 
  <body>
+    <?php 
+      include('feedbackRequest.php');
+    ?>
+
     <div class="container">
       <div class="span-18">
         <h1>VOLIA GIS - The Truth Is Out There!</h1>
@@ -62,8 +66,8 @@ include('rotatingArrows.php');
        
          //echo $tools; 
          //echo $buttons;
-         echo $newTools;
-      
+        echo $newTools;
+        echo $newFeedBack;
         ?>
         <div class="supply">
           <ul>

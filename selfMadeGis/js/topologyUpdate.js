@@ -225,6 +225,15 @@ let params = {
 		displayResult:true,
 		displayStyle:'table'
 	},
+	sendFeedback:{
+		phpFile:'sendFeedback',
+		id:'sendFeedback',
+		wrapper:'#request',
+		type:'POST',
+		displayResult: true,
+		displayStyle:'table'
+
+	}
 
 }
 //-------------------file upload params-------------------------------------------------------------------------------------------------
@@ -269,6 +278,7 @@ let fileUploadParams = {
 	//	enctype:'multipart/form-data',
 	//	submitName:'filesSubmit'
 	//}
+
 }
 //----------vocabulars----------------------------------------------------------------------------------------------------------------------
 let vocabulary ={
@@ -281,7 +291,8 @@ let vocabulary ={
 	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під&acute;їзду', '№Поверху', 'Розташування', 'house_id', 'id комутатора', 'id мат. комутатора','mac_address', 'ip_address', 'serial_number', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни'],
 	ctvToplogyAddFlats:['№',  'Вулиця', '№будинку', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID','Квартири'],
 	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsx','xls','dwg','pdf','png','дата pdf'],
-	userTable:['№','E-mail','Доступ','pass','Редагування']
+	userTable:['№','E-mail','Доступ','pass','Редагування'],
+	sendFeedback:['№','e-mail','Тема','Запит','Статус','Час відкриття запиту','Час закриття запиту']
 };
 
 //-----------------unique values from array ------------------------------------
@@ -629,8 +640,11 @@ $(document).ready(function(){
 		let callId = $(this).attr('id');
 		if(params.hasOwnProperty(callId)){
 			$('#'+callId).phpRequest(params[callId]);
-		} else{ console.log('yo forgot input data into params object')}
+		} else{ console.log('you forgot input data into params object')}
 		
+	})
+	$('#feedback').on('click', function(){
+		$('#request').toggle();
 	})
 
 	//-----------------------------------------------------------------------------------------------------------------------------------
@@ -639,7 +653,7 @@ $(document).ready(function(){
 	//----------------------------------file upload------------------------------------------------------------------------------
 	//$('#fullAccess_holder').fileUploadToTmp(fileUploadParams.fileUpload,'#fullAccess_holder');
 	$('#filesUpload_holder').fileUploadToTmpAll(fileUploadParams.fileUpload,'#filesUpload_holder');
-	$('#filesUpload_holder').fileUploadToTmpAll(fileUploadParams.csvDownload,'#filesUpload_holder');
+	//$('#filesUpload_holder').fileUploadToTmpAll(fileUploadParams.csvDownload,'#filesUpload_holder');
 	//$('#cableChannelCables_holder').fileUploadToTmpAll(fileUploadParams.filesUpload,'#cableChannelCables_holder');
 	//---------------------------------------------------------------------------------------------------------------------------
 	$('#ctv_holder').addSheList('ctv_holder'); 
@@ -672,8 +686,15 @@ $.fn.phpRequest = function(params) {
 		//-------------------------------------------------------------------------------------
 		//-------------------------------------------------------------------------------------
 		console.log('phpFile',$(this).attr('id'));
+		console.log(params);
 		request[params.id] = $('#'+params.id).val();
 		request['she'] = $('#sheSelection').val();
+		if(params['wrapper'] != undefined){
+			request['sub'] = $('#request').find('select').val();
+			request['request'] = $('#request').find('textarea').val();
+			request['restriction'] = $(this).data('restriction');
+			request['e_mail'] = $(this).data('e_mail');
+		}
 		if(request[params.id] == undefined ){ request['buttonId'] =params.id}
 		if ($('#'+params.id).val() !=='вибери місто') {
 
@@ -702,6 +723,7 @@ $.fn.phpRequest = function(params) {
 								});
 								$('button#addNewUser').newUser('addNewUser','addNewUser');
 								$('button.deleteUser').newUser('addNewUser','deleteUser');
+								$('html, body').animate({ scrollTop: $('.'+'displayResult'+attributId).offset().top }, 'slow');
 							}
 							if( params.displayStyle == 'graph'){
 								statistcsDraw(data);
