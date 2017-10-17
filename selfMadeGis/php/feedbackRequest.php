@@ -27,8 +27,8 @@
 			if (count($user_param_array)>0) {
 				echo '<div id="mail">';
 				echo '<select name="sub">
-					<option selected>питання по вебінтерфейсу</option>
-					<option >питання по QGIS</option>
+					<option>питання по карті QGIS/веб-інтерфейсу</option>
+					<option   selected>питання по роботі вебінтерфейсу/QGIS plugins</option>
 					<option >запит на додавання/корегування нових/старих елементів</option>
 				</select>';
 				echo '<h2>Your Suggestion/Feedback</h2>';

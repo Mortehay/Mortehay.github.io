@@ -1,3 +1,13 @@
+<?php
+	session_start();
+    if(isset($_SESSION['current'])){
+         $_SESSION['oldlink']=$_SESSION['current'];
+    }else{
+         $_SESSION['oldlink']='no previous page';
+    }
+    $_SESSION['current']=$_SERVER['PHP_SELF']; 
+	require('loginCheck.php');// MAKE SURE PAGE IS SECURE AND USER LOGGED IN
+?>
 <!DOCTYPE HTML>
 <html>
 <head>

@@ -3,6 +3,11 @@
 //ini_set('display_errors', 1);
 include('restriction.php');
 include('rotatingArrows.php');
+require('loginCheck.php');// MAKE SURE PAGE IS SECURE AND USER LOGGED IN
+//login success
+session_start();
+$_SESSION['user_logged_in'] = true;
+//store other stuff in the session like user settings and data
 
 
 ?>
@@ -82,7 +87,8 @@ include('rotatingArrows.php');
       echo $rotatingArrows;
       ?>
       <?php
-        echo'<script type="text/javascript">let restriction = "'.$restriction.'"; let cityArray = '.json_encode($city_array).';localStorage.setItem("tempRestriction", restriction);localStorage.setItem("tempCityArray", cityArray);</script>';
+      //echo '<hr>'.$_SESSION['e_mail'].'<hr>';
+        echo'<script type="text/javascript">let restriction = JSON.stringify({restriction:"'.$restriction.'", e_mail:"'.$_SESSION['e_mail'].'"}); let cityArray = '.json_encode($city_array).';localStorage.setItem("tempRestriction", restriction);localStorage.setItem("tempCityArray", cityArray);</script>';
       ?>
     <div id="back-to-top" title="Back to top">&uarr;</div>
     <script type="text/javascript" src="../js/accordion.js"></script>

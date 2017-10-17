@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# -*- coding: windows-1251 -*-
 """
 /***************************************************************************
  SaveAttributes
@@ -29,7 +30,9 @@ from save_attributes_dialog import SaveAttributesDialog
 import os.path
 import csv
 from qgis.gui import QgsMessageBar
-
+import sys
+#reload(sys)
+#sys.setdefaultencoding('utf-8')
 class SaveAttributes:
     """QGIS Plugin Implementation."""
     def __init__(self, iface):
@@ -206,6 +209,7 @@ class SaveAttributes:
         result = self.dlg.exec_()
         # See if OK was pressed
         if result:
+
             # Do something useful here - delete the line containing pass and
             filename = self.dlg.lineEdit.text()
 

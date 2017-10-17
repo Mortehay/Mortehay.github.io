@@ -65,11 +65,11 @@ $.fn.phpRequest = function(params) {
 		});
 			$(document).on('click', function(){
 				console.log('click');
-				let restriction = localStorage.getItem("tempRestriction");
+				let restriction = JSON.parse(localStorage.getItem("tempRestriction"));
 				$(".x-form-element").children().attr("list","street_list");
 				if ($('#returnArrow').length == 0) {
 
-					$('#panel_header').prepend('<a href="http://10.112.129.170/qgis-ck/php/main_page.php?restriction='+restriction+'" style="display:inline-block;float:left"><div id="returnArrow" style="cursor:pointer;height:22px;width:22px;"><img src="../img/returnArrow.png" style="height:100%;width:100%;""></div></a>');
+					$('#panel_header').prepend('<a href="http://10.112.129.170/qgis-ck/php/main_page.php?restriction='+restriction.restriction+'&e_mail='+restriction.e_mail+'" style="display:inline-block;float:left"><div id="returnArrow" style="cursor:pointer;height:22px;width:22px;"><img src="../img/returnArrow.png" style="height:100%;width:100%;""></div></a>');
 				} 
 				
 			})  	

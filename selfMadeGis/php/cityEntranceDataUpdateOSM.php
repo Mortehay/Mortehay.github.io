@@ -31,6 +31,11 @@ if ($files) {
         $queryArrayKeys = false;
         //echo $query;
         $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
+        // text bug "staírcase"
+        $query = "UPDATE ".$selectedCity.".".$selectedCity."_entrances SET openstreet_entrance = 'staircase' WHEN openstreet_entrance = 'staírcase';";
+        $queryArrayKeys = false;
+        //echo $query;
+        $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
        
   }
 }  

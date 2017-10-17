@@ -68,6 +68,9 @@ class dbConnSetClass{
     $arr_response = self::dbConnect("SELECT e_mail, md5, restriction FROM public.access WHERE e_mail= '".$e_mail."';", array('e_mail', 'md5', 'restriction'), true);
     if(md5($password)===$arr_response[0]['md5']){
       self::dbConnect("INSERT INTO public.login(e_mail, login_time) VALUES ('".$e_mail."',now());",false,true);
+      //login success
+      $_SESSION['user_logged_in'] = true;
+      //store other stuff in the session like user settings and data
       header("location: main_page.php?restriction=".$arr_response[0]['restriction']."&e_mail=".$e_mail); // Redirecting To Other Page
       return true;
     } else {
@@ -317,25 +320,25 @@ class fileUpload {
             if(substr($linkText, -1) != '{'){ $linkText .= ',';}
             $linkText .='"'.'Повна карта міста - '.' '.$city[2].'"';
             if(substr($linkLink, -1) != '{'){ $linkLink .= ',';}
-            $linkLink .='qgiswebclient.html?map=/var/www/QGIS-Web-Client-master/projects/'.$value;
+            $linkLink .='qgiswebclient.php?map=/var/www/QGIS-Web-Client-master/projects/'.$value;
             //echo 'Повна карта міста '.' '.$city[2].'<hr>';
           } else if((substr_count($value,'_') >1 ) and (strpos($value, 'coverage') !== false) ){
             if(substr($linkText, -1) != '{'){ $linkText .= ',';}
             $linkText .='"'.'Карта покриття міста - '.' '.$city[2].'"';
             if(substr($linkLink, -1) != '{'){ $linkLink .= ',';}
-            $linkLink .='qgiswebclient.html?map=/var/www/QGIS-Web-Client-master/projects/'.$value;
+            $linkLink .='qgiswebclient.php?map=/var/www/QGIS-Web-Client-master/projects/'.$value;
             //echo 'Повна карта міста '.' '.$city[2].' - покриття'.'<hr>';
           } else if((substr_count($value,'_') >1 ) and (strpos($value, 'customer_heatmap') !== false) ){
             if(substr($linkText, -1) != '{'){ $linkText .= ',';}
             $linkText .='"'.'Карта heatmap міста - '.' '.$city[2].'"';
             if(substr($linkLink, -1) != '{'){ $linkLink .= ',';}
-            $linkLink .='qgiswebclient.html?map=/var/www/QGIS-Web-Client-master/projects/'.$value;
+            $linkLink .='qgiswebclient.php?map=/var/www/QGIS-Web-Client-master/projects/'.$value;
             //echo 'Повна карта міста '.' '.$city[2].' - покриття heatmap'.'<hr>';
           } else if((substr_count($value,'_') >1 ) and (strpos($value, 'luch') !== false) ){
             if(substr($linkText, -1) != '{'){ $linkText .= ',';}
             $linkText .='"'.'Карта лінійно-кабельного обліку міста -'.' '.$city[2].'"';
             if(substr($linkLink, -1) != '{'){ $linkLink .= ',';}
-            $linkLink .='qgiswebclient.html?map=/var/www/QGIS-Web-Client-master/projects/'.$value;
+            $linkLink .='qgiswebclient.php?map=/var/www/QGIS-Web-Client-master/projects/'.$value;
             //echo 'Повна карта міста '.' '.$city[2].' - лініно-кабельний облік'.'<hr>';
           }
         }
