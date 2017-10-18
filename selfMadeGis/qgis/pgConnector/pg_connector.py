@@ -276,9 +276,9 @@ class pgConnector:
         self.dlg.label.clear()
 
         city = None
-        for item in QgsMapLayerRegistry.instance().mapLayers():
-            if 'buildings' in item:
-                city = item[0:item.find('_')]
+        # for item in QgsMapLayerRegistry.instance().mapLayers():
+        #     if 'buildings' in item:
+        #         city = item[0:item.find('_')]
         #-----------------------------------
         queryDict = {
             'cableChannelChannelDataUpdate':{
@@ -323,7 +323,7 @@ class pgConnector:
         with open(project.fileName()) as f:
             content = f.readlines()
         for line in content:
-            if ("datasource" in line) & ("host" in line) &("port" in line) & ("user" in line):
+            if ("datasource" in line) & ("host" in line) &("port" in line) & ("user" in line) & ("table" in line):
                 print line
                 list_properties = line.split(" ")
                 break
@@ -345,9 +345,13 @@ class pgConnector:
                 final_list.append(searching(i))
             if "password" in i:
                 final_list.append(searching(i))
+            if "table" in i:
+                i_arr = i.split(".")
+                i_arr[0] = i_arr[0].replace('"','')
+                final_list.append(searching(i_arr[0]))
 
 
-
+        city = final_list[4]
         #----adding link to file if needed---------
         for k, v in queryDict.iteritems():
             if queryDict[k]['fileLink'] == 'archive' :
