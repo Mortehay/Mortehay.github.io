@@ -241,6 +241,13 @@ let params = {
 		displayResult:true,
 		displayStyle:'table'
 	},
+	cityBiomsDataUpdateOSM:{
+		phpFile:'cityBiomsDataUpdateOSM',
+		id:'city_bioms_OSM_data_eng',
+		type:'POST',
+		displayResult: false,
+		displayStyle:'none'
+	},
 
 }
 //-------------------file upload params-------------------------------------------------------------------------------------------------

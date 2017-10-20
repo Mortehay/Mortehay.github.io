@@ -43,6 +43,8 @@ if ($restriction != NULL) {
 	    }
 	if ( count($city_array) > 1) {
 	   	array_unshift($city_array, 'вибери місто');
+	   	//print_r(array_unshift($city_array, 'вибери місто'));
+	   	$_SESSION['city_array'] = $city_array;
 	}
 	foreach ($city_array as $key => $value) {
 	    $option .='<option value="'.$city_array[$key].'">'.$city_array[$key].'</option>';
@@ -86,16 +88,16 @@ if ($restriction != NULL) {
 		array('filesUpload', 'Завантаження файлів',
 			array(
 				array(
-					'NULL',
+					'qgisProjectFiles',
+				),
+				array(
+					'Відобразити файли проектів',
 				),
 				array(
 					'NULL',
 				),
 				array(
-					'NULL',
-				),
-				array(
-					'NULL' ,
+					'Виводить таблицю qgis файлів(залитих на сервер) з вказанням імені/дати файла' ,
 				)
 				
 			)
@@ -190,6 +192,7 @@ if ($restriction != NULL) {
 				array(/*id  for buttons*/
 					'cityBuildingDataUpdateOSM',
 					'cityRoadsDataUpdateOSM',
+					'cityBiomsDataUpdateOSM',
 					'cityBuildingDataUpdate',//update from csv manually loaded from cubic
 					//'cityBuildingDataUpdateAuto', //update from csv automaticali loaded from cubic
 					'cityBuildingDublicatesFinder',//findes building with same geometry
@@ -199,6 +202,7 @@ if ($restriction != NULL) {
 				array(/*buttons names*/
 					'Оновлення даних про будинки OSM',
 					'Оновлення даних про дороги OSM',
+					'Оновлення даних про річки/парки OSM',
 					'Оновлення даних про будинки CUBIC',
 					//'Оновлення даних про будинки CUBIC(from auto)', 
 					'Відобразити дублікати будинків',
@@ -208,6 +212,7 @@ if ($restriction != NULL) {
 				array(/*seletors ids*/
 					'city_building_OSM_data_eng',
 					'city_roads_OSM_data_eng',
+					'city_bioms_OSM_data_eng',
 					'city_building_data_eng', 
 					//'city_building_data_eng_auto', 
 					'city_building_dublicates_finder_eng',
@@ -217,6 +222,7 @@ if ($restriction != NULL) {
 				array(/*titles for buttons*/
 					'Оновлення даних про будинки з завантаненої CSV(city_buildings_osm.csv), яка зформована з даних вивантажених з overpass-turbo',
 					'Оновлення даних про дороги з завантаненої CSV(city_roads_osm.csv), яка зформована з даних вивантажених з overpass-turbo',
+					'Оновлення даних про річки з завантаненої CSV(city_river_line.csv/city_river_poly.csv/city_park_poly.csv), яка зформована з даних вивантажених з overpass-turbo',
 					'Оновлення даних про будинки з завантаненої CSV(city_buildings.csv), яка зформована з даних вивантажених з КУБІКУ(Дислокация по районам и типам сетей (дополненный) чи автоматично)',
 					//'Оновлення даних про будинки з автоматично завантаненої CSV(city_buildings.csv), яка зформована з даних вивантажених з КУБІКУ(автоматично)',
 					'Відображає перелік будинків з однаковою адресою та різною геометрією',
