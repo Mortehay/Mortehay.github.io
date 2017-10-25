@@ -31,12 +31,16 @@ if ($restriction != NULL) {
 	$retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
 	$sumObjectsArray = $retuenedArray;
 	//print_r($sumObjectsArray);
+	$user_map_links = postgres_to_php_array($_SESSION['user_map_links']);
+	//print_r($user_map_links);
 	     foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
 	     	$accordion.='<div class="accordion-section'.(int)$sumObjectsArray[$sumObjectsArrayKey]['id'].'">'.'<a class="accordion-section-title" href="#accordion-'.(int)$sumObjectsArray[$sumObjectsArrayKey]['id'].'">'.$sumObjectsArray[$sumObjectsArrayKey]['city'].'</a>'.'<div id="accordion-'.(int)$sumObjectsArray[$sumObjectsArrayKey]['id'].'" class="accordion-section-content">';
 	     	$array_names = postgres_to_php_array($sumObjectsArray[$sumObjectsArrayKey]['links_description']);
 	        $array_links = postgres_to_php_array($sumObjectsArray[$sumObjectsArrayKey]['links']);
 	        foreach ($array_names as $index => $value) {
-		        $accordion.='<a href="'.$array_links[$index].'">'.$array_names[$index].'</a>';
+
+		        $accordion .= substrArrayInString('<a href="'.$array_links[$index].'">'.$array_names[$index].'</a>',$user_map_links);
+		        //$accordion.='<a href="'.$array_links[$index].'">'.$array_names[$index].'</a>'; //old style
 		    } 
 		    $accordion.='</div>'.'</div>';
 		    $city_array[] = $sumObjectsArray[$sumObjectsArrayKey]['city_eng'];
@@ -44,8 +48,9 @@ if ($restriction != NULL) {
 	if ( count($city_array) > 1) {
 	   	array_unshift($city_array, 'вибери місто');
 	   	//print_r(array_unshift($city_array, 'вибери місто'));
-	   	$_SESSION['city_array'] = $city_array;
+	   	
 	}
+	$_SESSION['city_array'] = $city_array;
 	foreach ($city_array as $key => $value) {
 	    $option .='<option value="'.$city_array[$key].'">'.$city_array[$key].'</option>';
 	}

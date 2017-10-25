@@ -65,11 +65,12 @@ class dbConnSetClass{
     }
   }
   public function siteLogin($e_mail, $password){
-    $arr_response = self::dbConnect("SELECT e_mail, md5, restriction FROM public.access WHERE e_mail= '".$e_mail."';", array('e_mail', 'md5', 'restriction'), true);
+    $arr_response = self::dbConnect("SELECT e_mail, md5, restriction, map_links FROM public.access WHERE e_mail= '".$e_mail."';", array('e_mail', 'md5', 'restriction','map_links'), true);
     if(md5($password)===$arr_response[0]['md5']){
       self::dbConnect("INSERT INTO public.login(e_mail, login_time) VALUES ('".$e_mail."',now());",false,true);
       //login success
       $_SESSION['user_logged_in'] = true;
+      $_SESSION['user_map_links'] =$arr_response[0]['map_links'];
       //store other stuff in the session like user settings and data
       header("location: main_page.php?restriction=".$arr_response[0]['restriction']."&e_mail=".$e_mail); // Redirecting To Other Page
       return true;
@@ -434,7 +435,7 @@ class fileUpload {
         } else {
             echo "Sorry, there was an error uploading your file.";
         }
-      } else if(strtolower($fileType) == 'qgs' and strtolower($restriction) =='admin'){
+      } else if(strtolower($fileType) == 'qgs' ){//and strtolower($restriction) =='admin'
         if (move_uploaded_file($_FILES[$button_id]['tmp_name'], $target_file)) {
             echo "The file ". basename( $_FILES[$button_id]['name']). " has been uploaded.";
             chmod($target_file, 0666);
@@ -1006,4 +1007,17 @@ function csvFromXml($xml, $city, $type){
 
   return true;
 }
+//-----------check whether substring(from array) in string
+function substrArrayInString($stringtext, $substrArray){
+  $state = '';
+  foreach ($substrArray as $substr) {
+    //echo 'string------'.$string.'<hr>';
+    if (strpos($stringtext, str_replace('"','',$substr))) {
+        $state .= $stringtext;
+    }
+  }
+  //echo 'state------'.$stringtext.'<hr>';
+  return $state;
+}
+//--------------------------------------------------------
 ?>

@@ -23,7 +23,7 @@ if($email2 && $restriction) {
 		$headers = 'From:'. $email2 . "\r\n"; // Sender's Email
 		$headers .= 'Cc:'. $email2 . "\r\n"; // Carbon copy to Sender
 		// Message lines should not exceed 70 characters (PHP rule), so wrap it
-		$message = wordwrap($message, 240);
+		$message = wordwrap($message, 1000);
 		// log feedback to publick.gisfeedback
 		$query ="SELECT 1 as counter FROM public.gisfeedback where feedback_text = '".$message."' AND feedback_email = '".$email2."';";
 		$queryArrayKeys = array('counter');
@@ -35,9 +35,15 @@ if($email2 && $restriction) {
 			$queryArrayKeys = false;
 			$retuenedArray = $feedbacker -> dbConnect($query, $queryArrayKeys, true);
 			//echo $query;
-			$message .=$query;
+			//$message .=$query;
 			// Send Mail By PHP Mail Function
-			$emailer ->mail_attachment('yurii.shpylovyi@volia.com','gisFeedBack',$subject , $message, '', ''); //( $to, $from,$subject , $message, $path, $filename)
+			if(in_array($sub,array('питання по роботі вебінтерфейсу/QGIS plugins','запит на додавання/корегування нових/старих елементів'))){
+				$emailer ->mail_attachment('yurii.shpylovyi@volia.com','gisFeedBack',$subject , $message, '', ''); //( $to, $from,$subject , $message, $path, $filename)
+			}
+			if(in_array($sub,array('питання по карті QGIS/веб-інтерфейсу'))){
+				$emailer ->mail_attachment('andrii.zaverukha@volia.com','mapFeedBack',$subject , $message, '', ''); //( $to, $from,$subject , $message, $path, $filename)
+			}
+			//$emailer ->mail_attachment('yurii.shpylovyi@volia.com','gisFeedBack',$subject , $message, '', ''); //( $to, $from,$subject , $message, $path, $filename)
 			$mailmsg = "Your mail has been sent successfuly ! Thank you for your feedback";
 			//echo $mailmsg;
 		}
