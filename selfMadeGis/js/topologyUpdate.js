@@ -307,7 +307,7 @@ let vocabulary ={
 	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsx','xls','dwg','pdf','png','дата pdf'],
 	userTable:['№','E-mail','Доступ','pass','Редагування'],
 	sendFeedback:['№','e-mail','Тема','Запит','Статус','Час відкриття запиту','Час закриття запиту'],
-	qgisProjectFiles:['№','Назва файлу','Дата файлу','Редагувати']
+	qgisProjectFiles:['№','Назва файлу','Дата файлу','Скачати','Редагувати']
 };
 
 //-----------------unique values from array ------------------------------------
@@ -618,8 +618,10 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		               			} else {
 		               				row +='<td class="dataCell">'+'<button id="'+rowData['cubic_code']+'" class="wiringShow" data-link="'+rowData[key]+'">схема зварювань</button>'+'</td>';
 		               			}	
-		               		} else if(String(rowData[key]).includes('http://')){
+		               		} else if(String(rowData[key]).includes('http://') && (String(rowData[key]).includes('.qgs') == false ) && (String(rowData[key]).includes('.csv') == false) ){
 		               			row +='<td class="dataCell">'+'<a target="_blank" href="'+rowData[key]+'">посилання на архів</a>'+'</td>';
+		               		} else if(String(rowData[key]).includes('http://') && (String(rowData[key]).includes('.qgs') || String(rowData[key]).includes('.csv')) ){
+		               			row +='<td class="dataCell">'+'<a href="'+rowData[key]+'" download>посилання на архів</a>'+'</td>';
 		               		} else {
 		               			row +='<td class="dataCell" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</td>';	
 		               		}
