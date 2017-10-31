@@ -274,7 +274,8 @@ class mailSender{
 class fileUpload {
   private $restriction = 'none';
   public function dirCreate($city, $target_file, $file_name,$fileType){
-    if($fileType =='csv'){ $newDirPath = '/var/www/QGIS-Web-Client-master/site/csv/archive/'.$city.'/';}        
+    if($fileType =='csv'){ $newDirPath = '/var/www/QGIS-Web-Client-master/site/csv/archive/'.$city.'/';}
+    if($fileType =='gpx'){ $newDirPath = '/var/www/QGIS-Web-Client-master/site/gpx/archive/'.$city.'/';}          
     if($fileType =='qgs'){ $newDirPath = '/var/www/QGIS-Web-Client-master/projects/';}  
     if (!file_exists($newDirPath )) {
       $oldmask = umask(0);
@@ -406,6 +407,50 @@ class fileUpload {
 
    /* */
   }
+  public function csvFromQuery($destinationPath,$query_type, $city, $header,$table_array){
+    if ($header && $table_array) {
+        $dirPath = $destinationPath;
+            if (!file_exists($dirPath )) {
+                $oldmask = umask(0);
+                    mkdir($dirPath , 0777, true);
+                    umask($oldmask);
+            }
+            $filePath = $destinationPath.$city.$query_type.'.csv';
+            echo $filePath.'<hr>';
+            print_r($header);
+            echo '<hr>';
+            print_r($table_array);
+            touch($filePath);
+            chmod($filePath, 0666);
+            $file = fopen($filePath, 'w');
+            fputcsv($file, $header, ',', '"');
+            foreach ($table_array as $row_key => $row) {
+                   fputcsv($file, $row, ',', '"');
+            }
+            fclose($file);
+            echo '<hr>it works<hr>';
+    } else {echo '<hr>wrong header or table_array<hr>';}
+            
+            return true;
+  }
+  public function gpxCoordToArray($filePath){
+    $gpx=simplexml_load_file($filePath) or die("Error: Cannot create object");
+    //print_r($gpx);
+    $coords = array();
+    foreach($gpx->children() as $node){
+       //echo  $node->{'lon'}.'<hr>';
+      //print_r($node);
+      //echo '<hr>'.$node->attributes()->lon.'<hr>';
+      //echo '<hr>';
+      if($node->attributes()->lon && $node->attributes()->lat){
+        array_push($coords,array('lon' => (string) $node->attributes()->lon, 'lat' => (string) $node->attributes()->lat));
+      }
+    }
+    if(!empty($coords)){
+      return $coords;
+    } else {return false;}
+
+  }
   public function upload($restriction,$login_user,$button_id){
     $target_dir = "/tmp/";
     $target_file = $target_dir . basename($_FILES[$button_id]['name']);
@@ -443,6 +488,40 @@ class fileUpload {
             $query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
             $file_logger -> dbConnect($query, false, true);
             self::maps_link_reloader();
+           header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+        } else {
+            echo "Sorry, there was an error uploading your file.";
+            //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+        }
+      } else if(strtolower($fileType) == 'gpx' ){//and strtolower($restriction) =='admin'
+        if (move_uploaded_file($_FILES[$button_id]['tmp_name'], $target_file)) {
+            echo "The file ". basename( $_FILES[$button_id]['name']). " has been uploaded.";
+            chmod($target_file, 0666);
+            echo '<hr>'.$selectedCity.'<hr>';
+            echo '<hr>'.$target_file.'<hr>';
+            $file_name = basename( $_FILES[$button_id]['name']);
+            
+            $query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
+            $file_logger -> dbConnect($query, false, true);
+            $coordsFilePath = '/var/www/QGIS-Web-Client-master/site/csv/archive/'.$selectedCity.'/';
+            $table_type = str_replace(array($selectedCity),'',explode('.', $file_name)[0]);
+            //echo '<hr>'.explode('.', $file_name)[0].'<hr>';
+            //echo '<hr>'.$table_type.'<hr>';
+            $extention = '.csv';
+            if (strpos($table_type, 'coords') !== false) {
+              self::dirCreate($selectedCity, $target_file, $file_name, $fileType);
+                  self::csvFromQuery($coordsFilePath, $table_type, $selectedCity, array('lon','lat'), self::gpxCoordToArray($target_file));
+              $query = "CREATE TEMP TABLE temp(id serial, lon varchar(100), lat varchar(100), geom geometry); select copy_for_testuser('temp( lon, lat )', '".$coordsFilePath.$selectedCity.$table_type.$extention."', ',', 'UTF-8');UPDATE temp SET geom = ST_Transform(ST_SetSRID(ST_MakePoint(lon::real,lat::real), 4326),32636);INSERT INTO ".$selectedCity.".".$selectedCity."_cable_air_poles(geom) select geom from temp WHERE geom NOT IN(SELECT DISTINCT geom FROM ".$selectedCity.".".$selectedCity."_cable_air_poles WHERE geom IS NOT NULL); UPDATE ".$selectedCity.".".$selectedCity."_cable_air_poles SET table_id = 'p_'||id where table_id is null;";
+              echo $query;
+              $file_logger -> dbConnect($query, false, true);
+              $query = "UPDATE ".$selectedCity.".".$selectedCity."_cable_air_poles SET pole_street = ".$selectedCity."_roads.name FROM ".$selectedCity.".".$selectedCity."_roads WHERE ST_Intersects(".$selectedCity.".".$selectedCity."_roads.geom, ST_Buffer(".$selectedCity.".".$selectedCity."_cable_air_poles.geom,20)) and ".$selectedCity.".".$selectedCity."_roads.geom is not null AND ".$selectedCity.".".$selectedCity."_cable_air_poles.pole_street IS NULL;UPDATE ".$selectedCity.".".$selectedCity."_cable_air_poles SET pole_micro_district = ".$selectedCity."_microdistricts.micro_district FROM ".$selectedCity.".".$selectedCity."_microdistricts WHERE ST_Contains(".$selectedCity."_microdistricts.coverage_geom, ".$selectedCity."_cable_air_poles.geom) and ".$selectedCity.".".$selectedCity."_microdistricts.coverage_geom is not null  AND ".$selectedCity.".".$selectedCity."_cable_air_poles.pole_micro_district IS NULL;";
+              $file_logger -> dbConnect($query, false, true);
+
+              echo $query;
+
+            }
+            
+
            header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
         } else {
             echo "Sorry, there was an error uploading your file.";

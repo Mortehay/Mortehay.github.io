@@ -40,7 +40,7 @@ $tables[3] = 'CREATE TABLE IF NOT EXISTS '.$selectedCity.'.'.$selectedCity.'_cab
  $index_geom[3] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_air_cable_geom'".","."'geom'".","."'".$selectedCity."_cable_air_cable_geom_gist'".", 'gist');";
 //-----------------------------------------------------------------------------------------------------------------------------
 //-----------------create  cable air poles table--------------------------------------------------------------------
-$tables[4] ='CREATE TABLE IF NOT EXISTS '.$selectedCity.'.'.$selectedCity.'_cable_air_poles(geom geometry,table_id character varying(100),pole_number character varying(100),pole_short_description character varying(300),id serial);';
+$tables[4] ='CREATE TABLE IF NOT EXISTS '.$selectedCity.'.'.$selectedCity.'_cable_air_poles(geom geometry,table_id character varying(100),pole_number character varying(100),pole_short_description character varying(300),id serial,   pole_type varchar(100),   line_type varchar(100),  line_number varchar(100),  feeder_number varchar(100),  pole_owner varchar(100),  pole_street varchar(100),  pole_district varchar(100),   pole_micro_district varchar(100),  note varchar(100),  rezerve varchar(100));';
 //-----------------------------------------------------------------------------------------------------------------------------
  $index_id[4] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_air_poles'".","."'id'".","."'".$selectedCity."_cable_air_poles_id'".", 'btree');";
  $index_geom[4] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_air_poles'".","."'geom'".","."'".$selectedCity."_cable_air_poles_gist'".", 'gist');";
