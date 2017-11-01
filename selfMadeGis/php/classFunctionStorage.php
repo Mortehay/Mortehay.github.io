@@ -140,7 +140,7 @@ class mailSender{
               self::newDirCreation($reserveDirPath);
               self::restriction_change($reserveDirPath);
               $linkStorage ="'/var/www/QGIS-Web-Client-master/site/csv/cubic/".$params['tableType']."/".$selectedCity.$params['tableType'].$params['fileExtention']."'";
-              $query ="CREATE TEMP TABLE temp( ".$queryModificator['var']."); select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ;  create temp table csvTemp as (SELECT CITY,STREET, HOUSE, FLAT, CODE, NAME ,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID, 'missing' as state FROM temp WHERE CODE NOT IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL) ) UNION ALL (with data(CITY,STREET, HOUSE, FLAT, CODE, NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID)  as (select CITY,STREET, HOUSE, FLAT, CODE, NAME, PGS_ADDR, OU_OP_ADDR, OU_CODE, DATE_REG, COMENT, UNAME, NET_TYPE, HOUSE_ID  from temp) select d.CITY, d.STREET, d.HOUSE, d.FLAT, d.CODE, d.NAME, d.PGS_ADDR, d.OU_OP_ADDR, d.OU_CODE, d.DATE_REG, d.COMENT, d.UNAME, d.NET_TYPE, d.HOUSE_ID, 'reused code' as rcode from data d where not exists (select 1 from ".$selectedCity.".".$selectedCity."_ctv_topology u where u.cubic_code = d.CODE and u.cubic_house_id = d.HOUSE_ID  and u.cubic_name = d.NAME) and CODE IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL) ); update csvTemp set house = replace(house, '/', '\'); select copy_for_testuser_v2('csvTemp','TO','".$path.$selectedCity.$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.$params['fileExtention']."', ';','CSV HEADER','windows-1251') WHERE (select true from csvTemp limit 1); select copy_for_testuser_v2('csvTemp','TO','".$reserveDirPath.$selectedCity.$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.$params['fileExtention']."', ';','CSV HEADER','windows-1251') WHERE (select true from csvTemp limit 1);";
+              $query ="CREATE TEMP TABLE temp( ".$queryModificator['var']."); select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ;  create temp table csvTemp as (SELECT CITY,STREET, HOUSE, FLAT, CODE, NAME ,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID, 'missing' as state FROM temp WHERE CODE NOT IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL) ) UNION ALL (with data(CITY,STREET, HOUSE, FLAT, CODE, NAME,PGS_ADDR,OU_OP_ADDR,OU_CODE,DATE_REG,COMENT,UNAME,NET_TYPE,HOUSE_ID)  as (select CITY,STREET, HOUSE, FLAT, CODE, NAME, PGS_ADDR, OU_OP_ADDR, OU_CODE, DATE_REG, COMENT, UNAME, NET_TYPE, HOUSE_ID  from temp) select d.CITY, d.STREET, d.HOUSE, d.FLAT, d.CODE, d.NAME, d.PGS_ADDR, d.OU_OP_ADDR, d.OU_CODE, d.DATE_REG, d.COMENT, d.UNAME, d.NET_TYPE, d.HOUSE_ID, 'reused code' as rcode from data d where not exists (select 1 from ".$selectedCity.".".$selectedCity."_ctv_topology u where u.cubic_code = d.CODE and u.cubic_house_id = d.HOUSE_ID  and u.cubic_name = d.NAME) and CODE IN(SELECT cubic_code FROM ". $selectedCity.".".$selectedCity."_ctv_topology WHERE cubic_code IS NOT NULL) ) UNION ALL (with data(cubic_city, cubic_street, cubic_house, cubic_flat, cubic_code, cubic_name,cubic_pgs_addr, cubic_ou_op_addr, cubic_ou_code, cubic_date_reg, cubic_coment, cubic_uname, cubic_net_type, cubic_house_id)  as (select cubic_city, cubic_street, cubic_house, cubic_flat, cubic_code, cubic_name,cubic_pgs_addr, cubic_ou_op_addr, cubic_ou_code, cubic_date_reg, cubic_coment, cubic_uname, cubic_net_type, cubic_house_id  from ".$selectedCity.".".$selectedCity."_ctv_topology) select d.cubic_city, d.cubic_street, d.cubic_house, d.cubic_flat, d.cubic_code, d.cubic_name,d.cubic_pgs_addr, d.cubic_ou_op_addr, d.cubic_ou_code, d.cubic_date_reg, d.cubic_coment, d.cubic_uname, d.cubic_net_type, d.cubic_house_id, 'present state' as state from data d where not exists (select 1 from temp u where d.cubic_code = u.CODE and d.cubic_house_id = u.HOUSE_ID  and d.cubic_name = u.NAME) and cubic_code IN(SELECT CODE FROM temp WHERE CODE IS NOT NULL) ); update csvTemp set house = replace(house, '/', '\'); select copy_for_testuser_v2('csvTemp','TO','".$path.$selectedCity.$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.$params['fileExtention']."', ';','CSV HEADER','windows-1251') WHERE (select true from csvTemp limit 1); select copy_for_testuser_v2('csvTemp','TO','".$reserveDirPath.$selectedCity.$params['tableType'].'_'.$params['tableTypeSufix'].'_'.$today.$params['fileExtention']."', ';','CSV HEADER','windows-1251') WHERE (select true from csvTemp limit 1);";
               echo $query.'<hr>';
               $postgres -> dbConnect($query, false, true);
             }
@@ -458,7 +458,9 @@ class fileUpload {
     if(substr($file_name,0,stripos($file_name, '_'))!='qgis'){
       $selectedCity = substr($file_name,0,stripos($file_name, '_'));
     } else {
-      $selectedCity = substr(substr($file_name,5));
+      echo $file_name.'<hr>';
+      $selectedCity = substr(substr($file_name,5),0,-4);
+      echo $selectedCity.'<hr>';
     }
     
     //$uploadOk = 1;
@@ -467,100 +469,107 @@ class fileUpload {
     //$fileTypes = array('csv','qgs');
     $file_logger = new dbConnSetClass;
     // Check file size
-    if ($_FILES[$button_id]['size'] <= 512000000) {
-      if($fileType == 'csv'){
-        if (move_uploaded_file($_FILES[$button_id]["tmp_name"], $target_file)) {
-            echo "The file ". basename( $_FILES[$button_id]["name"]). " has been uploaded.";
-            chmod($target_file, 0666);
-            self::dirCreate($selectedCity, $target_file, $file_name, $fileType);
-            $query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
-            $file_logger -> dbConnect($query, false, true);
+    session_start();
+    //city restriction
+    //print_r($_SESSION['city_array'] ); 
+    if (in_array($selectedCity, $_SESSION['city_array'] )){
 
-           header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
-        } else {
-            echo "Sorry, there was an error uploading your file.";
-        }
-      } else if(strtolower($fileType) == 'qgs' ){//and strtolower($restriction) =='admin'
-        if (move_uploaded_file($_FILES[$button_id]['tmp_name'], $target_file)) {
-            echo "The file ". basename( $_FILES[$button_id]['name']). " has been uploaded.";
-            chmod($target_file, 0666);
-            self::dirCreate($selectedCity, $target_file, $file_name, $fileType);
-            $query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
-            $file_logger -> dbConnect($query, false, true);
-            self::maps_link_reloader();
-           header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
-        } else {
-            echo "Sorry, there was an error uploading your file.";
-            //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
-        }
-      } else if(strtolower($fileType) == 'gpx' ){//and strtolower($restriction) =='admin'
-        if (move_uploaded_file($_FILES[$button_id]['tmp_name'], $target_file)) {
-            echo "The file ". basename( $_FILES[$button_id]['name']). " has been uploaded.";
-            chmod($target_file, 0666);
-            echo '<hr>'.$selectedCity.'<hr>';
-            echo '<hr>'.$target_file.'<hr>';
-            $file_name = basename( $_FILES[$button_id]['name']);
-            
-            $query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
-            $file_logger -> dbConnect($query, false, true);
-            $coordsFilePath = '/var/www/QGIS-Web-Client-master/site/csv/archive/'.$selectedCity.'/';
-            $table_type = str_replace(array($selectedCity),'',explode('.', $file_name)[0]);
-            //echo '<hr>'.explode('.', $file_name)[0].'<hr>';
-            //echo '<hr>'.$table_type.'<hr>';
-            $extention = '.csv';
-            if (strpos($table_type, 'coords') !== false) {
+
+      if ($_FILES[$button_id]['size'] <= 512000000) {
+        if($fileType == 'csv'){
+          if (move_uploaded_file($_FILES[$button_id]["tmp_name"], $target_file)) {
+              echo "The file ". basename( $_FILES[$button_id]["name"]). " has been uploaded.";
+              chmod($target_file, 0666);
               self::dirCreate($selectedCity, $target_file, $file_name, $fileType);
-                  self::csvFromQuery($coordsFilePath, $table_type, $selectedCity, array('lon','lat'), self::gpxCoordToArray($target_file));
-              $query = "CREATE TEMP TABLE temp(id serial, lon varchar(100), lat varchar(100), geom geometry); select copy_for_testuser('temp( lon, lat )', '".$coordsFilePath.$selectedCity.$table_type.$extention."', ',', 'UTF-8');UPDATE temp SET geom = ST_Transform(ST_SetSRID(ST_MakePoint(lon::real,lat::real), 4326),32636);INSERT INTO ".$selectedCity.".".$selectedCity."_cable_air_poles(geom) select geom from temp WHERE geom NOT IN(SELECT DISTINCT geom FROM ".$selectedCity.".".$selectedCity."_cable_air_poles WHERE geom IS NOT NULL); UPDATE ".$selectedCity.".".$selectedCity."_cable_air_poles SET table_id = 'p_'||id where table_id is null;";
-              echo $query;
-              $file_logger -> dbConnect($query, false, true);
-              $query = "UPDATE ".$selectedCity.".".$selectedCity."_cable_air_poles SET pole_street = ".$selectedCity."_roads.name FROM ".$selectedCity.".".$selectedCity."_roads WHERE ST_Intersects(".$selectedCity.".".$selectedCity."_roads.geom, ST_Buffer(".$selectedCity.".".$selectedCity."_cable_air_poles.geom,20)) and ".$selectedCity.".".$selectedCity."_roads.geom is not null AND ".$selectedCity.".".$selectedCity."_cable_air_poles.pole_street IS NULL;UPDATE ".$selectedCity.".".$selectedCity."_cable_air_poles SET pole_micro_district = ".$selectedCity."_microdistricts.micro_district FROM ".$selectedCity.".".$selectedCity."_microdistricts WHERE ST_Contains(".$selectedCity."_microdistricts.coverage_geom, ".$selectedCity."_cable_air_poles.geom) and ".$selectedCity.".".$selectedCity."_microdistricts.coverage_geom is not null  AND ".$selectedCity.".".$selectedCity."_cable_air_poles.pole_micro_district IS NULL;";
+              $query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
               $file_logger -> dbConnect($query, false, true);
 
-              echo $query;
+             header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+          } else {
+              echo "Sorry, there was an error uploading your file.";
+          }
+        } else if(strtolower($fileType) == 'qgs' ){//and strtolower($restriction) =='admin'
+          if (move_uploaded_file($_FILES[$button_id]['tmp_name'], $target_file)) {
+              echo "The file ". basename( $_FILES[$button_id]['name']). " has been uploaded.";
+              chmod($target_file, 0666);
+              self::dirCreate($selectedCity, $target_file, $file_name, $fileType);
+              $query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
+              $file_logger -> dbConnect($query, false, true);
+              self::maps_link_reloader();
+             header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+          } else {
+              echo "Sorry, there was an error uploading your file.";
+              //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+          }
+        } else if(strtolower($fileType) == 'gpx' ){//and strtolower($restriction) =='admin'
+          if (move_uploaded_file($_FILES[$button_id]['tmp_name'], $target_file)) {
+              echo "The file ". basename( $_FILES[$button_id]['name']). " has been uploaded.";
+              chmod($target_file, 0666);
+              echo '<hr>'.$selectedCity.'<hr>';
+              echo '<hr>'.$target_file.'<hr>';
+              $file_name = basename( $_FILES[$button_id]['name']);
+              
+              $query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
+              $file_logger -> dbConnect($query, false, true);
+              $coordsFilePath = '/var/www/QGIS-Web-Client-master/site/csv/archive/'.$selectedCity.'/';
+              $table_type = str_replace(array($selectedCity),'',explode('.', $file_name)[0]);
+              //echo '<hr>'.explode('.', $file_name)[0].'<hr>';
+              //echo '<hr>'.$table_type.'<hr>';
+              $extention = '.csv';
+              if (strpos($table_type, '_poles_coords') !== false) {
+                self::dirCreate($selectedCity, $target_file, $file_name, $fileType);
+                    self::csvFromQuery($coordsFilePath, $table_type, $selectedCity, array('lon','lat'), self::gpxCoordToArray($target_file));
+                $query = "CREATE TEMP TABLE temp(id serial, lon varchar(100), lat varchar(100), geom geometry); select copy_for_testuser('temp( lon, lat )', '".$coordsFilePath.$selectedCity.$table_type.$extention."', ',', 'UTF-8');UPDATE temp SET geom = ST_Transform(ST_SetSRID(ST_MakePoint(lon::real,lat::real), 4326),32636);INSERT INTO ".$selectedCity.".".$selectedCity."_cable_air_poles(geom) select geom from temp WHERE geom NOT IN(SELECT DISTINCT geom FROM ".$selectedCity.".".$selectedCity."_cable_air_poles WHERE geom IS NOT NULL); UPDATE ".$selectedCity.".".$selectedCity."_cable_air_poles SET table_id = 'p_'||id where table_id is null;";
+                echo $query;
+                $file_logger -> dbConnect($query, false, true);
+                $query = "UPDATE ".$selectedCity.".".$selectedCity."_cable_air_poles SET pole_street = ".$selectedCity."_roads.name FROM ".$selectedCity.".".$selectedCity."_roads WHERE ST_Intersects(".$selectedCity.".".$selectedCity."_roads.geom, ST_Buffer(".$selectedCity.".".$selectedCity."_cable_air_poles.geom,20)) and ".$selectedCity.".".$selectedCity."_roads.geom is not null AND ".$selectedCity.".".$selectedCity."_cable_air_poles.pole_street IS NULL;UPDATE ".$selectedCity.".".$selectedCity."_cable_air_poles SET pole_micro_district = ".$selectedCity."_microdistricts.micro_district FROM ".$selectedCity.".".$selectedCity."_microdistricts WHERE ST_Contains(".$selectedCity."_microdistricts.coverage_geom, ".$selectedCity."_cable_air_poles.geom) and ".$selectedCity.".".$selectedCity."_microdistricts.coverage_geom is not null  AND ".$selectedCity.".".$selectedCity."_cable_air_poles.pole_micro_district IS NULL;";
+                $file_logger -> dbConnect($query, false, true);
 
-            }
-            
+                echo $query;
 
-           header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+              }
+              
+
+             header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+          } else {
+              echo "Sorry, there was an error uploading your file.";
+              //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+          }
+        } else if(strtolower($fileType) == 'zip' or strtolower($fileType) == 'rar'){
+          if (move_uploaded_file($_FILES[$button_id]['tmp_name'], $target_file)) {
+              echo "The file ". basename( $_FILES[$button_id]['name']). " has been uploaded.";
+              chmod($target_file, 0666);
+              $postgres = new dbConnSetClass;
+              $query = "select nspname from pg_catalog.pg_namespace where nspname not like '%pg_%' and nspname not in('information_schema', '_city_hlam', 'topology','public');";
+              $queryArrayKeys = array('nspname');
+              //echo $query;
+              $cities = array();
+              $sumObjectsArray = $postgres -> dbConnect($query, $queryArrayKeys, true);
+              foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
+                array_push($cities, $objectArray['nspname']);
+              }
+              $tableTypes = array('ctv','topology', 'switches','cable','channels','air');
+
+              //print_r($cities);print_r($tableTypes);
+              self::unArchive('/tmp/',  basename( $_FILES[$button_id]['name']), $fileType , $cities, $tableTypes);
+              //self::dirCreate($selectedCity, $target_file, $file_name, $fileType);
+              //$query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
+              //$file_logger -> dbConnect($query, false, true);
+
+             header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+          } else {
+              echo "Sorry, there was an error uploading your file.";
+              //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+          }
         } else {
-            echo "Sorry, there was an error uploading your file.";
-            //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+          echo 'your file have restricted type please try qgs or csv';
+          //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
         }
-      } else if(strtolower($fileType) == 'zip' or strtolower($fileType) == 'rar'){
-        if (move_uploaded_file($_FILES[$button_id]['tmp_name'], $target_file)) {
-            echo "The file ". basename( $_FILES[$button_id]['name']). " has been uploaded.";
-            chmod($target_file, 0666);
-            $postgres = new dbConnSetClass;
-            $query = "select nspname from pg_catalog.pg_namespace where nspname not like '%pg_%' and nspname not in('information_schema', '_city_hlam', 'topology','public');";
-            $queryArrayKeys = array('nspname');
-            //echo $query;
-            $cities = array();
-            $sumObjectsArray = $postgres -> dbConnect($query, $queryArrayKeys, true);
-            foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
-              array_push($cities, $objectArray['nspname']);
-            }
-            $tableTypes = array('ctv','topology', 'switches','cable','channels','air');
 
-            //print_r($cities);print_r($tableTypes);
-            self::unArchive('/tmp/',  basename( $_FILES[$button_id]['name']), $fileType , $cities, $tableTypes);
-            //self::dirCreate($selectedCity, $target_file, $file_name, $fileType);
-            //$query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
-            //$file_logger -> dbConnect($query, false, true);
-
-           header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
-        } else {
-            echo "Sorry, there was an error uploading your file.";
-            //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
-        }
       } else {
-        echo 'your file have restricted type please try qgs or csv';
-        //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+          echo 'Sorry, your file is too big';
+          //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
       }
-
-    } else {
-        echo 'Sorry, your file is too big';
-        //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
     }
   }
 }

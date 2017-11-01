@@ -248,6 +248,13 @@ let params = {
 		displayResult: false,
 		displayStyle:'none'
 	},
+	cableAirPolesUpdate:{
+		phpFile: 'cableAirPolesUpdate',
+		id:'cable_air_poles_data_city_eng',
+		type:'POST',
+		displayResult: false,
+		displayStyle:'none'
+	},
 
 }
 //-------------------file upload params-------------------------------------------------------------------------------------------------

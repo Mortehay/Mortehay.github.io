@@ -156,22 +156,22 @@ if ($restriction != NULL) {
 				array(/*id  for buttons*/
 					'cableAirCableDataUpdate', 
 					'cableAirCableDataView',
-					//'cableAirPolesUpdate'
+					'cableAirPolesUpdate'
 				),
 				array(/*buttons names*/
 					'Оновлення даних ПКП - кабелі', 
 					'Вивести таблицю ПКП - кабелі',
-					//'Ововити дані привязки стовпів'
+					'Оновити дані привязки стовпів'
 				),
 				array(/*seletors ids*/
 					'cable_air_cable_data_city_eng', 
 					'cable_air_cable_dataView_city_eng',
-					//'cable_air_poles_data_city_eng'
+					'cable_air_poles_data_city_eng'
 				),
 				array(/*titles for buttons*/
 					'Оновлює данні в таблиці про кабельні прокладки ПКП(повітряно кабельнв переходи) з завантаженого файлу CSV(city_cable_air.csv, шаблон_реєстру_ВОЛЗ ПКП)',
 					'Виводить на екран кабел ПКП, які вже мають геометрію та данні в таблиці',
-					//'Оновлює дані привязки стовпів до вулиць, районів, мікрорайонів'
+					'Оновлює дані привязки стовпів до вулиць, районів, мікрорайонів де вони NULL (початкові дані отримуються з файла city_poles_coords.gpx з нього беруться тільки lon/lat)'
 				)
 			)
 		),

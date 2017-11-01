@@ -38,18 +38,25 @@
 	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
 }
 
-
 div.tools__visible{
 	display:block;
-	background-image: url(../img/click_me.png);
-	background-position:-18px;
-	background-color: transparent;
+	background: url(../img/click_me.png) -20px 0;
+	/* background-position:-18px;
+	background-color: transparent; */
 	width:81px;
 	height:136px;
 	float:left;
 	
 }
-
+div.tools__visible:hover{
+	background: url(../img/click_me.png) -19px -136px;
+}
+div.tools__visible:active{
+	background-color: #788df5;
+	-webkit-box-shadow: 0px 0px 5px 0px rgba(58,58,230,1);
+	-moz-box-shadow: 0px 0px 5px 0px rgba(58,58,230,1);
+	box-shadow: 0px 0px 5px 0px rgba(58,58,230,1);
+}
 .newTools h2{
 	font-size: 12px;
 	font-weight: bold;
