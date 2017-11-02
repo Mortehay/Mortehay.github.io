@@ -1,5 +1,5 @@
 <?php
-//ini_set('display_errors', 1);
+ini_set('display_errors', 1);
 include('classFunctionStorage.php');
 if ($_POST['cable_channel_pits_city_eng']) {
   $selectedCity= $_POST['cable_channel_pits_city_eng'];
@@ -11,6 +11,11 @@ $query = "UPDATE ".$selectedCity.".".$selectedCity."_cable_channel_pits SET micr
 $queryArrayKeys = false;
 echo $query;
 $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
+$query = "create temp table tmp as select pits.pit_id, buildings.cubic_street from ".$selectedCity.".".$selectedCity."_cable_channel_pits pits right join ".$selectedCity.".".$selectedCity."_buildings buildings on(ST_DWithin(buildings.building_geom,pits.geom,20))  where pits.street is null; update  ".$selectedCity.".".$selectedCity."_cable_channel_pits set street = tmp.cubic_street from tmp where tmp.pit_id = ".$selectedCity."_cable_channel_pits.pit_id; drop table tmp;create temp table tmp as select pits.pit_id, buildings.cubic_street from ".$selectedCity.".".$selectedCity."_cable_channel_pits pits right join ".$selectedCity.".".$selectedCity."_buildings buildings on(ST_DWithin(buildings.building_geom,pits.geom,40))  where pits.street is null; update  ".$selectedCity.".".$selectedCity."_cable_channel_pits set street = tmp.cubic_street from tmp where tmp.pit_id = ".$selectedCity."_cable_channel_pits.pit_id; drop table tmp; create temp table tmp as select pits.pit_id, buildings.cubic_street from ".$selectedCity.".".$selectedCity."_cable_channel_pits pits right join ".$selectedCity.".".$selectedCity."_buildings buildings on(ST_DWithin(buildings.building_geom,pits.geom,60))  where pits.street is null; update  ".$selectedCity.".".$selectedCity."_cable_channel_pits set street = tmp.cubic_street from tmp where tmp.pit_id = ".$selectedCity."_cable_channel_pits.pit_id; drop table tmp; create temp table tmp as select pits.pit_id, buildings.cubic_street from ".$selectedCity.".".$selectedCity."_cable_channel_pits pits right join ".$selectedCity.".".$selectedCity."_buildings buildings on(ST_DWithin(buildings.building_geom,pits.geom,80))  where pits.street is null; update  ".$selectedCity.".".$selectedCity."_cable_channel_pits set street = tmp.cubic_street from tmp where tmp.pit_id = ".$selectedCity."_cable_channel_pits.pit_id; drop table tmp;create temp table tmp as select pits.pit_id, buildings.cubic_street from ".$selectedCity.".".$selectedCity."_cable_channel_pits pits right join ".$selectedCity.".".$selectedCity."_buildings buildings on(ST_DWithin(buildings.building_geom,pits.geom,100))  where pits.street is null; update  ".$selectedCity.".".$selectedCity."_cable_channel_pits set street = tmp.cubic_street from tmp where tmp.pit_id = ".$selectedCity."_cable_channel_pits.pit_id; drop table tmp; create temp table tmp as select pits.pit_id, roads.name from ".$selectedCity.".".$selectedCity."_cable_channel_pits pits right join ".$selectedCity.".".$selectedCity."_roads roads on(ST_DWithin(roads.geom,pits.geom,80))  where pits.street is null; update  ".$selectedCity.".".$selectedCity."_cable_channel_pits set street = tmp.name from tmp where tmp.pit_id = ".$selectedCity."_cable_channel_pits.pit_id; drop table tmp;";
+$queryArrayKeys = false;
+echo $query;
+$retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
+
 $query = "SELECT DISTINCT pit_id, json_data FROM ".$selectedCity.".".$selectedCity."_cable_channel_pits WHERE pit_id IS NOT NULL;";
 $queryArrayKeys = array('pit_id', 'json_data');
 echo $query;
