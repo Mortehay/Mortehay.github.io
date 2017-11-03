@@ -737,7 +737,7 @@ $.fn.phpRequest = function(params) {
 							alert('Відсутні нові елементи');
 							$('.curtenScripStatus').hide();
 						} else {
-							if( params.displayStyle == 'table' ) {
+							if( (params.displayStyle == 'table')  ) {
 								displayTableData('displayResult'+attributId, 'container', data, vocabulary[attributId]);
 								closeSpan('displayResult'+attributId);
 								$('button.mapWindow').openNewMapWindow(params);
@@ -747,7 +747,10 @@ $.fn.phpRequest = function(params) {
 								});
 								$('button#addNewUser').newUser('addNewUser','addNewUser');
 								$('button.deleteUser').newUser('addNewUser','deleteUser');
-								$('html, body').animate({ scrollTop: $('.'+'displayResult'+attributId).offset().top }, 'slow');
+								if ($('.'+'displayResult'+attributId)[0]){
+									$('html, body').animate({ scrollTop: $('.'+'displayResult'+attributId).offset().top }, 'slow');
+								}
+								
 							}
 							if( params.displayStyle == 'graph'){
 								statistcsDraw(data);
