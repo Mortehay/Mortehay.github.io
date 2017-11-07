@@ -1133,4 +1133,13 @@ function substrArrayInString($stringtext, $substrArray){
   return $state;
 }
 //--------------------------------------------------------
+//operations under $cities array
+function cityVocabulary($cities, $field, $value) {
+     foreach($cities as $key => $city)
+     {
+        if ( $city[$field] === $value )
+           return $key;
+     }
+     return false;
+  }
 ?>

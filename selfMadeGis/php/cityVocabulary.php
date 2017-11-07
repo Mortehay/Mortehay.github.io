@@ -1,4 +1,5 @@
 	<?php
+	//ini_set('display_errors', 1);
 	//----------------------------city array--------------------------------------------------------------------
 	$cities = array(
 	array('volia.vn','vinnitsa','Вінниця'),
@@ -49,4 +50,21 @@
 	array('volia.nvm','novomoskovsk','Новомосковськ') 
 	);
 	//------------------------------------------------------------------------------------------------------------
+	$feedback_sub = array(
+		'питання по карті QGIS/веб-інтерфейсу',
+		'питання по роботі вебінтерфейсу/QGIS plugins',
+		'запит на додавання/корегування нових/старих елементів'
+	);
+	/*function cityVocabulary($cities, $field, $value) {
+	   foreach($cities as $key => $city)
+	   {
+	      if ( $city[$field] === $value )
+	         return $key;
+	   }
+	   return false;
+	}
+
+	echo cityVocabulary($cities, 1, 'melitopol');
+	echo '<hr>';
+	echo $cities[cityVocabulary($cities, 1, 'melitopol')][0];*/
 ?>

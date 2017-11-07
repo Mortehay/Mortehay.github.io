@@ -2,6 +2,7 @@
 <?php
 ini_set('display_errors', 1);
 //include('restriction.php');
+include('cityVocabulary.php');
 if($_SERVER['SERVER_ADDR']) {
 	$server_address = $_SERVER['SERVER_ADDR']; 
 } else {
@@ -176,6 +177,10 @@ echo $query;
 	$postgresSwitches -> dbConnect($query, false, true);
 	//------------------
 	$query ="CREATE TEMP TABLE tmp_agr (cubic_switch_id varchar(100), cubic_parent_switch_id varchar(100), cubic_switch_role varchar(100), cubic_switch_agr_id varchar(100), level integer); INSERT INTO tmp_agr WITH RECURSIVE tmp_agr ( cubic_switch_id, cubic_parent_switch_id, cubic_switch_role, cubic_parent_switch_agr_id , LEVEL ) AS (SELECT T1.cubic_switch_id , T1.cubic_parent_switch_id , T1.cubic_switch_role , T1.cubic_parent_switch_id as cubic_parent_switch_agr_id , 1 FROM ".$selectedCity.".".$selectedCity."_switches T1 WHERE T1.cubic_parent_switch_role = 'agr' union select T2.cubic_switch_id, T2.cubic_parent_switch_id, T2.cubic_switch_role,tmp_agr.cubic_parent_switch_agr_id ,LEVEL + 1 FROM ".$selectedCity.".".$selectedCity."_switches T2 INNER JOIN tmp_agr ON( tmp_agr.cubic_switch_id = T2.cubic_parent_switch_id) ) select * from tmp_agr  ORDER BY cubic_parent_switch_agr_id; UPDATE ".$selectedCity.".".$selectedCity."_switches SET cubic_switch_agr_id = tmp_agr.cubic_switch_agr_id FROM tmp_agr WHERE ".$selectedCity."_switches.cubic_switch_id = tmp_agr.cubic_switch_id; UPDATE ".$selectedCity.".".$selectedCity."_switches SET cubic_switch_agr_id = null WHERE ".$selectedCity."_switches.cubic_switch_id not in (select distinct cubic_switch_id from tmp_agr where cubic_switch_id is not null);";
+
+	echo $query.'<hr>';
+	$postgresSwitches -> dbConnect($query, false, true);
+	$query ="UPDATE ".$selectedCity.".".$selectedCity."_switches SET work_link ='http://work.volia.net/w2/eth/switch_info/act.current.php?ip='||cubic_ip_address||'&company=".$cities[cityVocabulary($cities, 1, $selectedCity)][0]."' WHERE cubic_ip_address IS NOT NULL;";
 
 	echo $query.'<hr>';
 	$postgresSwitches -> dbConnect($query, false, true);
