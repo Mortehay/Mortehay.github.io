@@ -479,7 +479,8 @@ class fileUpload {
       $selectedCity = substr($file_name,0,stripos($file_name, '_'));
     } else {
       echo $file_name.'<hr>';
-      $selectedCity = substr(substr($file_name,5),0,-4);
+      //$selectedCity = substr(substr($file_name,5),0,-4);
+      $selectedCity = explode('_', substr($file_name,0,-4))[1];
       echo $selectedCity.'<hr>';
     }
     
@@ -1142,4 +1143,20 @@ function cityVocabulary($cities, $field, $value) {
      }
      return false;
   }
+// creates pg array from php array----------------------------------------------  
+function to_pg_array($set) {
+    settype($set, 'array'); // can be called with a scalar or array
+    $result = array();
+    foreach ($set as $t) {
+        if (is_array($t)) {
+            $result[] = to_pg_array($t);
+        } else {
+            $t = str_replace('"', '\\"', $t); // escape double quote
+            if (! is_numeric($t)) // quote only non-numeric values
+                $t = '"' . $t . '"';
+            $result[] = $t;
+        }
+    }
+    return '{' . implode(",", $result) . '}'; // format
+}  
 ?>

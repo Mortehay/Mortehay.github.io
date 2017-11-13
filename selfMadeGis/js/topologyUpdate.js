@@ -312,11 +312,21 @@ let vocabulary ={
 	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під&acute;їзду', '№Поверху', 'Розташування', 'house_id', 'id комутатора', 'id мат. комутатора','mac_address', 'ip_address', 'serial_number', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни'],
 	ctvToplogyAddFlats:['№',  'Вулиця', '№будинку', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID','Квартири'],
 	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsx','xls','dwg','pdf','png','дата pdf'],
-	userTable:['№','E-mail','Доступ','pass','Редагування'],
+	userTable:['№','E-mail','Доступ','pass','доступні карти','Редагування'],
 	sendFeedback:['№','e-mail','Тема','Запит','Статус','Час відкриття запиту','Час закриття запиту'],
 	qgisProjectFiles:['№','Назва файлу','Дата файлу','Скачати','Редагувати']
 };
-
+//---------------remove element from array----------------------------------
+Array.prototype.remove = function() {
+    var what, a = arguments, L = a.length, ax;
+    while (L && this.length) {
+        what = a[--L];
+        while ((ax = this.indexOf(what)) !== -1) {
+            this.splice(ax, 1);
+        }
+    }
+    return this;
+};
 //-----------------unique values from array ------------------------------------
 Array.prototype.uniqueValues = function()
 {
@@ -707,6 +717,8 @@ $.fn.phpRequest = function(params) {
 		//console.log($('#'+params.id).val() );
 		let request = {};
 		let attributId = $(this).attr('id');
+		let map_links = [];
+		localStorage.setItem("map_links", JSON.stringify(map_links));
 		//-------------------------------------------------------------------------------------
 		//-------------------------------------------------------------------------------------
 		console.log('phpFile',$(this).attr('id'));
@@ -741,12 +753,32 @@ $.fn.phpRequest = function(params) {
 								displayTableData('displayResult'+attributId, 'container', data, vocabulary[attributId]);
 								closeSpan('displayResult'+attributId);
 								$('button.mapWindow').openNewMapWindow(params);
+								//----------------------user addition or removement---------------------------
 								$('input[type="checkbox"].deleteUser').click(function() {
 								    //console.log($(this).data('mail'));
 								    $('button[data-mail="' + $(this).data('mail')+'"]').toggle(this.checked);
 								});
-								$('button#addNewUser').newUser('addNewUser','addNewUser');
-								$('button.deleteUser').newUser('addNewUser','deleteUser');
+								
+								$('.map_links').on('change', function(){
+									//console.log('click');
+									if($(this).prop('checked')){
+										//console.log('click');
+										$(this).next().css({"background-color": "yellow"});
+										map_links.push($(this).data('map'));
+										localStorage.setItem("map_links", JSON.stringify(map_links));
+									} else { 
+										$(this).next().css({"background-color": "#cceeff"});
+										map_links.remove($(this).data('map'));
+										localStorage.setItem("map_links", JSON.stringify(map_links));
+
+									};
+									console.log('map_links', map_links);
+									return map_links;
+								});
+								//console.log('map_links', map_links);
+								$('button#addNewUser').newUser('addNewUser','addNewUser',params,attributId);
+								$('button.deleteUser').newUser('addNewUser','deleteUser',params,attributId);
+								//------------------------------------------------------------------------------
 								if ($('.'+'displayResult'+attributId)[0]){
 									$('html, body').animate({ scrollTop: $('.'+'displayResult'+attributId).offset().top }, 'slow');
 								}
@@ -795,21 +827,37 @@ $.fn.pageUpScroll = function(documentHeight){
 	})
 }
 //------------new user-----------------------------------------------------------------------------------------
-$.fn.newUser = function(url,buttonId){
+$.fn.newUser = function(url,buttonId,params,attributId){
 	$(this).on('click', function(){
 		let request = {};
+		let map_links = [];
+		console.log('params',params);
+		console.log('attributId',attributId);
 		if(buttonId =='addNewUser'){
-			request ={
-				'buttonId':buttonId,
-				'Email':$('#'+buttonId+'Email').val(),
-				'Password':$('#'+buttonId+'Password').val(),
-				'Restriction':$('#'+buttonId+'Restriction').val()
-			};
+			let map_links = JSON.parse(localStorage.getItem("map_links"));
+			console.log('map_links', map_links);
+			console.log('map_links.length', map_links.length);
+			if((map_links.length > 0) || ($('#addNewUserRestriction').val() != '')  || ($('#addNewUserEmail').val() != '')  || ($('#addNewUserPassword').val() != '')){
+				request ={
+					'buttonId':buttonId,
+					'Email':$('#'+buttonId+'Email').val(),
+					'Password':$('#'+buttonId+'Password').val(),
+					'Restriction':$('#'+buttonId+'Restriction').val(),
+					'map_links': map_links
+				};
+				$('.tableDisplayResult').remove();
+				localStorage.setItem("map_links", JSON.stringify([]));
+				//$('#'+attributId).phpRequest(params[attributId]);
+			} else {alert('будь ласка, заповніть поля та виберіть карти для доступу');}
+			
+
 		} else if(buttonId =='deleteUser'){
 			request ={
 				'buttonId':buttonId,
 				'Email':$(this).data('mail'),
 			}
+			//$( '.'+ buttonId +'[data-mail="test@mail.com"]').parents('tr:first').remove();
+			$('.tableDisplayResult').remove();
 		}
 		
 		//console.log(request);
