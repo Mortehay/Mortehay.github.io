@@ -14,8 +14,9 @@ if ($restriction === 'admin')  {
     $pass = $_REQUEST['Password'];
     $md5 =md5($pass);
     $map_links = to_pg_array($_REQUEST['map_links']);
+    $file_links = to_pg_array($_REQUEST['file_links']);
     //$query = "INSERT INTO public.access(e_mail,restriction,password,md5,map_links) SELECT '".$e_mail."', '".$restriction."','".$pass."', '".$md5."','".'{"Повна карта міста","Карта покриття міста","Карта heatmap міста","Карта лінійно-кабельного обліку міста"}'."' WHERE NOT EXISTS(SELECT e_mail FROM public.access WHERE e_mail='".$e_mail."') ;";
-    $query = "INSERT INTO public.access(e_mail,restriction,password,md5,map_links) SELECT '".$e_mail."', '".$restriction."','".$pass."', '".$md5."','".$map_links."' WHERE NOT EXISTS(SELECT e_mail FROM public.access WHERE e_mail='".$e_mail."') ;";
+    $query = "INSERT INTO public.access(e_mail,restriction,password,md5,map_links,file_links) SELECT '".$e_mail."', '".$restriction."','".$pass."', '".$md5."','".$map_links."','".$file_links."' WHERE NOT EXISTS(SELECT e_mail FROM public.access WHERE e_mail='".$e_mail."') ;";
 
     $conn = $newDBrequest -> setProp('dbConnSet', $connLSetings);
     $newDBrequest -> dbConnect($query, false, true);

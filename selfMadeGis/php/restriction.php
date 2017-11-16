@@ -9,6 +9,7 @@ if ($_POST['e_mail']) {$e_mail= $_POST['e_mail'];} else {$e_mail = $_REQUEST['e_
 session_start();
 $_SESSION['restriction'] = $restriction;
 $_SESSION['e_mail'] = $e_mail;
+//echo $_SESSION['user_file_links'].'111111111111111111111111111111'.'<hr>';
 $option = '';
 $accordion='';
 $tools ='';

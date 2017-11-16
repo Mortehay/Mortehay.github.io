@@ -7,9 +7,9 @@ $e_mail = $_SESSION['e_mail'];
 if ($restriction === 'admin')  {
   $newDBrequest = new dbConnSetClass;
   if ($_POST['buttonId'] =='user_table') {
-    $query = "SELECT e_mail, restriction, map_links FROM public.access;";
+    $query = "SELECT e_mail, restriction, map_links, file_links FROM public.access order by restriction, e_mail;";
     //echo $query;
-    $queryArrayKeys = array('e_mail', 'restriction', 'map_links');
+    $queryArrayKeys = array('e_mail', 'restriction', 'map_links','file_links');
     $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
 
     $sumObjectsArray = $retuenedArray;
@@ -24,6 +24,10 @@ if ($restriction === 'admin')  {
         '<input type="checkbox"  id="map_coverage" class="map_links" data-map="Карта покриття міста"><label  class="map_links" for="map_coverage">Карта покриття міста</label><br>'.
         '<input type="checkbox"  id="map_heatmap" class="map_links" data-map="Карта heatmap міста"><label  class="map_links" for="map_heatmap">Карта heatmap міста</label><br>'.
         '<input type="checkbox"  id="map_luch"  class="map_links" data-map="Карта лінійно-кабельного обліку міста"><label  class="map_links" for="map_luch">Карта лінійно-кабельного обліку міста</label><br>',
+      'file_links' => '<input type="checkbox" id="file_full" class="file_links" data-file="full"><label  class="file_links" for="file_full">full</label><br>'.
+        '<input type="checkbox"  id="file_coverage" class="file_links" data-file="coverage"><label  class="file_links" for="file_coverage">coverage</label><br>'.
+        '<input type="checkbox"  id="file_heatfile" class="file_links" data-file="customer_heatmap"><label  class="file_links" for="file_heatfile">customer_heatmap</label><br>'.
+        '<input type="checkbox"  id="file_luch"  class="file_links" data-file="luch"><label  class="file_links" for="file_luch">luch</label><br>',
       'edit' => '<button id="addNewUser">додати користувача</button>' )); 
     foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
 
@@ -32,6 +36,7 @@ if ($restriction === 'admin')  {
         'restriction' => $sumObjectsArray[$sumObjectsArrayKey]['restriction'],
         'pass' => '---',
         'map_links' => $sumObjectsArray[$sumObjectsArrayKey]['map_links'],
+        'file_links' => $sumObjectsArray[$sumObjectsArrayKey]['file_links'],
         'edit' => '<button class="invisible deleteUser" data-mail="'.$sumObjectsArray[$sumObjectsArrayKey]['e_mail'].'">видалити</button>'.'<input type="checkbox" class="deleteUser" data-mail="'.$sumObjectsArray[$sumObjectsArrayKey]['e_mail'].'">'
       );
       array_push($arr_response['response'], $arr ); 

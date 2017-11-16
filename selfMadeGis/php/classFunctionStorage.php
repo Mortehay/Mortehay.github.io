@@ -65,12 +65,14 @@ class dbConnSetClass{
     }
   }
   public function siteLogin($e_mail, $password){
-    $arr_response = self::dbConnect("SELECT e_mail, md5, restriction, map_links FROM public.access WHERE e_mail= '".$e_mail."';", array('e_mail', 'md5', 'restriction','map_links'), true);
+    $arr_response = self::dbConnect("SELECT e_mail, md5, restriction, map_links, file_links FROM public.access WHERE e_mail= '".$e_mail."';", array('e_mail', 'md5', 'restriction','map_links','file_links'), true);
     if(md5($password)===$arr_response[0]['md5']){
       self::dbConnect("INSERT INTO public.login(e_mail, login_time) VALUES ('".$e_mail."',now());",false,true);
       //login success
+      session_start();
       $_SESSION['user_logged_in'] = true;
       $_SESSION['user_map_links'] =$arr_response[0]['map_links'];
+      $_SESSION['user_file_links'] =$arr_response[0]['file_links'];
       //store other stuff in the session like user settings and data
       header("location: main_page.php?restriction=".$arr_response[0]['restriction']."&e_mail=".$e_mail); // Redirecting To Other Page
       return true;
@@ -318,13 +320,13 @@ class fileUpload {
       $linkLink = '{';
       foreach ($fileNames as $value) {
         if(strpos($value, $city[1]) !== false){
-          
-          if(substr_count($value,'_') == 1 ){
+
+          if((substr_count($value,'_') >1 ) and (strpos($value, 'full') !== false) ){
             if(substr($linkText, -1) != '{'){ $linkText .= ',';}
             $linkText .='"'.'Повна карта міста - '.' '.$city[2].'"';
             if(substr($linkLink, -1) != '{'){ $linkLink .= ',';}
             $linkLink .='qgiswebclient.php?map=/var/www/QGIS-Web-Client-master/projects/'.$value;
-            //echo 'Повна карта міста '.' '.$city[2].'<hr>';
+            //echo 'Повна карта міста '.' '.$city[2].' - покриття'.'<hr>';
           } else if((substr_count($value,'_') >1 ) and (strpos($value, 'coverage') !== false) ){
             if(substr($linkText, -1) != '{'){ $linkText .= ',';}
             $linkText .='"'.'Карта покриття міста - '.' '.$city[2].'"';
@@ -343,7 +345,13 @@ class fileUpload {
             if(substr($linkLink, -1) != '{'){ $linkLink .= ',';}
             $linkLink .='qgiswebclient.php?map=/var/www/QGIS-Web-Client-master/projects/'.$value;
             //echo 'Повна карта міста '.' '.$city[2].' - лініно-кабельний облік'.'<hr>';
-          }
+          } else if((substr_count($value,'_') == 1 ) ){
+            if(substr($linkText, -1) != '{'){ $linkText .= ',';}
+            $linkText .='"'.'(файл для налагодження) Повна карта міста - '.' '.$city[2].'"';
+            if(substr($linkLink, -1) != '{'){ $linkLink .= ',';}
+            $linkLink .='qgiswebclient.php?map=/var/www/QGIS-Web-Client-master/projects/'.$value;
+            //echo 'Повна карта міста '.' '.$city[2].'<hr>';
+          }  
         }
       }
       if(substr($linkText, -1) != '{'){
