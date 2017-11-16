@@ -47,7 +47,8 @@
 	array('volia.kamianets-podilskyi','kamianets-podilskyi','Кам_янець-Подільський'),
 	array('volia.obukhiv','obukhiv','Обухів'),
 	array('volia.bila-tserkva','bilatserkva', 'Біла Церква'),
-	array('volia.nvm','novomoskovsk','Новомосковськ') 
+	array('volia.nvm','novomoskovsk','Новомосковськ'),
+	array('volia.ivano-frankivsk','ivanofrankivsk','Івано-Франківськ') 
 	);
 	//------------------------------------------------------------------------------------------------------------
 	$feedback_sub = array(

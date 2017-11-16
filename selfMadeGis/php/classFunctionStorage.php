@@ -471,6 +471,25 @@ class fileUpload {
       return $coords;
     } else {return false;}
   }
+  public function dir_files_names($dir_path){
+    if(file_exists($dir_path)){
+      if(count(scandir($dir_path)) == 2){
+        return false;
+      } else {return array_values(array_diff(scandir($dir_path),['.','..']));}
+    }
+    
+  }
+  public function cities_names_from_files($path){
+    $cities_list = array();
+    foreach(self::dir_files_names($path) as $file_name){
+      if (!in_array(explode('_',substr($file_name,0,-4))[1],$cities_list)){
+        array_push($cities_list, explode('_',substr($file_name,0,-4))[1]);
+      }
+    }
+    if(!empty($cities_list)){
+      return $cities_list;
+    } else {return false;}
+  }
   public function upload($restriction,$login_user,$button_id){
     $target_dir = "/tmp/";
     $target_file = $target_dir . basename($_FILES[$button_id]['name']);
@@ -493,8 +512,25 @@ class fileUpload {
     session_start();
     //city restriction
     //print_r($_SESSION['city_array'] ); 
-    if (in_array($selectedCity, $_SESSION['city_array'] )){
-
+    $admin_full_users = array();
+    $query = "select e_mail from public.access where restriction in('admin', 'full');";
+    $respond = $file_logger -> dbConnect($query, array('e_mail'), true);
+    foreach($respond as $res){
+      array_push($admin_full_users,$res['e_mail']);
+    }
+    //print_r($admin_full_users);
+    //echo '<hr>';
+    //echo $login_user;
+    //echo '<hr>';
+    if(in_array($login_user, $admin_full_users)){
+      $cities_array = self::cities_names_from_files('/var/www/QGIS-Web-Client-master/projects/');
+      //print_r($cities_array);
+      //echo '<hr>';
+    } else { $cities_array = $_SESSION['city_array'];}
+    //$cities_array = $_SESSION['city_array'];
+    if (in_array($selectedCity, $cities_array ) ){
+      //print_r($cities_array);
+      //echo '<hr>';
 
       if ($_FILES[$button_id]['size'] <= 512000000) {
         if($fileType == 'csv'){
