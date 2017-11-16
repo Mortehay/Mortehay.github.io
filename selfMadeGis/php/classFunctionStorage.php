@@ -536,7 +536,7 @@ class fileUpload {
       //echo '<hr>';
     } else { $cities_array = $_SESSION['city_array'];}
     //$cities_array = $_SESSION['city_array'];
-    if (in_array($selectedCity, $cities_array ) ){
+    if (in_array($selectedCity, $cities_array ) || (in_array($restriction, array('admin','full') ) ) ){
       //print_r($cities_array);
       //echo '<hr>';
 
