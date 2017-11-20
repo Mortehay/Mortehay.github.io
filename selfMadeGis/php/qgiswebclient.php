@@ -1,5 +1,6 @@
 <?php
 	session_start();
+	ini_set('display_errors', 1);
     if(isset($_SESSION['current'])){
          $_SESSION['oldlink']=$_SESSION['current'];
     }else{
@@ -22,7 +23,15 @@
 	<link rel="stylesheet" type="text/css" href="../css/popup.css" /> 
 
 	<link rel="stylesheet" type="text/css" href="../css/layerOrderTab.css" />
-    <script src="https://maps.googleapis.com/maps/api/js?v=3&sensor=false"></script>
+	<?php
+		if(!in_array((string)$_SERVER['REMOTE_ADDR'],array('10.119.254.36'))){
+			echo '<script src="https://maps.googleapis.com/maps/api/js?v=3&sensor=false"></script>';
+		}
+		if(!in_array((string)$_SERVER['REMOTE_ADDR'],array('10.119.254.36'))){
+			echo '<script type="text/javascript"> var back_groun_layer_state = true;</script>';
+		} else {echo '<script type="text/javascript"> var back_groun_layer_state = false;</script>';}
+	?>
+   <!--  <script src="https://maps.googleapis.com/maps/api/js?v=3&sensor=false"></script> -->
 <!--
 	<script type="text/javascript" src="../libs/ext/adapter/ext/ext-base.js"></script>
 -->
@@ -60,7 +69,8 @@
 	<script type="text/javascript" src="../js/WebgisInit.js"></script>
 
 	 <!-- jquery -->
-	<script  src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
+
+	<script  src="../libs/jquery/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
 	
 <style type="text/css">
 #dpiDetection {
@@ -105,5 +115,11 @@ h4.DXFExportDisclaimer {
 <div></div>
 
 <script type="text/javascript" src="../js/streetSearch.js"></script>
+<?php
+		if(in_array((string)$_SERVER['REMOTE_ADDR'],array('10.119.254.36'))){
+			echo '<script type="text/javascript" src="../js/tablet.js"></script>';
+		}
+	?>
+
 </body>
 </html>

@@ -121,84 +121,89 @@ Ext.onReady(function () {
 	//set some status messsages
 	mainStatusText.setText(mapAppLoadingString[lang]);
 
-	//OpenstreetMap background layers
-	if (enableOSMMaps) {	    
-        	arrayOSM = ["http://otile1.mqcdn.com/tiles/1.0.0/map/${z}/${x}/${y}.jpg",
-                    	"http://otile2.mqcdn.com/tiles/1.0.0/map/${z}/${x}/${y}.jpg",
-                    	"http://otile3.mqcdn.com/tiles/1.0.0/map/${z}/${x}/${y}.jpg",
-                    	"http://otile4.mqcdn.com/tiles/1.0.0/map/${z}/${x}/${y}.jpg"];
-        	arrayAerial = ["http://otile1.mqcdn.com/tiles/1.0.0/sat/${z}/${x}/${y}.jpg",
-                        "http://otile2.mqcdn.com/tiles/1.0.0/sat/${z}/${x}/${y}.jpg",
-                        "http://otile3.mqcdn.com/tiles/1.0.0/sat/${z}/${x}/${y}.jpg",
-                        "http://otile4.mqcdn.com/tiles/1.0.0/sat/${z}/${x}/${y}.jpg"];
-       		arrayCycle = ["http://a.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
-   			"http://b.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
-   			"http://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png"];
+	//--------------------no background layers
 
-        	//baseOSM = new OpenLayers.Layer.OSM("MapQuest-OSM Tiles", arrayOSM, {numZoomLevels: 22, attribution: "Data, imagery and map information provided by <a href='http://www.mapquest.com/'  target='_blank'>MapQuest</a>, <a href='http://www.openstreetmap.org/' target='_blank'>Open Street Map</a> and contributors, <a href='http://creativecommons.org/licenses/by-sa/2.0/' target='_blank'>CC-BY-SA</a>  <img src='http://developer.mapquest.com/content/osm/mq_logo.png' border='0'>"} );
-       		//baseAerial = new OpenLayers.Layer.OSM("MapQuest Open Aerial Tiles (zoom < 11)", arrayAerial, {numZoomLevels: 11, attribution: "Data, imagery and map information provided by <a href='http://www.mapquest.com/'  target='_blank'>MapQuest</a>, <a href='http://www.openstreetmap.org/' target='_blank'>Open Street Map</a> and contributors, <a href='http://creativecommons.org/licenses/by-sa/2.0/' target='_blank'>CC-BY-SA</a>  <img src='http://developer.mapquest.com/content/osm/mq_logo.png' border='0'>"});
-		mapnik= new OpenLayers.Layer.OSM("OpenStreetMap (mapnik)");
-		cycle = new OpenLayers.Layer.OSM("OpenCycleMap",arrayCycle, {attribution: "<a href='http://www.openstreetmap.org/' target='_blank'>Open Street Map</a> and contributors. Tiles courtesy of<a target='_blank' href='http://www.thunderforest.com/'>Andy Allan</a>"});
+	if(back_groun_layer_state){
+		//OpenstreetMap background layers
+		if (enableOSMMaps) {	    
+	        	arrayOSM = ["http://otile1.mqcdn.com/tiles/1.0.0/map/${z}/${x}/${y}.jpg",
+	                    	"http://otile2.mqcdn.com/tiles/1.0.0/map/${z}/${x}/${y}.jpg",
+	                    	"http://otile3.mqcdn.com/tiles/1.0.0/map/${z}/${x}/${y}.jpg",
+	                    	"http://otile4.mqcdn.com/tiles/1.0.0/map/${z}/${x}/${y}.jpg"];
+	        	arrayAerial = ["http://otile1.mqcdn.com/tiles/1.0.0/sat/${z}/${x}/${y}.jpg",
+	                        "http://otile2.mqcdn.com/tiles/1.0.0/sat/${z}/${x}/${y}.jpg",
+	                        "http://otile3.mqcdn.com/tiles/1.0.0/sat/${z}/${x}/${y}.jpg",
+	                        "http://otile4.mqcdn.com/tiles/1.0.0/sat/${z}/${x}/${y}.jpg"];
+	       		arrayCycle = ["http://a.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
+	   			"http://b.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
+	   			"http://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png"];
+
+	        	//baseOSM = new OpenLayers.Layer.OSM("MapQuest-OSM Tiles", arrayOSM, {numZoomLevels: 22, attribution: "Data, imagery and map information provided by <a href='http://www.mapquest.com/'  target='_blank'>MapQuest</a>, <a href='http://www.openstreetmap.org/' target='_blank'>Open Street Map</a> and contributors, <a href='http://creativecommons.org/licenses/by-sa/2.0/' target='_blank'>CC-BY-SA</a>  <img src='http://developer.mapquest.com/content/osm/mq_logo.png' border='0'>"} );
+	       		//baseAerial = new OpenLayers.Layer.OSM("MapQuest Open Aerial Tiles (zoom < 11)", arrayAerial, {numZoomLevels: 11, attribution: "Data, imagery and map information provided by <a href='http://www.mapquest.com/'  target='_blank'>MapQuest</a>, <a href='http://www.openstreetmap.org/' target='_blank'>Open Street Map</a> and contributors, <a href='http://creativecommons.org/licenses/by-sa/2.0/' target='_blank'>CC-BY-SA</a>  <img src='http://developer.mapquest.com/content/osm/mq_logo.png' border='0'>"});
+			mapnik= new OpenLayers.Layer.OSM("OpenStreetMap (mapnik)");
+			cycle = new OpenLayers.Layer.OSM("OpenCycleMap",arrayCycle, {attribution: "<a href='http://www.openstreetmap.org/' target='_blank'>Open Street Map</a> and contributors. Tiles courtesy of<a target='_blank' href='http://www.thunderforest.com/'>Andy Allan</a>"});
 
 
-		baseLayers.push(mapnik)
-		//baseLayers.push(baseOSM);
-		baseLayers.push(cycle);
-		//baseLayers.push(baseAerial);
+			baseLayers.push(mapnik)
+			//baseLayers.push(baseOSM);
+			baseLayers.push(cycle);
+			//baseLayers.push(baseAerial);
+		}
+
+		if (enableGoogleCommercialMaps) {
+			googleSatelliteLayer = new OpenLayers.Layer.Google(
+				"Google Satellite",
+				{type: google.maps.MapTypeId.SATELLITE, numZoomLevels: ZOOM_LEVELS, isBaseLayer: true}
+			);
+			baseLayers.push(googleSatelliteLayer);
+			googleMapLayer = new OpenLayers.Layer.Google(
+				"Google Map",
+				{type: google.maps.MapTypeId.MAP, numZoomLevels: ZOOM_LEVELS, isBaseLayer: true}
+			);
+			baseLayers.push(googleMapLayer);
+		}
+		if (enableBingCommercialMaps) {
+			bingSatelliteLayer = new OpenLayers.Layer.Bing({
+				name: "Bing Satellite",
+				key: bingApiKey,
+				type: "Aerial",
+				isBaseLayer: true,
+				visibility: false
+			});
+			baseLayers.push(bingSatelliteLayer);
+		}
 	}
+		
+		
+		if (urlParamsOK) {
+			loadWMSConfig(null);
+		} else {
+			alert(errMessageStartupNotAllParamsFoundString[lang]);
+		}
 
-	if (enableGoogleCommercialMaps) {
-		googleSatelliteLayer = new OpenLayers.Layer.Google(
-			"Google Satellite",
-			{type: google.maps.MapTypeId.SATELLITE, numZoomLevels: ZOOM_LEVELS, isBaseLayer: true}
-		);
-		baseLayers.push(googleSatelliteLayer);
-		googleMapLayer = new OpenLayers.Layer.Google(
-			"Google Map",
-			{type: google.maps.MapTypeId.MAP, numZoomLevels: ZOOM_LEVELS, isBaseLayer: true}
-		);
-		baseLayers.push(googleMapLayer);
-	}
-	if (enableBingCommercialMaps) {
-		bingSatelliteLayer = new OpenLayers.Layer.Bing({
-			name: "Bing Satellite",
-			key: bingApiKey,
-			type: "Aerial",
-			isBaseLayer: true,
-			visibility: false
-		});
-		baseLayers.push(bingSatelliteLayer);
-	}
-	
-	if (urlParamsOK) {
-		loadWMSConfig(null);
-	} else {
-		alert(errMessageStartupNotAllParamsFoundString[lang]);
-	}
-
-	if (fullColorLayers.length > 0) {
-		// add fullColorLayers to layerImageFormats
-		var fullColorLayersAppended = false;
-		for (var i = 0; i < layerImageFormats.length; i++) {
-			var layerImageFormat = layerImageFormats[i];
-			if (layerImageFormat.format == "image/jpeg") {
-				// append fullColorLayers to jpeg format
-				layerImageFormat.layers = layerImageFormat.layers.concat(fullColorLayers);
-				fullColorLayersAppended = true;
-				break;
+		if (fullColorLayers.length > 0) {
+			// add fullColorLayers to layerImageFormats
+			var fullColorLayersAppended = false;
+			for (var i = 0; i < layerImageFormats.length; i++) {
+				var layerImageFormat = layerImageFormats[i];
+				if (layerImageFormat.format == "image/jpeg") {
+					// append fullColorLayers to jpeg format
+					layerImageFormat.layers = layerImageFormat.layers.concat(fullColorLayers);
+					fullColorLayersAppended = true;
+					break;
+				}
+			}
+			if (!fullColorLayersAppended) {
+				// add new jpeg config with fullColorLayers
+				layerImageFormats.push({
+					format: "image/jpeg",
+					layers: fullColorLayers
+				});
 			}
 		}
-		if (!fullColorLayersAppended) {
-			// add new jpeg config with fullColorLayers
-			layerImageFormats.push({
-				format: "image/jpeg",
-				layers: fullColorLayers
-			});
-		}
-	}
 
-    customPostLoading(); //in Customizations.js
-});
+	    customPostLoading(); //in Customizations.js
+	});
 
 function loadWMSConfig(topicName) {
 	loadMask = new Ext.LoadMask(Ext.getCmp('MapPanel').body, {

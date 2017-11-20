@@ -67,7 +67,7 @@ class dbConnSetClass{
   public function siteLogin($e_mail, $password){
     $arr_response = self::dbConnect("SELECT e_mail, md5, restriction, map_links, file_links FROM public.access WHERE e_mail= '".$e_mail."';", array('e_mail', 'md5', 'restriction','map_links','file_links'), true);
     if(md5($password)===$arr_response[0]['md5']){
-      self::dbConnect("INSERT INTO public.login(e_mail, login_time) VALUES ('".$e_mail."',now());",false,true);
+      self::dbConnect("INSERT INTO public.login(e_mail, login_time,ip_address) VALUES ('".$e_mail."',now(),'".$_SERVER['REMOTE_ADDR']."');",false,true);
       //login success
       session_start();
       $_SESSION['user_logged_in'] = true;
