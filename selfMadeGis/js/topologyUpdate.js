@@ -312,7 +312,7 @@ let vocabulary ={
 	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під&acute;їзду', '№Поверху', 'Розташування', 'house_id', 'id комутатора', 'id мат. комутатора','mac_address', 'ip_address', 'serial_number', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни'],
 	ctvToplogyAddFlats:['№',  'Вулиця', '№будинку', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID','Квартири'],
 	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsx','xls','dwg','pdf','png','дата pdf'],
-	userTable:['№','E-mail','Доступ','pass','доступні карти','Редагування'],
+	userTable:['№','E-mail','Доступ','pass','доступні карти','доступні файли','Тип користувача','Редагування'],
 	sendFeedback:['№','e-mail','Тема','Запит','Статус','Час відкриття запиту','Час закриття запиту'],
 	qgisProjectFiles:['№','Назва файлу','Дата файлу','Скачати','Редагувати']
 };
@@ -718,7 +718,10 @@ $.fn.phpRequest = function(params) {
 		let request = {};
 		let attributId = $(this).attr('id');
 		let map_links = [];
+		let file_links = [];
+		let user_type = '';
 		localStorage.setItem("map_links", JSON.stringify(map_links));
+		localStorage.setItem("file_links", JSON.stringify(file_links));
 		//-------------------------------------------------------------------------------------
 		//-------------------------------------------------------------------------------------
 		console.log('phpFile',$(this).attr('id'));
@@ -758,7 +761,7 @@ $.fn.phpRequest = function(params) {
 								    //console.log($(this).data('mail'));
 								    $('button[data-mail="' + $(this).data('mail')+'"]').toggle(this.checked);
 								});
-								
+								//bad code :))
 								$('.map_links').on('change', function(){
 									//console.log('click');
 									if($(this).prop('checked')){
@@ -775,6 +778,35 @@ $.fn.phpRequest = function(params) {
 									console.log('map_links', map_links);
 									return map_links;
 								});
+								$('.file_links').on('change', function(){
+									//console.log('click');
+									if($(this).prop('checked')){
+										//console.log('click');
+										$(this).next().css({"background-color": "yellow"});
+										file_links.push($(this).data('file'));
+										localStorage.setItem("file_links", JSON.stringify(file_links));
+									} else { 
+										$(this).next().css({"background-color": "#cceeff"});
+										file_links.remove($(this).data('file'));
+										localStorage.setItem("file_links", JSON.stringify(file_links));
+
+									};
+									console.log('file_links', file_links);
+									return file_links;
+								});
+								$('.user_type').on('change', function(){
+									//console.log('click');
+									if($(this).prop('checked')){
+										//console.log('click');
+										$('.user_type').css({"background-color": "#cceeff"});
+										$(this).next().css({"background-color": "yellow"});
+										user_type = $(this).data('user');
+										localStorage.setItem("user_type", JSON.stringify(user_type));
+									} 
+									console.log('user_type', user_type);
+									return user_type;
+								});
+								///----------------------
 								//console.log('map_links', map_links);
 								$('button#addNewUser').newUser('addNewUser','addNewUser',params,attributId);
 								$('button.deleteUser').newUser('addNewUser','deleteUser',params,attributId);
@@ -811,6 +843,7 @@ $.fn.phpRequest = function(params) {
 	//})
   	
 };
+
 //---------scrollUp--------------------------------------------------------------------------------------------
 $.fn.pageUpScroll = function(documentHeight){
 	$( window ).scroll(function() {
@@ -831,22 +864,31 @@ $.fn.newUser = function(url,buttonId,params,attributId){
 	$(this).on('click', function(){
 		let request = {};
 		let map_links = [];
+		let file_links =[];
+		let user_type = '';
 		console.log('params',params);
 		console.log('attributId',attributId);
 		if(buttonId =='addNewUser'){
-			let map_links = JSON.parse(localStorage.getItem("map_links"));
+			map_links = JSON.parse(localStorage.getItem("map_links"));
+			file_links = JSON.parse(localStorage.getItem("file_links"));
+			user_type = JSON.parse(localStorage.getItem("user_type"));
 			console.log('map_links', map_links);
 			console.log('map_links.length', map_links.length);
-			if((map_links.length > 0) || ($('#addNewUserRestriction').val() != '')  || ($('#addNewUserEmail').val() != '')  || ($('#addNewUserPassword').val() != '')){
+			if((file_links.length > 0) || (map_links.length > 0) || (user_type != '') || ($('#addNewUserRestriction').val() != '')  || ($('#addNewUserEmail').val() != '')  || ($('#addNewUserPassword').val() != '')){
 				request ={
 					'buttonId':buttonId,
 					'Email':$('#'+buttonId+'Email').val(),
 					'Password':$('#'+buttonId+'Password').val(),
 					'Restriction':$('#'+buttonId+'Restriction').val(),
-					'map_links': map_links
+					'map_links': map_links,
+					'file_links': file_links,
+					'user_type': user_type
 				};
+				console.log('request',request);
 				$('.tableDisplayResult').remove();
 				localStorage.setItem("map_links", JSON.stringify([]));
+				localStorage.setItem("file_links", JSON.stringify([]));
+				localStorage.setItem("user_type", JSON.stringify(''));
 				//$('#'+attributId).phpRequest(params[attributId]);
 			} else {alert('будь ласка, заповніть поля та виберіть карти для доступу');}
 			

@@ -7,9 +7,9 @@ $e_mail = $_SESSION['e_mail'];
 if ($restriction === 'admin')  {
   $newDBrequest = new dbConnSetClass;
   if ($_POST['buttonId'] =='user_table') {
-    $query = "SELECT e_mail, restriction, map_links, file_links FROM public.access order by restriction, e_mail;";
+    $query = "SELECT e_mail, restriction, map_links, file_links, user_type FROM public.access order by restriction, e_mail;";
     //echo $query;
-    $queryArrayKeys = array('e_mail', 'restriction', 'map_links','file_links');
+    $queryArrayKeys = array('e_mail', 'restriction', 'map_links','file_links', 'user_type');
     $retuenedArray = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
 
     $sumObjectsArray = $retuenedArray;
@@ -28,6 +28,8 @@ if ($restriction === 'admin')  {
         '<input type="checkbox"  id="file_coverage" class="file_links" data-file="coverage"><label  class="file_links" for="file_coverage">coverage</label><br>'.
         '<input type="checkbox"  id="file_heatfile" class="file_links" data-file="customer_heatmap"><label  class="file_links" for="file_heatfile">customer_heatmap</label><br>'.
         '<input type="checkbox"  id="file_luch"  class="file_links" data-file="luch"><label  class="file_links" for="file_luch">luch</label><br>',
+      'user_type' => '<input type="radio" id="user_editor" class="user_type" name="usertype" data-user="editor"><label  class="user_type" for="user_editor">editor</label><br>'.
+        '<input type="radio" id="user_reader" class="user_type" name="usertype" data-user="reader"><label  class="user_type" for="user_reader">reader</label><br>',
       'edit' => '<button id="addNewUser">додати користувача</button>' )); 
     foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
 
@@ -37,6 +39,7 @@ if ($restriction === 'admin')  {
         'pass' => '---',
         'map_links' => $sumObjectsArray[$sumObjectsArrayKey]['map_links'],
         'file_links' => $sumObjectsArray[$sumObjectsArrayKey]['file_links'],
+        'user_type' => $sumObjectsArray[$sumObjectsArrayKey]['user_type'],
         'edit' => '<button class="invisible deleteUser" data-mail="'.$sumObjectsArray[$sumObjectsArrayKey]['e_mail'].'">видалити</button>'.'<input type="checkbox" class="deleteUser" data-mail="'.$sumObjectsArray[$sumObjectsArrayKey]['e_mail'].'">'
       );
       array_push($arr_response['response'], $arr ); 

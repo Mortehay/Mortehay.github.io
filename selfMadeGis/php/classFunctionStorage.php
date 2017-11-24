@@ -65,7 +65,7 @@ class dbConnSetClass{
     }
   }
   public function siteLogin($e_mail, $password){
-    $arr_response = self::dbConnect("SELECT e_mail, md5, restriction, map_links, file_links FROM public.access WHERE e_mail= '".$e_mail."';", array('e_mail', 'md5', 'restriction','map_links','file_links'), true);
+    $arr_response = self::dbConnect("SELECT e_mail, md5, restriction, map_links, file_links, user_type FROM public.access WHERE e_mail= '".$e_mail."';", array('e_mail', 'md5', 'restriction','map_links','file_links', 'user_type'), true);
     if(md5($password)===$arr_response[0]['md5']){
       self::dbConnect("INSERT INTO public.login(e_mail, login_time,ip_address) VALUES ('".$e_mail."',now(),'".$_SERVER['REMOTE_ADDR']."');",false,true);
       //login success
@@ -73,6 +73,7 @@ class dbConnSetClass{
       $_SESSION['user_logged_in'] = true;
       $_SESSION['user_map_links'] =$arr_response[0]['map_links'];
       $_SESSION['user_file_links'] =$arr_response[0]['file_links'];
+      $_SESSION['user_type'] = $arr_response[0]['user_type'];
       //store other stuff in the session like user settings and data
       header("location: main_page.php?restriction=".$arr_response[0]['restriction']."&e_mail=".$e_mail); // Redirecting To Other Page
       return true;

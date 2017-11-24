@@ -10,12 +10,17 @@
 
 	session_start();
 	$city_array = $_SESSION['city_array'];
+	$user_type = $_SESSION['user_type'];
 	$file_links = postgres_to_php_array($_SESSION['user_file_links']);
 
 
 	foreach($qgisProjectFiles as $filename){
 		copy($qgisProjectFilesDir.$filename, $qgisProjectLocalFilesDir.$filename);
 		$fileEdit -> textExchange('127.0.0.1','10.112.129.170',$qgisProjectLocalFilesDir.$filename);
+		if($user_type = 'reader'){
+			$fileEdit -> textExchange('simpleuser','simplereader',$qgisProjectLocalFilesDir.$filename);
+			$fileEdit -> textExchange('simplepassword','readerpassword',$qgisProjectLocalFilesDir.$filename);
+		}
 		foreach ($file_links as $file_link) {
 			if(strpos($filename,$file_link) !== false){
 				if(in_array(str_replace('.qgs','',explode('_',$filename)[1]),$city_array)){

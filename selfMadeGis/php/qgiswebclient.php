@@ -24,10 +24,10 @@
 
 	<link rel="stylesheet" type="text/css" href="../css/layerOrderTab.css" />
 	<?php
-		if(!in_array((string)$_SERVER['REMOTE_ADDR'],array('10.119.254.36'))){
+		if(!in_array((string)$_SERVER['REMOTE_ADDR'],array('10.119.254.36','10.119.254.30'))){
 			echo '<script src="https://maps.googleapis.com/maps/api/js?v=3&sensor=false"></script>';
 		}
-		if(!in_array((string)$_SERVER['REMOTE_ADDR'],array('10.119.254.36'))){
+		if(!in_array((string)$_SERVER['REMOTE_ADDR'],array('10.119.254.36','10.119.254.30'))){
 			echo '<script type="text/javascript"> var back_groun_layer_state = true;</script>';
 		} else {echo '<script type="text/javascript"> var back_groun_layer_state = false;</script>';}
 	?>
