@@ -12,12 +12,20 @@ $connLSetings = array(
 //classes///////////////////////////////////////////////////////////////////////////////////
 ///postgresql///////////////////////////////////////////////////////////////////////////////
 class dbConnSetClass{
+  private $outerIp = '10.112.129.170';
   private $dbConnSet = array(
     "host"=>"host=127.0.0.1",
     "port"=>"port=5432",
     "dbname"=>"dbname=postgres",
     "user"=>"user=simpleuser",
     "password"=>"password=simplepassword"
+    );
+  private $dbConnSetReader = array(
+    "host"=>"host=127.0.0.1",
+    "port"=>"port=5432",
+    "dbname"=>"dbname=postgres",
+    "user"=>"user=simplereader",
+    "password"=>"password=readerpassword"
     );
   private $selectedCity = 'none';
   private $queryArrayKeys = array();
@@ -288,7 +296,9 @@ class fileUpload {
     }
     chmod($target_file, 0666);
     copy($target_file, $newDirPath . $file_name);
-    self::textExchange('10.112.129.170','127.0.0.1',$newDirPath . $file_name);
+    $conSettings = new dbConnSetClass;
+    
+    self::textExchange($conSettings->getProp('outerIp'),str_replace('host=', '', $conSettings->getProp('dbConnSet')['host']),$newDirPath . $file_name);
     //echo $dirPath;
     return true;
   }
