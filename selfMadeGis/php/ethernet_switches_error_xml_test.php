@@ -24,6 +24,18 @@ foreach ($cities as $city) {
 
 	echo $query;
 	$newalertDBrequest -> dbConnect($query, false, true);
+
+	//last week alarm log counter
+	$query ="insert into ".$city[1].".".$city[1]."_switches_alert_log_counter_last_week(cubic_street, cubic_house_num, cubic_house_entrance_num, cubic_house_floor, cubic_switch_location, cubic_switch_contract_cnt, cubic_switch_contract_active_cnt, cubic_ip_address, cubic_switch_id, cubic_switch_role, cubic_switch_model, unique_alert_counter, 	switch_last_update_time, switch_down_time, switch_geom,	coverage_geom,	mon_traffic_state, mon_ping_state, mon_ports_state, mon_ping_ignore, alert_time_length, 	alert_time_length_text) select cubic_street, cubic_house_num, cubic_house_entrance_num, cubic_house_floor, cubic_switch_location,  cubic_switch_contract_cnt, cubic_switch_contract_active_cnt, cubic_ip_address, cubic_switch_id, cubic_switch_role, cubic_switch_model, unique_alert_counter, switch_last_update_time, switch_down_time, switch_geom,	coverage_geom,	mon_traffic_state, mon_ping_state, mon_ports_state, mon_ping_ignore, alert_time_length, alert_time_length_text from ".$city[1].".".$city[1]."_switches_alert_log_counter d where not exists(select 1 from ".$city[1].".".$city[1]."_switches_alert_log_counter_last_week t where t.switch_last_update_time =d.switch_last_update_time and t.switch_down_time = d.switch_down_time and t.cubic_ip_address = d.cubic_ip_address) and d.switch_last_update_time >= now() -interval '7 days'; Delete from ".$city[1].".".$city[1]."_switches_alert_log_counter_last_week where switch_last_update_time < now() -interval '7 days';";
+
+	echo $query;
+	$newalertDBrequest -> dbConnect($query, false, true);
+	//previous week alarm log counter
+	$query ="insert into ".$city[1].".".$city[1]."_switches_alert_log_counter_previous_week(cubic_street, cubic_house_num, cubic_house_entrance_num, cubic_house_floor, cubic_switch_location, cubic_switch_contract_cnt, cubic_switch_contract_active_cnt, cubic_ip_address, cubic_switch_id, cubic_switch_role, cubic_switch_model, unique_alert_counter, 	switch_last_update_time, switch_down_time, switch_geom,	coverage_geom,	mon_traffic_state, mon_ping_state, mon_ports_state, mon_ping_ignore, alert_time_length, 	alert_time_length_text) select cubic_street, cubic_house_num, cubic_house_entrance_num, cubic_house_floor, cubic_switch_location,  cubic_switch_contract_cnt, cubic_switch_contract_active_cnt, cubic_ip_address, cubic_switch_id, cubic_switch_role, cubic_switch_model, unique_alert_counter, switch_last_update_time, switch_down_time, switch_geom,	coverage_geom,	mon_traffic_state, mon_ping_state, mon_ports_state, mon_ping_ignore, alert_time_length, alert_time_length_text from ".$city[1].".".$city[1]."_switches_alert_log_counter d where not exists(select 1 from ".$city[1].".".$city[1]."_switches_alert_log_counter_previous_week t where t.switch_last_update_time =d.switch_last_update_time and t.switch_down_time = d.switch_down_time and t.cubic_ip_address = d.cubic_ip_address) and d.switch_last_update_time >= now() -interval '14 days' and d.switch_last_update_time < now() -interval '7 days'; Delete from ".$city[1].".".$city[1]."_switches_alert_log_counter_previous_week where switch_last_update_time <= now() -interval '14 days';";
+
+	echo $query;
+	$newalertDBrequest -> dbConnect($query, false, true);
+
 }
 
 ?>

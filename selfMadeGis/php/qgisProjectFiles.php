@@ -14,22 +14,26 @@
 	$file_links = postgres_to_php_array($_SESSION['user_file_links']);
 
 	$conSettings = new dbConnSetClass;
-	//cho '<hr>usertype---'.$user_type.'<hr>';
+	//echo '<hr>usertype---'.$user_type.'<hr>';
 	//echo '<hr>editor---'.str_replace('user=', '', $conSettings->getProp('dbConnSet')['user']).'<hr>';
 	//echo '<hr>reader---'.str_replace('user=', '', $conSettings->getProp('dbConnSetReader')['user']).'<hr>';
 	//echo '<hr>editor---'.str_replace('password=', '', $conSettings->getProp('dbConnSet')['password']).'<hr>';
 	//echo '<hr>reader---'.str_replace('password=', '', $conSettings->getProp('dbConnSetReader')['password']).'<hr>';
 	foreach($qgisProjectFiles as $filename){
+		$fileEdit -> textExchange('simplepassword',str_replace('password=', '', $conSettings->getProp('dbConnSetReader')['password']),$qgisProjectFilesDir.$filename);
 		copy($qgisProjectFilesDir.$filename, $qgisProjectLocalFilesDir.$filename);
+		$fileEdit -> textExchange('simplepassword',str_replace('password=', '', $conSettings->getProp('dbConnSetReader')['password']),$qgisProjectLocalFilesDir.$filename);
 		$fileEdit -> textExchange(str_replace('host=', '', $conSettings->getProp('dbConnSet')['host']) ,$conSettings->getProp('outerIp'),$qgisProjectLocalFilesDir.$filename);
 		if($user_type == 'reader'){
 			//echo str_replace('user=', '', $conSettings->getProp('dbConnSet')['user']).' ---- '.str_replace('user=', '', $conSettings->getProp('dbConnSetReader')['user']).'<hr>';
+			//$fileEdit -> textExchange('simplepassword',str_replace('password=', '', $conSettings->getProp('dbConnSetReader')['password']),$qgisProjectLocalFilesDir.$filename);
 			$fileEdit -> textExchange(str_replace('user=', '', $conSettings->getProp('dbConnSet')['user']),str_replace('user=', '', $conSettings->getProp('dbConnSetReader')['user']),$qgisProjectLocalFilesDir.$filename);
 			$fileEdit -> textExchange(str_replace('password=', '', $conSettings->getProp('dbConnSet')['password']),str_replace('password=', '', $conSettings->getProp('dbConnSetReader')['password']),$qgisProjectLocalFilesDir.$filename);
 			//$fileEdit -> textExchange('simpleuser','simplereader',$qgisProjectLocalFilesDir.$filename);
 			//$fileEdit -> textExchange('simplepassword','readerpassword',$qgisProjectLocalFilesDir.$filename);
 		}
 		if($user_type == 'editor'){
+			//$fileEdit -> textExchange('readerpassword',str_replace('password=', '', $conSettings->getProp('dbConnSetReader')['password']),$qgisProjectLocalFilesDir.$filename);
 			$fileEdit -> textExchange(str_replace('user=', '', $conSettings->getProp('dbConnSetReader')['user']),str_replace('user=', '', $conSettings->getProp('dbConnSet')['user']),$qgisProjectLocalFilesDir.$filename);
 			$fileEdit -> textExchange(str_replace('password=', '', $conSettings->getProp('dbConnSetReader')['password']),str_replace('password=', '', $conSettings->getProp('dbConnSet')['password']),$qgisProjectLocalFilesDir.$filename);
 			//$fileEdit -> textExchange('simplereader','simpleuser',$qgisProjectLocalFilesDir.$filename);

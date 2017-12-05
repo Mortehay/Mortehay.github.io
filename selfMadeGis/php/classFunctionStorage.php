@@ -18,14 +18,14 @@ class dbConnSetClass{
     "port"=>"port=5432",
     "dbname"=>"dbname=postgres",
     "user"=>"user=simpleuser",
-    "password"=>"password=simplepassword"
+    "password"=>"password=proleEmploymentPassword"
     );
   private $dbConnSetReader = array(
     "host"=>"host=127.0.0.1",
     "port"=>"port=5432",
     "dbname"=>"dbname=postgres",
     "user"=>"user=simplereader",
-    "password"=>"password=readerpassword"
+    "password"=>"password=ghostUserPassword"
     );
   private $selectedCity = 'none';
   private $queryArrayKeys = array();
