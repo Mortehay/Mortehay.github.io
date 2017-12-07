@@ -13,6 +13,7 @@ $connLSetings = array(
 ///postgresql///////////////////////////////////////////////////////////////////////////////
 class dbConnSetClass{
   private $outerIp = '10.112.129.170';
+  private $shareAddress = '//10.112.129.165/share/';
   private $dbConnSet = array(
     "host"=>"host=127.0.0.1",
     "port"=>"port=5432",
@@ -298,8 +299,12 @@ class fileUpload {
     chmod($target_file, 0666);
     copy($target_file, $newDirPath . $file_name);
     $conSettings = new dbConnSetClass;
+    if($fileType == 'qgs'){
+      self::textExchange($conSettings->getProp('outerIp'),str_replace('host=', '', $conSettings->getProp('dbConnSet')['host']),$newDirPath . $file_name);
+      self::textExchange('C:/темп/',$conSettings->getProp('shareAddress'),$newDirPath . $file_name);
+      self::textExchange('C:/quickfinder/',$conSettings->getProp('shareAddress'),$newDirPath . $file_name);
+    }
     
-    self::textExchange($conSettings->getProp('outerIp'),str_replace('host=', '', $conSettings->getProp('dbConnSet')['host']),$newDirPath . $file_name);
     //echo $dirPath;
     $newFilePath = $newDirPath.$file_name;
     return $newFilePath;
@@ -515,6 +520,8 @@ class fileUpload {
     $connection = ssh2_connect($address, $port);
     ssh2_auth_password($connection, $login, $password);
     ssh2_scp_send($connection, $locationPath, $destinationPath, 0644);
+    // Add this to flush buffers/close session 
+    ssh2_exec($connection, 'exit'); 
   }
   public function upload($restriction,$login_user,$button_id){
     $target_dir = "/tmp/";
