@@ -285,10 +285,11 @@ class mailSender{
 class fileUpload {
   private $restriction = 'none';
   public function dirCreate($city, $target_file, $file_name,$fileType){
-    if($fileType =='csv'){ $newDirPath = '/var/www/QGIS-Web-Client-master/site/csv/archive/'.$city.'/';}
-    if($fileType =='gpx'){ $newDirPath = '/var/www/QGIS-Web-Client-master/site/gpx/archive/'.$city.'/';}
-    if($fileType =='kml'){ $newDirPath = '/var/www/QGIS-Web-Client-master/site/kml/archive/'.$city.'/';}           
-    if($fileType =='qgs'){ $newDirPath = '/var/www/QGIS-Web-Client-master/projects/';}  
+    if($fileType == 'csv'){ $newDirPath = '/var/www/QGIS-Web-Client-master/site/csv/archive/'.$city.'/';}
+    if($fileType == 'gpx'){ $newDirPath = '/var/www/QGIS-Web-Client-master/site/gpx/archive/'.$city.'/';}
+    if($fileType == 'kml'){ $newDirPath = '/var/www/QGIS-Web-Client-master/site/kml/archive/'.$city.'/';}           
+    if($fileType == 'qgs'){ $newDirPath = '/var/www/QGIS-Web-Client-master/projects/';}
+    if($fileType == 'qfts'){ $newDirPath = '/var/www/QGIS-Web-Client-master/searchfiles/';}  
     if (!file_exists($newDirPath )) {
       $oldmask = umask(0);
           mkdir($newDirPath , 0777, true);
@@ -300,7 +301,8 @@ class fileUpload {
     
     self::textExchange($conSettings->getProp('outerIp'),str_replace('host=', '', $conSettings->getProp('dbConnSet')['host']),$newDirPath . $file_name);
     //echo $dirPath;
-    return true;
+    $newFilePath = $newDirPath.$file_name;
+    return $newFilePath;
   }
   public function textExchange($oldText,$newText,$targeFile){
     $str=file_get_contents($targeFile);
@@ -509,6 +511,11 @@ class fileUpload {
       return $cities_list;
     } else {return false;}
   }
+  public function sshFileReplaceToShare($address, $port, $login, $password, $locationPath, $destinationPath){
+    $connection = ssh2_connect($address, $port);
+    ssh2_auth_password($connection, $login, $password);
+    ssh2_scp_send($connection, $locationPath, $destinationPath, 0644);
+  }
   public function upload($restriction,$login_user,$button_id){
     $target_dir = "/tmp/";
     $target_file = $target_dir . basename($_FILES[$button_id]['name']);
@@ -572,6 +579,20 @@ class fileUpload {
               $query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
               $file_logger -> dbConnect($query, false, true);
               self::maps_link_reloader();
+             header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+          } else {
+              echo "Sorry, there was an error uploading your file.";
+              //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+          }
+        } else if(strtolower($fileType) == 'qfts' ){//and strtolower($restriction) =='admin'
+          if (move_uploaded_file($_FILES[$button_id]['tmp_name'], $target_file)) {
+              echo "The file ". basename( $_FILES[$button_id]['name']). " has been uploaded.";
+              chmod($target_file, 0666);
+              $locationPath = self::dirCreate($selectedCity, $target_file, $file_name, $fileType);
+              $destinationPath = '/mnt/samba/share/'.$file_name;
+              $query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
+              $file_logger -> dbConnect($query, false, true);
+              self::sshFileReplaceToShare('10.112.129.165', 5432, 'yshpylovyi', 'yshpylovyi2017', $locationPath, $destinationPath);
              header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
           } else {
               echo "Sorry, there was an error uploading your file.";
