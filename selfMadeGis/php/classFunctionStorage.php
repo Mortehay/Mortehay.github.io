@@ -748,7 +748,10 @@ class dbOrConnSetClass{
             return true;
   }
   public function cityTablesCreate($city, $conn){
-        $stid = oci_parse($conn, $this->query. " WHERE CITY ='$city[2]' ");//AND ROWNUM <=1000
+        //$stid = oci_parse($conn, $this->query. " WHERE CITY ='$city[2]' ");//AND ROWNUM <=1000
+        if(strpos(strtolower($this->query),'where')) {
+          $stid = oci_parse($conn, $this->query. " AND CITY ='$city[2]' ");
+        } else { $stid = oci_parse($conn, $this->query. " WHERE CITY ='$city[2]' ");}
         if (oci_execute($stid)) {
             $headder = array();
             if ($row = oci_fetch_array($stid, OCI_ASSOC+OCI_RETURN_NULLS)) {
@@ -765,7 +768,10 @@ class dbOrConnSetClass{
         
     }
   public function cityTablesCreateBrowser($city, $conn){
-      $stid = oci_parse($conn, $this->query. " WHERE CITY ='$city' ");//AND ROWNUM <=1000
+      if(strpos(strtolower($this->query),'where')) {
+        $stid = oci_parse($conn, $this->query. " AND CITY ='$city' ");
+      } else { $stid = oci_parse($conn, $this->query. " WHERE CITY ='$city' ");}
+      //$stid = oci_parse($conn, $this->query. " WHERE CITY ='$city' ");//AND ROWNUM <=1000
       $table_array = array();
       if (oci_execute($stid)) {
         
