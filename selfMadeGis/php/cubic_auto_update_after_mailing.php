@@ -165,7 +165,45 @@ echo $query;
 
 	echo $query.'<hr>';
 	$postgresSwitches -> dbConnect($query, false, true);
+
+	//user equipment edition ;)
+		//--user equipment update (hybrids/modems)-----------------------------------------------------------------
+	/////modems tables update
+	$tableType = "_modems";
+  	$fileExtention =".csv";
+	$linkStorage ="'/var/www/QGIS-Web-Client-master/site/csv/cubic/".$tableType."/".$selectedCity.$tableType.$fileExtention."'";
 	
+	$queryModificator = array(
+      'var' => 'id serial, CONTRACT_ID varchar(100), CONTRACT_CODE  varchar(100), CONTRACT_TYPE varchar(100), DISTRICT  varchar(100), STREET  varchar(100),HOUSE  varchar(100), SECTOR varchar(100), FLAT  varchar(100), TARIFF_TYPE  varchar(100), MAC  varchar(100), STATUS varchar(100), STATUS_DATE  varchar(100), CITY  varchar(100), NETTYPE  varchar(100), STATUS_AO  varchar(100), HOUSE_ID  varchar(100), SERVICE  varchar(100), NAME  varchar(100), SERIAL varchar(100), DATE_FROM varchar(100), EQUIPMENT_ID  varchar(100), DATE_CHANGE  varchar(100), TECHNOLOGY_NAME  varchar(100), TYPE_NAME  varchar(100), REPORT_DATE  varchar(100)', 
+      'val'=> 'CONTRACT_ID,CONTRACT_CODE,CONTRACT_TYPE,DISTRICT,STREET,HOUSE,SECTOR,FLAT,TARIFF_TYPE,MAC,STATUS,STATUS_DATE,CITY,NETTYPE,STATUS_AO,HOUSE_ID,SERVICE,NAME,SERIAL,DATE_FROM,EQUIPMENT_ID,DATE_CHANGE,TECHNOLOGY_NAME,TYPE_NAME,REPORT_DATE', 
+      'delimiter' =>"','" , 
+      'encoding'=>"'utf-8'");
+ 	$postgresUserEquipmentTopology = new dbConnSetClass;
+ 	$query = "CREATE TEMP TABLE temp( ".$queryModificator['var']."); select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ; CREATE TEMP TABLE alien_cubic_code AS SELECT DISTINCT SERIAL FROM temp WHERE SERIAL IS NOT NULL ;DELETE FROM ".$selectedCity.".".$selectedCity."_modems WHERE serial NOT IN(SELECT SERIAL FROM alien_cubic_code); 	INSERT INTO " . $selectedCity.".".$selectedCity."_modems(".$queryModificator['val'].") SELECT ".$queryModificator['val']." FROM temp WHERE serial NOT IN(SELECT serial FROM ". $selectedCity.".".$selectedCity."_modems WHERE serial IS NOT NULL); UPDATE ".$selectedCity.".".$selectedCity."_modems SET contract_id = temp.CONTRACT_ID,contract_code = temp.CONTRACT_CODE,contract_type = temp.CONTRACT_TYPE,district = temp.DISTRICT,street = temp.STREET,house = temp.HOUSE,sector = temp.SECTOR,flat = temp.FLAT,tariff_type = temp.TARIFF_TYPE,mac = temp.MAC,status = temp.STATUS,status_date = temp.STATUS_DATE,city = temp.CITY,nettype = temp.NETTYPE,status_ao = temp.STATUS_AO,house_id = temp.HOUSE_ID,service = temp.SERVICE,name = temp.NAME,serial = temp.SERIAL,date_from = temp.DATE_FROM,equipment_id = temp.EQUIPMENT_ID,date_change = temp.DATE_CHANGE,technology_name = temp.TECHNOLOGY_NAME,type_name = temp.TYPE_NAME,report_date = temp.REPORT_DATE FROM  temp WHERE ".$selectedCity.".".$selectedCity."_modems.serial = temp.serial and ".$selectedCity.".".$selectedCity."_modems.house_id = temp.HOUSE_ID and ".$selectedCity.".".$selectedCity."_modems.name = temp.NAME; ";
+    echo $query.'<hr>';
+    $postgresUserEquipmentTopology -> dbConnect($query, false, true);
+
+    $query = "UPDATE ". $selectedCity.".".$selectedCity."_modems SET equipment_geom = ".$selectedCity."_entrances.geom FROM ".$selectedCity.".".$selectedCity."_entrances WHERE ".$selectedCity."_entrances.geom IS NOT NULL AND ".$selectedCity."_entrances.cubic_entrance_id = ".$selectedCity."_modems.house_id||'p'||".$selectedCity."_modems.sector;";
+    echo $query.'<hr>';
+    $postgresUserEquipmentTopology -> dbConnect($query, false, true);
+    /////hybrids tables update
+	$tableType = "_hybrids";
+  	$fileExtention =".csv";
+	$linkStorage ="'/var/www/QGIS-Web-Client-master/site/csv/cubic/".$tableType."/".$selectedCity.$tableType.$fileExtention."'";
+	
+	$queryModificator = array(
+      'var' => 'id serial, CONTRACT_ID varchar(100), CONTRACT_CODE  varchar(100), CONTRACT_TYPE varchar(100), DISTRICT  varchar(100), STREET  varchar(100),HOUSE  varchar(100), SECTOR varchar(100), FLAT  varchar(100), TARIFF_TYPE  varchar(100), MAC  varchar(100), STATUS varchar(100), STATUS_DATE  varchar(100), CITY  varchar(100), NETTYPE  varchar(100), STATUS_AO  varchar(100), HOUSE_ID  varchar(100), SERVICE  varchar(100), NAME  varchar(100), SERIAL varchar(100), DATE_FROM varchar(100), EQUIPMENT_ID  varchar(100), DATE_CHANGE  varchar(100), TECHNOLOGY_NAME  varchar(100), TYPE_NAME  varchar(100), REPORT_DATE  varchar(100)', 
+      'val'=> 'CONTRACT_ID,CONTRACT_CODE,CONTRACT_TYPE,DISTRICT,STREET,HOUSE,SECTOR,FLAT,TARIFF_TYPE,MAC,STATUS,STATUS_DATE,CITY,NETTYPE,STATUS_AO,HOUSE_ID,SERVICE,NAME,SERIAL,DATE_FROM,EQUIPMENT_ID,DATE_CHANGE,TECHNOLOGY_NAME,TYPE_NAME,REPORT_DATE', 
+      'delimiter' =>"','" , 
+      'encoding'=>"'utf-8'");
+
+ 	$query = "CREATE TEMP TABLE temp( ".$queryModificator['var']."); select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ; CREATE TEMP TABLE alien_cubic_code AS SELECT DISTINCT SERIAL FROM temp WHERE SERIAL IS NOT NULL ;DELETE FROM ".$selectedCity.".".$selectedCity."_hybrids WHERE serial NOT IN(SELECT SERIAL FROM alien_cubic_code); INSERT INTO ". $selectedCity.".".$selectedCity."_hybrids(".$queryModificator['val'].") SELECT ".$queryModificator['val']." FROM temp WHERE serial NOT IN(SELECT serial FROM ". $selectedCity.".".$selectedCity."_hybrids WHERE serial IS NOT NULL);UPDATE ".$selectedCity.".".$selectedCity."_hybrids SET contract_id = temp.CONTRACT_ID,contract_code = temp.CONTRACT_CODE,contract_type = temp.CONTRACT_TYPE,district = temp.DISTRICT,street = temp.STREET,house = temp.HOUSE,sector = temp.SECTOR,flat = temp.FLAT,tariff_type = temp.TARIFF_TYPE,mac = temp.MAC,status = temp.STATUS,status_date = temp.STATUS_DATE,city = temp.CITY,nettype = temp.NETTYPE,status_ao = temp.STATUS_AO,house_id = temp.HOUSE_ID,service = temp.SERVICE,name = temp.NAME,serial = replace(replace(temp.SERIAL, ':',''),' ',''),date_from = temp.DATE_FROM,equipment_id = temp.EQUIPMENT_ID,date_change = temp.DATE_CHANGE,technology_name = temp.TECHNOLOGY_NAME,type_name = temp.TYPE_NAME,report_date = temp.REPORT_DATE, link = 'http://sc.volia.net/tvmon/index.php?mac='||replace(replace(temp.SERIAL, ':',''),' ','') FROM  temp WHERE ".$selectedCity.".".$selectedCity."_hybrids.serial = temp.serial and ".$selectedCity.".".$selectedCity."_hybrids.house_id = temp.HOUSE_ID and ".$selectedCity.".".$selectedCity."_hybrids.name = temp.NAME; ";
+    echo $query.'<hr>';
+    $postgresUserEquipmentTopology -> dbConnect($query, false, true);
+
+    $query = "UPDATE ". $selectedCity.".".$selectedCity."_hybrids SET equipment_geom = ".$selectedCity."_entrances.geom FROM ".$selectedCity.".".$selectedCity."_entrances WHERE ".$selectedCity."_entrances.geom IS NOT NULL AND ".$selectedCity."_entrances.cubic_entrance_id = ".$selectedCity."_hybrids.house_id||'p'||".$selectedCity."_hybrids.sector  and ".$selectedCity."_hybrids.equipment_geom is null; UPDATE ". $selectedCity.".".$selectedCity."_hybrids SET equipment_geom = ".$selectedCity."_buildings.building_geom_fourthpoint FROM ".$selectedCity.".".$selectedCity."_buildings WHERE ".$selectedCity."_buildings.building_geom_fourthpoint IS NOT NULL AND ".$selectedCity."_buildings.cubic_house_id = ".$selectedCity."_hybrids.house_id and ".$selectedCity."_hybrids.equipment_geom is null;";
+    echo $query.'<hr>';
+    $postgresUserEquipmentTopology -> dbConnect($query, false, true);
 
 }
 ?>
