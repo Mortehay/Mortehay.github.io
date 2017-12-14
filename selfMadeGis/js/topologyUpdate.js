@@ -468,6 +468,7 @@ function closeSpan(index){
 	$('.closeSpan').on('click', function(){
 		console.log('click');
 		$(this).parent().remove();
+		$('#showFileDate').remove();
 	})
 }
 
@@ -479,6 +480,7 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 	resp = JSON.parse(data);
 	//console.log('resp',resp);
 	$('.'+mainTagClass).remove();
+	$('#showFileDate').remove();
 	if (resp !=null) {
 		console.log('resp',resp);
 		let list = resp.response;
@@ -888,7 +890,6 @@ $.fn.pageUpScroll = function(documentHeight){
             scrollTop: 0
         }, 700);
 	})
-
 }
 //------------new user-----------------------------------------------------------------------------------------
 $.fn.newUser = function(url,buttonId,params,attributId){
