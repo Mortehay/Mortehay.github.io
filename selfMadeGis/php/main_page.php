@@ -93,7 +93,7 @@ $_SESSION['user_logged_in'] = true;
       //echo '<hr>'.$_SESSION['e_mail'].'<hr>';
         echo'<script type="text/javascript">let restriction = JSON.stringify({restriction:"'.$restriction.'", e_mail:"'.$_SESSION['e_mail'].'"}); let cityArray = '.json_encode($city_array).';localStorage.setItem("tempRestriction", restriction);localStorage.setItem("tempCityArray", cityArray);</script>';
       ?>
-    <div id="back-to-top" title="Back to top">&uarr;</div>
+    <div id="back-to-top" title="Back to top"><div>&uarr;</div></div>
     <script type="text/javascript" src="../js/accordion.js"></script>
     <script type="text/javascript" src="../js/whois.js"></script>
     <script type="text/javascript" src="../js/topologyUpdate.js"></script>

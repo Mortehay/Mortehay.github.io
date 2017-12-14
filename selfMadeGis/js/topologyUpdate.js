@@ -310,7 +310,7 @@ let fileUploadParams = {
 }
 //----------vocabulars----------------------------------------------------------------------------------------------------------------------
 let vocabulary ={
-	cableChannelCableDataView:['№','Технічні умови','ту-дата','Договір', 'дог.дата', 'Додаткова угода','дод.дата','Акт прийомки', 'акт-дата','Затверджена картограма','карт.дата','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС', 'статус'],
+	cableChannelCableDataView:['№','Технічні умови','дата_файлу','Договір', 'дата_файлу', 'Додаткова угода','дата_файлу','Акт прийомки', 'дата_файлу','Затверджена картограма','дата_файлу','Опис маршруту','Тип кабелю','Посилання на архів','id кабеля','Статус використання','запасна','Статус договору','№ПГС', 'статус'],
 	cityBuildingDataUpdate:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
 	cityBuildingDataUpdateAuto:['№','Місто', 'Вулиця','№будинку', '"Кубік" HOUSE_ID','Кільк.Квартир'],
 	cableAirCableDataView:['№','id кабеля', 'Посилання на архів','Дата монтажу кабелю','Тип кабелю','Волоконність/Тип','Марка кабелю','№проекту', 'Призначення', 'Довжина, км','Опис маршруту', 'статус'],
@@ -318,7 +318,7 @@ let vocabulary ={
 	ctvTopologyUpdate:['№', 'Місто', 'Вулиця', '№будинку', 'Квартира', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID','статус вузла'],
 	etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під&acute;їзду', '№Поверху', 'Розташування', 'house_id', 'id комутатора', 'id мат. комутатора','mac_address', 'ip_address', 'serial_number', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни'],
 	ctvToplogyAddFlats:['№',  'Вулиця', '№будинку', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID','Квартири'],
-	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsx','xls','dwg','pdf','png','дата pdf'],
+	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsx','xls','dwg','pdf','png','дата_файлу pdf'],
 	userTable:['№','E-mail','Доступ','pass','доступні карти','доступні файли','Тип користувача','Редагування'],
 	sendFeedback:['№','e-mail','Тема','Запит','Статус','Час відкриття запиту','Час закриття запиту'],
 	qgisProjectFiles:['№','Назва файлу','Дата файлу','Скачати','Редагувати'],
@@ -489,30 +489,42 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		 let header = '';
 		 let headerSelectors = '';
 		 let sortedUniqueMatrix = [];
-	              let listNames = Object.keys(list[0]);
-	              //console.log('listNames', listNames);
-	              let selectionParams =[];
-	               if (vocabulary !==  'noVocabulary') {
-	               	header +='<tr>'
-	               	for (let i = 0; i < vocabulary.length; i++) {
-	               		header +='<th>'+vocabulary[i]+'</th>';
-	               	}
-	               	header +='</tr>';
-	               	headerSelectors = '<td></td>';
-	               	$('.'+mainTagClass).find('table').append(header);
-	               	listNames.forEach(function(item,index){
-	               		headerSelectors +='<td><input type="text" class="tableRowSelector" name="name_'+item+'" data-name="'+index+'" id="id_'+item+'" list="list_'+item+'"  style="background-color:#FAEBD7;"><datalist id="list_'+item+'" class="trimSelection"></datalist></td>';
-	               	});
-	               	$('.'+mainTagClass).find('table').append('<tr>'+headerSelectors +'</tr>');
+	      let listNames = Object.keys(list[0]);
+	      //console.log('listNames', listNames);
+	      let selectionParams = [];
+	      let hidenColumns = [];
+	       if (vocabulary !==  'noVocabulary') {
+	       	header +='<tr>'
+	       	for (let i = 0; i < vocabulary.length; i++) {
+	       		if ( String(vocabulary[i]).includes('дата_файлу')){
+	       			header +='<th class="filePresentDate">'+vocabulary[i]+'</th>';
+	       			hidenColumns.push(i-1);
+	       		} else { header +='<th>'+vocabulary[i]+'</th>';}
+	       		
+	       	}
+	       	//console.log('hidenColumns',hidenColumns);
+	       	header +='</tr>';
+	       	headerSelectors = '<td></td>';
+	       	$('.'+mainTagClass).find('table').append(header);
+	       	listNames.forEach(function(item,index){
+	       		//console.log('hidenColumns',hidenColumns);
+	       		//console.log('index',index);
+	       		if(hidenColumns.indexOf(index) > -1){
+	       			headerSelectors +='<td class="filePresentDate"><input type="text" class="tableRowSelector" name="name_'+item+'" data-name="'+index+'" id="id_'+item+'" list="list_'+item+'"  style="background-color:#FAEBD7;"><datalist id="list_'+item+'" class="trimSelection"></datalist></td>';
+	       		} else {headerSelectors +='<td><input type="text" class="tableRowSelector" name="name_'+item+'" data-name="'+index+'" id="id_'+item+'" list="list_'+item+'"  style="background-color:#FAEBD7;"><datalist id="list_'+item+'" class="trimSelection"></datalist></td>';}
+	       		//headerSelectors +='<td><input type="text" class="tableRowSelector" name="name_'+item+'" data-name="'+index+'" id="id_'+item+'" list="list_'+item+'"  style="background-color:#FAEBD7;"><datalist id="list_'+item+'" class="trimSelection"></datalist></td>';
+	       	});
+	       	$('.'+mainTagClass).find('table').append('<tr>'+headerSelectors +'</tr>');
 	               	//---------------------crear table filters--------------------------------------------------
 			$('#restoreDefaultTable').on('click', function(){
 				$('.dataCell').remove();
 				
 				sortedSelectLists(listNames, list);
-				rowDraw(list,vocabulary,mainTagClass);
+				rowDraw(list,vocabulary,mainTagClass,hidenColumns);
 				selectionParams =[];
 				$('.tableRowSelector').val('');
 				$('button.mapWindow').openNewMapWindow(params);
+				$('.filePresentDate').hide();
 			});
 			//---------------------------------------------------------------------------------------------
 	               } else { console.log('noVocabulary for table header') }
@@ -560,12 +572,13 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 				$('.dataCell').remove();
 				sortedSelectLists(listNames, trimList);
 				rowDraw(trimList,vocabulary,mainTagClass);
+				$('.filePresentDate').hide();
 				$('button.mapWindow').openNewMapWindow(params);
 			        	//---------------------crear table filters--------------------------------------------------
 				$('#restoreDefaultTable').on('click', function(){
 					$('.dataCell').remove();
 					sortedSelectLists(listNames, list);
-					rowDraw(list,vocabulary,mainTagClass);
+					rowDraw(list,vocabulary,mainTagClass,hidenColumns);
 					selectionParams =[];
 					$('.tableRowSelector').val('');
 					$('button.mapWindow').openNewMapWindow(params);
@@ -578,7 +591,7 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 	               	//console.log('sortedUniqueMatrix', sortedUniqueMatrix);
 	               	//-------------row of selectors cration-----------------------------------
 			//------------------------------------------------------------------------------
-			function rowDraw(list,vocabulary,mainTagClass){
+			function rowDraw(list,vocabulary,mainTagClass,hidenColumns){
 
 			
 		               for (let i = 0; i < list.length; i++) {
@@ -635,7 +648,7 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		               				row +='<td class="dataCell '+'fileNotDefinedState'+'" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</td>';
 		               			}
 		               		} else if ( String(key).includes('_date')) {
-		               			row +='<td class="dataCell '+'filePresent'+'" data-city="'+$('#'+params.id).val()+'"><span style ="color:blue">'+rowData[key]+'</span></td>';
+		               			row +='<td class="dataCell '+'filePresentDate'+'" data-city="'+$('#'+params.id).val()+'"><span style ="color:blue">'+rowData[key]+'</span></td>';
 		               		} else if(key == imgLink) {
 		               			$('.wiringShow').imgLinkShow();
 		               			if (rowData[key] == '-') {
@@ -657,8 +670,8 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		               }
 		               //$('button.mapWindow').openNewMapWindow(params);  
 		            } 
-		            rowDraw(list,vocabulary,mainTagClass);
-		            
+		            rowDraw(list,vocabulary,mainTagClass,hidenColumns);
+		            $('.filePresentDate').hide();
 	               }
 	}
 	
@@ -764,6 +777,14 @@ $.fn.phpRequest = function(params) {
 								displayTableData('displayResult'+attributId, 'container', data, vocabulary[attributId]);
 								closeSpan('displayResult'+attributId);
 								$('button.mapWindow').openNewMapWindow(params);
+								if ($('.filePresentDate')[0]){
+									$('<div id="showFileDate">&#9716;</div>').insertBefore('#back-to-top');
+										$('#showFileDate').on('click', function(e){
+											e.preventDefault();
+											console.log('click');
+											$('.filePresentDate').toggle();
+										})
+								}
 								//----------------------user addition or removement---------------------------
 								$('input[type="checkbox"].deleteUser').click(function() {
 								    //console.log($(this).data('mail'));
@@ -857,7 +878,8 @@ $.fn.pageUpScroll = function(documentHeight){
 	$( window ).scroll(function() {
 		if( $('body').scrollTop() > documentHeight){
 			$('#back-to-top').addClass('show');
-		} else { try {$('#back-to-top').removeClass('show');} catch(err) { console.log(err); }}
+			if($('.filePresentDate')[0]){$('#showFileDate').addClass('show');}
+		} else { try {$('#back-to-top').removeClass('show'); $('#showFileDate').removeClass('show')} catch(err) { console.log(err); }}
 	});
 	$('#back-to-top').on('click', function(e){
 		$('#back-to-top').removeClass('show');
@@ -866,6 +888,7 @@ $.fn.pageUpScroll = function(documentHeight){
             scrollTop: 0
         }, 700);
 	})
+
 }
 //------------new user-----------------------------------------------------------------------------------------
 $.fn.newUser = function(url,buttonId,params,attributId){

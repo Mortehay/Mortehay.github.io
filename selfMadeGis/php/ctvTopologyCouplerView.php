@@ -46,7 +46,7 @@ foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
     'dwgFile' => checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['dwgFile'],
     'pdfFile' => checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['pdfFile'],
     'imgFile' => checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['imgFile'],
-    'pdfFileModDate' => checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['pdfFileModDate']
+    'pdfFileMod_date' => checkIfFileExist($selectedCity, $sumObjectsArray[$sumObjectsArrayKey]['cubic_name'],$sumObjectsArray[$sumObjectsArrayKey]['cubic_code'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'], $sumObjectsArray[$sumObjectsArrayKey]['archive_link'])['pdfFileModDate']
   );
   array_push($arr_response['response'], $arr ); 
 }
