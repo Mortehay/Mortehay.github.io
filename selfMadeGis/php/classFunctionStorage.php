@@ -982,13 +982,26 @@ function topologyDirCreate($description, $city){
 function fileDate($folderLink, $checkList, $responseValue){
     $files = scandir($folderLink);
     $fileDate = '';
-    foreach ($files as $fileKey => $filename) {
+    /*foreach ($files as $fileKey => $filename) {
         if(strpos(mb_convert_case((string)$filename, MB_CASE_LOWER, "UTF-8") , $checkList['check'][array_search($responseValue, $checkList['response'])]) !== false){
            //$fileDate = '<br>'.'<span style ="color:blue">'. gmdate("Y-m-d",stat($folderLink.$filename)['mtime']).'</span>';
             $fileDate = gmdate("Y-m-d",stat($folderLink.$filename)['mtime']);
            //echo $folderLink.$filename.'---'.$fileDate.'<br>';
         }
-    }
+    }*/
+      foreach ($checkList['response'] as $listKey=>$value) {
+        if($responseValue == $value){
+          foreach ($files as $key => $filename) {
+              $lower = mb_convert_case((string)$filename, MB_CASE_LOWER, "UTF-8");
+              if(strpos($lower, $checkList['check'][$listKey])) {
+                  //$fileDate = gmdate("Y-m-d",stat($folderLink.$filename)['mtime']).$checkList['check'][$listKey];
+                  $fileDate = gmdate("Y-m-d",stat($folderLink.$filename)['mtime']);
+                  //echo $folderLink.$filename.'---'.$fileDate.'---'.$value.'---'.$checkList['response'][$listKey].'<br>';
+              }
+            }
+        }
+       
+      }
     return $fileDate;
 }
 ///////////////////////////////////////////////////////////////
