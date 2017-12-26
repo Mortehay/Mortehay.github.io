@@ -321,7 +321,7 @@ let vocabulary ={
 	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsx','xls','dwg','pdf','png','дата_файлу pdf'],
 	userTable:['№','E-mail','Доступ','pass','доступні карти','доступні файли','Тип користувача','Редагування'],
 	sendFeedback:['№','e-mail','Тема','Запит','Статус','Час відкриття запиту','Час закриття запиту'],
-	qgisProjectFiles:['№','Назва файлу','Дата файлу','Скачати','Редагувати'],
+	qgisProjectFiles:['№','Назва файлу','дата_файлу','Скачати','Редагувати'],
 	fileLinksTable:['№','Місто','Лінки','Регіон','Головне місто','Місто - англ.','координати вікна карти']
 };
 //---------------remove element from array----------------------------------
@@ -781,11 +781,12 @@ $.fn.phpRequest = function(params) {
 								$('button.mapWindow').openNewMapWindow(params);
 								if ($('.filePresentDate')[0]){
 									$('<div id="showFileDate">&#9716;</div>').insertBefore('#back-to-top');
-										$('#showFileDate').on('click', function(e){
-											e.preventDefault();
-											console.log('click');
-											$('.filePresentDate').toggle();
-										})
+									if($('body').height() < screen.height ){$('.filePresentDate').show();}
+									$('#showFileDate').on('click', function(e){
+										e.preventDefault();
+										console.log('click');
+										$('.filePresentDate').toggle();
+									})
 								}
 								//----------------------user addition or removement---------------------------
 								$('input[type="checkbox"].deleteUser').click(function() {
