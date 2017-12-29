@@ -585,6 +585,7 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 					$('.tableRowSelector').val('');
 					$('button.mapWindow').openNewMapWindow(params);
 					$('.wiringShow').imgLinkShow();
+					$('.filePresentDate').hide();
 				});
 				//---------------------------------------------------------------------------------------------  
 			        
