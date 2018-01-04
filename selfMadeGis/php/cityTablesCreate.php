@@ -46,10 +46,10 @@ $tables[4] ='CREATE TABLE IF NOT EXISTS '.$selectedCity.'.'.$selectedCity.'_cabl
  $index_geom[4] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_air_poles'".","."'geom'".","."'".$selectedCity."_cable_air_poles_gist'".", 'gist');";
 //-----------------------------------------------------------------------------------------------------------------------------
 //-----------------create  cable channels geom table-----------------------------------------------------------
-$tables[5] = 'CREATE TABLE IF NOT EXISTS '.$selectedCity.'.'.$selectedCity.'_cable_channels_cable_geom(geom geometry,table_id character varying(100),cable_type character varying(100),cable_short_type_description character varying(100),id serial,total_cable_length character varying(50));';
+$tables[5] = 'CREATE TABLE IF NOT EXISTS '.$selectedCity.'.'.$selectedCity.'_cable_channel_cable_geom(geom geometry,table_id character varying(100),cable_type character varying(100),cable_short_type_description character varying(100),id serial,total_cable_length character varying(50));';
 //-----------------------------------------------------------------------------------------------------------------------------
- $index_id[5] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_channels_cable_geom'".","."'id'".","."'".$selectedCity."_cable_channels_cable_geom_id'".", 'btree');";
- $index_geom[5] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_channels_cable_geom'".","."'geom'".","."'".$selectedCity."_cable_channels_cable_geom_gist'".", 'gist');";
+ $index_id[5] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_channel_cable_geom'".","."'id'".","."'".$selectedCity."_cable_channel_cable_geom_id'".", 'btree');";
+ $index_geom[5] = "SELECT create_index("."'".$selectedCity."'".", "."'".$selectedCity."_cable_channel_cable_geom'".","."'geom'".","."'".$selectedCity."_cable_channel_cable_geom_gist'".", 'gist');";
 //-----------------------------------------------------------------------------------------------------------------------------
 //-----------------create  cable channel pits table---------------------------------------------------------------
 $tables[6] = 'CREATE TABLE IF NOT EXISTS '.$selectedCity.'.'.$selectedCity.'_cable_channel_pits(geom geometry,table_id character varying(100),pit_number character varying(100),pit_short_description character varying(300), pit_district character varying(100), pit_coupler character varying(100), microdistrict character varying(100), district character varying(100), id serial, pit_id serial, json_data text, archive_link varchar(200), street varchar(100));';

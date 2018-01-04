@@ -7,13 +7,14 @@ if ($_POST['cable_air_cable_data_city_eng']) {
 } else {
   $selectedCity = $_REQUEST['cable_air_cable_data_city_eng'];
 }  
-	$linkArchive = "'".'<a href='.'"'.'http://'.$_SERVER['SERVER_ADDR'].'/qgis-ck/tmp/archive/'.$selectedCity.'/air/'."'".'||tmp.progect_number||'."'".'" target="_blank">посилання на архів</a>'."'";
+	//$linkArchive = "'".'<a href='.'"'.'http://'.$_SERVER['SERVER_ADDR'].'/qgis-ck/tmp/archive/'.$selectedCity.'/air/'."'".'||tmp.progect_number||'."'".'" target="_blank">посилання на архів</a>'."'";
+  $linkArchive = "'".'https://'.$_SERVER['SERVER_ADDR'].'/qgis-ck/tmp/archive/'.$selectedCity.'/air/'."'".'||tmp.progect_number||'."'";
   $promeLink = "/tmp/";
   $secondaryLink = "/var/www/QGIS-Web-Client-master/site/csv/archive/";
   $fileExtention ="_cable_air.csv";
   $files = fileExistenceCheck($promeLink, $secondaryLink, $selectedCity, $fileExtention)['files'];
   $linkStorage = fileExistenceCheck($promeLink, $secondaryLink, $selectedCity, $fileExtention)['linkStorage'];
-  if ($files) {
+if ($files) {
   foreach($files as $file) {
     $str_file = (string)$file;
     if ($str_file !== '.' && $str_file !== '..') {

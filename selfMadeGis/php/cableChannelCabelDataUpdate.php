@@ -8,7 +8,7 @@ if ($_POST['cable_channel_cable_data_city_eng']) {
   $selectedCity = $_REQUEST['cable_channel_cable_data_city_eng'];
 }  
   //$linkArchive = "'".'<a href='.'"'.'http://'.$_SERVER['SERVER_ADDR'].'/qgis-ck/tmp/archive/'.$selectedCity.'/cc/'."'".'||tmp_x.table_id||'."'".'" target="_blank">посилання на архів</a>'."'";
-  $linkArchive = "'".'http://'.$_SERVER['SERVER_ADDR'].'/qgis-ck/tmp/archive/'.$selectedCity.'/cc/'."'"."||tmp_x.table_id";
+  $linkArchive = "'".'https://'.$_SERVER['SERVER_ADDR'].'/qgis-ck/tmp/archive/'.$selectedCity.'/cc/'."'"."||tmp_x.table_id";
   $promeLink = "/tmp/";
   $secondaryLink = "/var/www/QGIS-Web-Client-master/site/csv/archive/";
   $fileExtention ="_cable_channels.csv";

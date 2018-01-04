@@ -48,7 +48,7 @@ echo $city['city_eng'].'<hr>';
 	$postgresCtvTopology -> dbConnect($query, false, true); 	
 	echo $query.'<hr>';
 
-	$link_left_part = 'http://'.$server_address.'/qgis-ck/tmp/archive/';
+	$link_left_part = 'https://'.$server_address.'/qgis-ck/tmp/archive/';
 	$link_right_part = '/';
 	$query = "UPDATE $selectedCity"."."."$selectedCity"."_ctv_topology SET archive_link = CASE "." WHEN cubic_name like '%Магистральный распределительный узел%' THEN '$link_left_part"."$selectedCity"."/topology/mdod/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Оптический узел%' THEN '$link_left_part"."$selectedCity"."/topology/nod/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Оптичний приймач%' THEN '$link_left_part"."$selectedCity"."/topology/op/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Передатчик оптический%' THEN '$link_left_part"."$selectedCity"."/topology/ot/"."'||cubic_code||'"."$link_right_part' "." WHEN cubic_name like '%Кросс-муфта%' THEN '$link_left_part"."$selectedCity"."/topology/cc/"."'||cubic_code||'"."$link_right_part' "."END ;";
 	$postgresCtvTopology -> dbConnect($query, false, true);
