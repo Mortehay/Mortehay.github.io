@@ -659,9 +659,9 @@ function displayTableData(mainTagClass, joinedToTgClass, data, vocabulary = 'noV
 		               			} else {
 		               				row +='<td class="dataCell">'+'<button id="'+rowData['cubic_code']+'" class="wiringShow" data-link="'+rowData[key]+'">схема зварювань</button>'+'</td>';
 		               			}	
-		               		} else if(String(rowData[key]).includes('http://') && (String(rowData[key]).includes('.qgs') == false ) && (String(rowData[key]).includes('.csv') == false) ){
+		               		} else if(String(rowData[key]).includes('https://') && (String(rowData[key]).includes('.qgs') == false ) && (String(rowData[key]).includes('.csv') == false) ){
 		               			row +='<td class="dataCell">'+'<a target="_blank" href="'+rowData[key]+'">посилання на архів</a>'+'</td>';
-		               		} else if(String(rowData[key]).includes('http://') && (String(rowData[key]).includes('.qgs') || String(rowData[key]).includes('.csv')) ){
+		               		} else if(String(rowData[key]).includes('https://') && (String(rowData[key]).includes('.qgs') || String(rowData[key]).includes('.csv')) ){
 		               			row +='<td class="dataCell">'+'<a href="'+rowData[key]+'" download>посилання на архів</a>'+'</td>';
 		               		} else {
 		               			row +='<td class="dataCell" data-city="'+$('#'+params.id).val()+'">'+rowData[key]+'</td>';	

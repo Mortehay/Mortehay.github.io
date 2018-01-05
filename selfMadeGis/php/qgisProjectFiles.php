@@ -20,7 +20,7 @@
 	//echo '<hr>editor---'.str_replace('password=', '', $conSettings->getProp('dbConnSet')['password']).'<hr>';
 	//echo '<hr>reader---'.str_replace('password=', '', $conSettings->getProp('dbConnSetReader')['password']).'<hr>';
 	foreach($qgisProjectFiles as $filename){
-		$fileEdit -> textExchange('simplepassword',str_replace('password=', '', $conSettings->getProp('dbConnSetReader')['password']),$qgisProjectFilesDir.$filename);
+		//$fileEdit -> textExchange('simplepassword',str_replace('password=', '', $conSettings->getProp('dbConnSetReader')['password']),$qgisProjectFilesDir.$filename);
 		copy($qgisProjectFilesDir.$filename, $qgisProjectLocalFilesDir.$filename);
 		$fileEdit -> textExchange('simplepassword',str_replace('password=', '', $conSettings->getProp('dbConnSetReader')['password']),$qgisProjectLocalFilesDir.$filename);
 		$fileEdit -> textExchange(str_replace('host=', '', $conSettings->getProp('dbConnSet')['host']) ,$conSettings->getProp('outerIp'),$qgisProjectLocalFilesDir.$filename);
@@ -45,7 +45,7 @@
 					$arr = array(
 			            'project_file_name' => $filename,
 			            'project_file_date' => gmdate("Y-m-d h:i:s \G\M\T",stat($qgisProjectFilesDir.$filename)['mtime']),
-			            'project_file_link' => 'http://'.$conSettings->getProp('outerIp').'/qgis-ck/tmp/projects-local/'.$filename
+			            'project_file_link' => 'https://'.$conSettings->getProp('outerIp').'/qgis-ck/tmp/projects-local/'.$filename
 			            //'project_file_dchema_state' => ''
 			         ); 
 		        	array_push($arr_response['response'], $arr );
