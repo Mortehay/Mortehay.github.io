@@ -22,6 +22,16 @@ $ethernetTopology->setProp('query_type','_switches');
 $ethernetTopology->setProp('query',"SELECT * FROM puma_qgis.gis_ethernet_topology ");
 $requestethernetTopology = $ethernetTopology->dbOrConnect($cities);
 
+$ethernetReestrWorking = new dbOrConnSetClass;
+$ethernetReestrWorking->setProp('query_type','_switches_working');
+$ethernetReestrWorking->setProp('query',"SELECT * FROM puma_qgis.gis_switch_reestr WHERE status like '%Работает%' ");
+$requestethernetReestrWorking = $ethernetReestrWorking->dbOrConnect($cities);
+
+$ethernetReestrAll = new dbOrConnSetClass;
+$ethernetReestrAll->setProp('query_type','_switches_all');
+$ethernetReestrAll->setProp('query',"SELECT * FROM puma_qgis.gis_switch_reestr ");
+$requestethernetReestrAll = $ethernetReestrAll->dbOrConnect($cities);
+
 ////////////////////////////////////
 echo 'that is all';
 ?>
