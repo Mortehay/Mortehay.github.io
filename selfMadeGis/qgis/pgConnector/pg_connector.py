@@ -365,10 +365,10 @@ class pgConnector:
         for k, v in queryDict.iteritems():
             if queryDict[k]['fileLink'] == 'archive' :
                 queryDict[k]['linkStorage'] = '/var/www/QGIS-Web-Client-master/site/'+queryDict[k]['fileType']+'/'+queryDict[k]['fileLink']+'/'+city+'/'+city + queryDict[k]['tableExtantion'] + '.' + queryDict[k]['fileType']
-                queryDict[k]['linkHTTPStorage'] = 'https://10.112.129.170/qgis-ck/'+queryDict[k]['fileType']+'/'+queryDict[k]['fileLink']+'/'+city+'/'+city + queryDict[k]['tableExtantion'] + '.' + queryDict[k]['fileType']
+                queryDict[k]['linkHTTPStorage'] = 'https://'+final_list[0]+'/qgis-ck/'+queryDict[k]['fileType']+'/'+queryDict[k]['fileLink']+'/'+city+'/'+city + queryDict[k]['tableExtantion'] + '.' + queryDict[k]['fileType']
             elif queryDict[k]['fileLink'] == 'cubic' :
                 queryDict[k]['linkStorage'] = '/var/www/QGIS-Web-Client-master/site/'+queryDict[k]['fileType']+'/'+queryDict[k]['fileLink']+'/'+queryDict[k]['tableExtantion']+'/'+city + queryDict[k]['tableExtantion'] + '.' + queryDict[k]['fileType']
-                queryDict[k]['linkHTTPStorage'] = 'https://10.112.129.170/qgis-ck/'+queryDict[k]['fileType']+'/'+queryDict[k]['fileLink']+'/'+queryDict[k]['tableExtantion']+'/'+city + queryDict[k]['tableExtantion'] + '.' + queryDict[k]['fileType']
+                queryDict[k]['linkHTTPStorage'] = 'https://'+final_list[0]+'/qgis-ck/'+queryDict[k]['fileType']+'/'+queryDict[k]['fileLink']+'/'+queryDict[k]['tableExtantion']+'/'+city + queryDict[k]['tableExtantion'] + '.' + queryDict[k]['fileType']
         
         
         #-----adding arrays of postgresql queries------

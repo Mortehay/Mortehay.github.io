@@ -1,0 +1,16 @@
+CREATE OR REPLACE FUNCTION input_table_id(table_name text,  column_name text, row_num integer) RETURNS void AS $$ 
+declare 
+   l_count integer;
+BEGIN
+EXECUTE format('SELECT count('||column_name||') FROM '||table_name||' ') INTO l_count;
+  
+  IF l_count = 0   THEN 
+     execute 'INSERT INTO '||table_name||'('||column_name||') SELECT  case when char_length(x.id::text) = 1 then ''t_0000''||x.id when char_length(x.id::text) = 2 then ''t_000''||x.id when char_length(x.id::text) = 3 then ''t_00''||x.id when char_length(x.id::text) = 4 then ''t_0''||x.id when char_length(x.id::text) = 5 then ''t_''||x.id else ''to_big_id'' end  FROM generate_series(1, '||row_num||') AS x(id);';
+ 
+  END if;
+END;
+$$ LANGUAGE plpgsql;
+
+
+select input_table_id('bila_tserkva.bila_tserkva_cable_air',  'table_id', 1000);
+
