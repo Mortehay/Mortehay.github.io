@@ -181,10 +181,7 @@ echo $query;
 
 	echo $query.'<hr>';
 	$postgresSwitches -> dbConnect($query, false, true);
-	$query ="UPDATE ".$selectedCity.".".$selectedCity."_switches SET work_link ='http://work.volia.net/w2/eth/switch_info/act.current.php?ip='||cubic_ip_address||'&company=".$cities[cityVocabulary($cities, 1, $selectedCity)][0]."' WHERE cubic_ip_address IS NOT NULL;";
-
-	echo $query.'<hr>';
-	$postgresSwitches -> dbConnect($query, false, true);
+	
 
 	///working switches tables update(normal tables previous were incorrect)
 
@@ -229,8 +226,22 @@ $linkStorage ="'/var/www/QGIS-Web-Client-master/site/csv/cubic/".$tableType."/".
 	//main switch geometry update for all table ----------------------------------------------
 	
 	$query ="UPDATE ".$selectedCity.".".$selectedCity."_switches_all SET switches_geom = CASE WHEN summ.geom IS NOT NULL THEN summ.geom WHEN summ.geom IS NULL THEN summ.building_geom_thirdpoint  END FROM (select switches.switch_id, switches.switches_geom, switches.house_id, switches.DOORWAY, buildings.building_geom_thirdpoint, entrances.cubic_entrance_id, entrances.geom, st_equals(switches.switches_geom,entrances.geom)  from ".$selectedCity.".".$selectedCity."_switches_all switches right join ".$selectedCity.".".$selectedCity."_buildings buildings on(switches.house_id=buildings.cubic_house_id) left join ".$selectedCity.".".$selectedCity."_entrances entrances on (switches.house_id||'p'||switches.DOORWAY = entrances.cubic_entrance_id) where switches.switch_id is not null) summ Where summ.switch_id = ".$selectedCity.".".$selectedCity."_switches_all.switch_id ;"; //and ".$selectedCity.".".$selectedCity."_switches.switches_geom is NULL
-	//echo $query.'<hr>';
+	echo $query.'<hr>';
 	$postgresSwitches -> dbConnect($query, false, true);
+
+	//--copy from switches topology table---------------------------------
+	$query ="UPDATE ".$selectedCity.".".$selectedCity."_switches_working SET switch_is_control = ".$selectedCity."_switches.cubic_switch_is_control, switch_is_opt82 = ".$selectedCity."_switches.cubic_switch_is_opt82, switch_contract_cnt = ".$selectedCity."_switches.cubic_switch_contract_cnt, cubic_switch_contract_active_cnt = ".$selectedCity."_switches.cubic_switch_contract_active_cnt, cubic_switch_location = ".$selectedCity."_switches.cubic_switch_location, switch_role = ".$selectedCity."_switches.cubic_switch_role  from ".$selectedCity.".".$selectedCity."_switches where ".$selectedCity."_switches_working.switch_id = ".$selectedCity."_switches.cubic_switch_id;"; 
+	echo $query.'<hr>';
+	$postgresSwitches -> dbConnect($query, false, true);
+	$query ="UPDATE ".$selectedCity.".".$selectedCity."_switches_all SET switch_is_control = ".$selectedCity."_switches.cubic_switch_is_control, switch_is_opt82 = ".$selectedCity."_switches.cubic_switch_is_opt82, switch_contract_cnt = ".$selectedCity."_switches.cubic_switch_contract_cnt, cubic_switch_contract_active_cnt = ".$selectedCity."_switches.cubic_switch_contract_active_cnt, cubic_switch_location = ".$selectedCity."_switches.cubic_switch_location, switch_role = ".$selectedCity."_switches.cubic_switch_role from ".$selectedCity.".".$selectedCity."_switches where ".$selectedCity."_switches_all.switch_id = ".$selectedCity."_switches.cubic_switch_id;"; 
+	echo $query.'<hr>';
+	$postgresSwitches -> dbConnect($query, false, true);
+	//-----------work links--------------------------------------------------------
+	$query ="UPDATE ".$selectedCity.".".$selectedCity."_switches SET work_link ='http://work.volia.net/w2/eth/switch_info/act.current.php?ip='||cubic_ip_address||'&company=".$cities[cityVocabulary($cities, 1, $selectedCity)][0]."' WHERE cubic_ip_address IS NOT NULL;UPDATE ".$selectedCity.".".$selectedCity."_switches_working SET work_link ='http://work.volia.net/w2/eth/switch_info/act.current.php?ip='||ip_address||'&company=".$cities[cityVocabulary($cities, 1, $selectedCity)][0]."' WHERE ip_address IS NOT NULL;UPDATE ".$selectedCity.".".$selectedCity."_switches_all SET work_link ='http://work.volia.net/w2/eth/switch_info/act.current.php?ip='||ip_address||'&company=".$cities[cityVocabulary($cities, 1, $selectedCity)][0]."' WHERE ip_address IS NOT NULL;";
+
+	echo $query.'<hr>';
+	$postgresSwitches -> dbConnect($query, false, true);
+	//--------------------------------------------------------------------
 
 	///cable channel pits tables update
 	$postgresCableChannels = new dbConnSetClass;

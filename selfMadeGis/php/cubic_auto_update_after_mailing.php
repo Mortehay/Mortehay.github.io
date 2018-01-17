@@ -130,7 +130,55 @@ echo $query;
     $postgresCoverage -> dbConnect($query, $queryArrayKeys, true);
     ///////////////////////
     ///switches tables update
-    $queryModificator = array(
+   	$postgresSwitches = new dbConnSetClass;
+	// inserting to switches topology------------------------------------------------------------------
+	$tableType = "_switches";
+	$fileExtention =".csv";
+
+	$linkStorage ="'/var/www/QGIS-Web-Client-master/site/csv/cubic/".$tableType."/".$selectedCity.$tableType.$fileExtention."'";
+	$queryModificator = array(
+	  'var' => 'idt serial, ID character varying(100),MAC_ADDRESS character varying(100),IP_ADDRESS character varying(100),SERIAL_NUMBER character varying(100),HOSTNAME character varying(100),DEV_FULL_NAME text,VENDOR_MODEL character varying(100),SW_MODEL character varying(100),SW_ROLE character varying(100),HOUSE_ID character varying(100),DOORWAY character varying(100),LOCATION character varying(100),FLOOR character varying(100),SW_MON_TYPE character varying(100),SW_INV_STATE character varying(100),VLAN character varying(100),DATE_CREATE character varying(100),DATE_CHANGE character varying(100),IS_CONTROL character varying(100),IS_OPT82 character varying(100),PARENT_ID character varying(100), PARENT_MAC  character varying(100),PARENT_PORT character varying(100),CHILD_ID character varying(100),CHILD_MAC character varying(100),CHILD_PORT character varying(100),PORT_NUMBER character varying(100),PORT_STATE character varying(100),CONTRACT_CNT character varying(100),CONTRACT_ACTIVE_CNT character varying(100),GUEST_VLAN character varying(100),CITY_ID character varying(100),CITY character varying(100),CITY_CODE character varying(100),REPORT_DATE character varying(100)', 
+	  'val'=> 'ID, MAC_ADDRESS, IP_ADDRESS, SERIAL_NUMBER, HOSTNAME, DEV_FULL_NAME, VENDOR_MODEL, SW_MODEL, SW_ROLE, HOUSE_ID, DOORWAY, LOCATION, FLOOR, SW_MON_TYPE, SW_INV_STATE,VLAN, DATE_CREATE, DATE_CHANGE, IS_CONTROL, IS_OPT82, PARENT_ID, PARENT_MAC, PARENT_PORT, CHILD_ID, CHILD_MAC, CHILD_PORT, PORT_NUMBER, PORT_STATE, CONTRACT_CNT, CONTRACT_ACTIVE_CNT, GUEST_VLAN,CITY_ID, CITY, CITY_CODE, REPORT_DATE',
+	  'delimiter' =>"','" , 
+	  'encoding'=>"'utf-8'");
+	$query = "CREATE TEMP TABLE temp( ".$queryModificator['var']."); select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding']."); INSERT INTO " . $selectedCity.".".$selectedCity."_switches(cubic_switch_id, cubic_mac_address, cubic_ip_address, cubic_switch_serial_number, cubic_hostname, cubic_switch_model, cubic_switch_role, cubic_house_id, cubic_house_entrance_num, cubic_switch_location, cubic_house_floor, cubic_monitoring_method, cubic_inventary_state, cubic_vlan, cubic_switch_date_create, cubic_switch_date_change, cubic_switch_is_control, cubic_switch_is_opt82, cubic_parent_switch_id, cubic_parent_mac_address, cubic_parent_down_port, cubic_up_port, cubic_switch_contract_cnt, cubic_switch_contract_active_cnt)  SELECT ID, MAC_ADDRESS, IP_ADDRESS, SERIAL_NUMBER, HOSTNAME, SW_MODEL, SW_ROLE, HOUSE_ID, DOORWAY, LOCATION, FLOOR, SW_MON_TYPE, SW_INV_STATE, VLAN, DATE_CREATE, DATE_CHANGE, IS_CONTROL, IS_OPT82, PARENT_ID, PARENT_MAC, PARENT_PORT, PORT_NUMBER, CONTRACT_CNT, CONTRACT_ACTIVE_CNT FROM temp t WHERE not exists(select 1 from ". $selectedCity.".".$selectedCity."_switches i_n where i_n.cubic_switch_id = t.id and i_n.cubic_mac_address = t.MAC_ADDRESS and i_n.cubic_parent_mac_address = t.PARENT_MAC);";
+
+	echo $query;
+	$postgresSwitches -> dbConnect($query, false, true);
+
+	// inserting to switches working------------------------------------------------------------------
+	$tableType = "_switches_working";
+	$fileExtention =".csv";
+
+	$linkStorage ="'/var/www/QGIS-Web-Client-master/site/csv/cubic/".$tableType."/".$selectedCity.$tableType.$fileExtention."'";
+	$queryModificator = array(
+	  'var' => 'id serial, CITY varchar(100), ADDRESS  varchar(100), HOUSE_ID  varchar(100), SWITCH_ID varchar(100), street varchar(100), DOORWAY varchar(100), FLOOR varchar(100), MAC_ADDRESS varchar(100), IP_ADDRESS varchar(100),DEV_NAME  varchar(100), DEV_TYPE  varchar(100), SWITCH_MODEL  varchar(100), STATUS  varchar(100), DATE_CREATE  varchar(100), SERIAL_NUMBER varchar(100), DATE_CHANGE varchar(100), DEV_FULL_NAME text, MON_TYPE  varchar(100), REPORT_DATE  varchar(100)', 
+	  'val'=> 'CITY,ADDRESS,HOUSE_ID,SWITCH_ID,DOORWAY,FLOOR,MAC_ADDRESS,IP_ADDRESS,DEV_NAME,DEV_TYPE,SWITCH_MODEL,STATUS,DATE_CREATE,SERIAL_NUMBER,DATE_CHANGE,DEV_FULL_NAME,MON_TYPE,REPORT_DATE',
+	  'delimiter' =>"','" , 
+	  'encoding'=>"'utf-8'");
+
+	$query = "CREATE TEMP TABLE temp( ".$queryModificator['var']."); select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding']."); INSERT INTO " . $selectedCity.".".$selectedCity."_switches_working(CITY,ADDRESS,HOUSE_ID,SWITCH_ID,DOORWAY,FLOOR,MAC_ADDRESS,IP_ADDRESS,DEV_NAME,DEV_TYPE,SWITCH_MODEL,STATUS,DATE_CREATE,SERIAL_NUMBER,DATE_CHANGE,DEV_FULL_NAME,MON_TYPE,REPORT_DATE)  SELECT DISTINCT on(ID) CITY,ADDRESS,HOUSE_ID,SWITCH_ID,DOORWAY,FLOOR,MAC_ADDRESS,IP_ADDRESS,DEV_NAME,DEV_TYPE,SWITCH_MODEL,STATUS,DATE_CREATE,SERIAL_NUMBER,DATE_CHANGE,DEV_FULL_NAME,MON_TYPE,REPORT_DATE FROM temp WHERE switch_ID NOT IN(SELECT distinct switch_id FROM ". $selectedCity.".".$selectedCity."_switches_working WHERE switch_id IS NOT NULL);";
+	echo $query;
+	$postgresSwitches -> dbConnect($query, false, true);
+
+	//inserting to all switches table load-------------------------------------------------------------
+
+	$tableType = "_switches_all";
+	$fileExtention =".csv";
+
+	$linkStorage ="'/var/www/QGIS-Web-Client-master/site/csv/cubic/".$tableType."/".$selectedCity.$tableType.$fileExtention."'";
+	$queryModificator = array(
+	  'var' => 'id serial, CITY varchar(100), ADDRESS  varchar(100), HOUSE_ID  varchar(100), SWITCH_ID varchar(100), street varchar(100), DOORWAY varchar(100), FLOOR varchar(100), MAC_ADDRESS varchar(100), IP_ADDRESS varchar(100),DEV_NAME  varchar(100), DEV_TYPE  varchar(100), SWITCH_MODEL  varchar(100), STATUS  varchar(100), DATE_CREATE  varchar(100), SERIAL_NUMBER varchar(100), DATE_CHANGE varchar(100), DEV_FULL_NAME text, MON_TYPE  varchar(100), REPORT_DATE  varchar(100)', 
+	  'val'=> 'CITY,ADDRESS,HOUSE_ID,SWITCH_ID,DOORWAY,FLOOR,MAC_ADDRESS,IP_ADDRESS,DEV_NAME,DEV_TYPE,SWITCH_MODEL,STATUS,DATE_CREATE,SERIAL_NUMBER,DATE_CHANGE,DEV_FULL_NAME,MON_TYPE,REPORT_DATE',
+	  'delimiter' =>"','" , 
+	  'encoding'=>"'utf-8'");
+
+	$query = "CREATE TEMP TABLE temp( ".$queryModificator['var'].");select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding']."); INSERT INTO " . $selectedCity.".".$selectedCity."_switches_all(CITY,ADDRESS,HOUSE_ID,SWITCH_ID,DOORWAY,FLOOR,MAC_ADDRESS,IP_ADDRESS,DEV_NAME,DEV_TYPE,SWITCH_MODEL,STATUS,DATE_CREATE,SERIAL_NUMBER,DATE_CHANGE,DEV_FULL_NAME,MON_TYPE,REPORT_DATE)  SELECT DISTINCT on(ID) CITY,ADDRESS,HOUSE_ID,SWITCH_ID,DOORWAY,FLOOR,MAC_ADDRESS,IP_ADDRESS,DEV_NAME,DEV_TYPE,SWITCH_MODEL,STATUS,DATE_CREATE,SERIAL_NUMBER,DATE_CHANGE,DEV_FULL_NAME,MON_TYPE,REPORT_DATE FROM temp WHERE switch_ID NOT IN(SELECT distinct switch_id FROM ". $selectedCity.".".$selectedCity."_switches_all WHERE switch_id IS NOT NULL);";
+
+	echo $query;
+	$postgresSwitches -> dbConnect($query, false, true);
+	//-------------------------------- switch topology update-----------------------------------------------------------------------
+	 $queryModificator = array(
     'var' => 'idt serial, ID character varying(100),MAC_ADDRESS character varying(100),IP_ADDRESS character varying(100),SERIAL_NUMBER character varying(100),HOSTNAME character varying(100),DEV_FULL_NAME  text,VENDOR_MODEL character varying(100),SW_MODEL character varying(100),SW_ROLE character varying(100),HOUSE_ID character varying(100),DOORWAY character varying(100),LOCATION character varying(100),FLOOR character varying(100),SW_MON_TYPE character varying(100),SW_INV_STATE character varying(100),VLAN character varying(100),DATE_CREATE character varying(100),DATE_CHANGE character varying(100),IS_CONTROL character varying(100),IS_OPT82 character varying(100),PARENT_ID character varying(100), PARENT_MAC  character varying(100),PARENT_PORT character varying(100),CHILD_ID character varying(100),CHILD_MAC character varying(100),CHILD_PORT character varying(100),PORT_NUMBER character varying(100),PORT_STATE character varying(100),CONTRACT_CNT character varying(100),CONTRACT_ACTIVE_CNT character varying(100),GUEST_VLAN character varying(100),CITY_ID character varying(100),CITY character varying(100),CITY_CODE character varying(100),REPORT_DATE character varying(100)', 
     'val'=> 'ID, MAC_ADDRESS, IP_ADDRESS, SERIAL_NUMBER, HOSTNAME, DEV_FULL_NAME, VENDOR_MODEL, SW_MODEL, SW_ROLE, HOUSE_ID, DOORWAY, LOCATION, FLOOR, SW_MON_TYPE, SW_INV_STATE,VLAN, DATE_CREATE, DATE_CHANGE, IS_CONTROL, IS_OPT82, PARENT_ID, PARENT_MAC, PARENT_PORT, CHILD_ID, CHILD_MAC, CHILD_PORT, PORT_NUMBER, PORT_STATE, CONTRACT_CNT, CONTRACT_ACTIVE_CNT, GUEST_VLAN,CITY_ID, CITY, CITY_CODE, REPORT_DATE',
     'delimiter' =>"','" , 
@@ -138,7 +186,7 @@ echo $query;
     $tableType = "_switches";
   	$fileExtention =".csv";
 	$linkStorage ="'/var/www/QGIS-Web-Client-master/site/csv/cubic/".$tableType."/".$selectedCity.$tableType.$fileExtention."'";
-    $postgresSwitches = new dbConnSetClass;
+    
     $query ="CREATE TEMP TABLE temp( ".$queryModificator['var']."); select copy_for_testuser('temp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ; CREATE TEMP TABLE alien_cubic_switch_id AS SELECT DISTINCT ID FROM temp WHERE ID IS NOT NULL ;DELETE FROM ".$selectedCity.".".$selectedCity."_switches WHERE cubic_switch_id NOT IN(SELECT ID FROM alien_cubic_switch_id) ; 
 	create temp table reused_cubic_switch_id as  (with data(ID,MAC_ADDRESS,IP_ADDRESS,SERIAL_NUMBER,HOSTNAME,DEV_FULL_NAME,VENDOR_MODEL,SW_MODEL,SW_ROLE,HOUSE_ID,DOORWAY,LOCATION,FLOOR,SW_MON_TYPE,SW_INV_STATE,VLAN,DATE_CREATE,DATE_CHANGE,IS_CONTROL,IS_OPT82,PARENT_ID,PARENT_MAC,PARENT_PORT, CHILD_ID, CHILD_MAC, CHILD_PORT,PORT_NUMBER, PORT_STATE, CONTRACT_CNT, CONTRACT_ACTIVE_CNT, GUEST_VLAN, CITY_ID, CITY, CITY_CODE, REPORT_DATE) as (select ID,MAC_ADDRESS,IP_ADDRESS,SERIAL_NUMBER,HOSTNAME,DEV_FULL_NAME,VENDOR_MODEL,SW_MODEL,SW_ROLE,HOUSE_ID,DOORWAY,LOCATION,FLOOR,SW_MON_TYPE,SW_INV_STATE,VLAN,DATE_CREATE,DATE_CHANGE,IS_CONTROL,IS_OPT82,PARENT_ID,PARENT_MAC,PARENT_PORT, CHILD_ID, CHILD_MAC, CHILD_PORT,PORT_NUMBER, PORT_STATE, CONTRACT_CNT, CONTRACT_ACTIVE_CNT, GUEST_VLAN, CITY_ID, CITY, CITY_CODE, REPORT_DATE from temp) select d.ID, d.MAC_ADDRESS, d.IP_ADDRESS, d.SERIAL_NUMBER, d.HOSTNAME, d.DEV_FULL_NAME, d.VENDOR_MODEL, d.SW_MODEL, d.SW_ROLE, d.HOUSE_ID, d.DOORWAY, d.LOCATION, d.FLOOR, d.SW_MON_TYPE, d.SW_INV_STATE, d.VLAN, d.DATE_CREATE, d.DATE_CHANGE, d.IS_CONTROL, d.IS_OPT82, d.PARENT_ID, d.PARENT_MAC, d.PARENT_PORT, d.CHILD_ID, d.CHILD_MAC, d.CHILD_PORT,d.PORT_NUMBER, d.PORT_STATE, d.CONTRACT_CNT, d.CONTRACT_ACTIVE_CNT, d.GUEST_VLAN, d.CITY_ID, d.CITY, d.CITY_CODE, d.REPORT_DATE, 'reused code' as rcode from data d where not exists (select 1 from chernivtsi.chernivtsi_switches u where u.cubic_switch_id = d.ID and u.cubic_house_id = d.HOUSE_ID) and ID IN(SELECT cubic_switch_id FROM chernivtsi.chernivtsi_switches WHERE cubic_switch_id IS NOT NULL) );
 	DELETE FROM ".$selectedCity.".".$selectedCity."_switches WHERE cubic_switch_id IN(SELECT id FROM reused_cubic_switch_id) ;
@@ -165,7 +213,66 @@ echo $query;
 
 	echo $query.'<hr>';
 	$postgresSwitches -> dbConnect($query, false, true);
+	//------------------------------------------------------------------------------------------------------------------------------------------------------
 
+	///working switches tables update(normal tables previous were incorrect)
+
+	$queryModificator = array(
+  'var' => 'id serial, CITY varchar(100), ADDRESS  varchar(100), HOUSE_ID  varchar(100), SWITCH_ID varchar(100), street varchar(100), DOORWAY varchar(100), FLOOR varchar(100), MAC_ADDRESS varchar(100), IP_ADDRESS varchar(100),DEV_NAME  varchar(100), DEV_TYPE  varchar(100), SWITCH_MODEL  varchar(100), STATUS  varchar(100), DATE_CREATE  varchar(100), SERIAL_NUMBER varchar(100), DATE_CHANGE varchar(100), DEV_FULL_NAME text, MON_TYPE  varchar(100), REPORT_DATE  varchar(100)', 
+  'val'=> 'CITY,ADDRESS,HOUSE_ID,SWITCH_ID,DOORWAY,FLOOR,MAC_ADDRESS,IP_ADDRESS,DEV_NAME,DEV_TYPE,SWITCH_MODEL,STATUS,DATE_CREATE,SERIAL_NUMBER,DATE_CHANGE,DEV_FULL_NAME,MON_TYPE,REPORT_DATE',
+  'delimiter' =>"','" , 
+  'encoding'=>"'utf-8'");
+  $tableType = "_switches_working";
+  $fileExtention =".csv";
+$linkStorage ="'/var/www/QGIS-Web-Client-master/site/csv/cubic/".$tableType."/".$selectedCity.$tableType.$fileExtention."'";
+
+  $query ="CREATE TEMP TABLE tmp( ".$queryModificator['var']."); select copy_for_testuser('tmp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ; CREATE TEMP TABLE alien_cubic_switch_id AS SELECT DISTINCT SWITCH_ID FROM tmp WHERE SWITCH_ID IS NOT NULL ;DELETE FROM ".$selectedCity.".".$selectedCity."_switches_working WHERE switch_id NOT IN(SELECT SWITCH_ID FROM alien_cubic_switch_id) ; UPDATE ".$selectedCity.".".$selectedCity."_switches_working SET CITY = tmp.CITY, ADDRESS = tmp.ADDRESS, HOUSE_ID = tmp.HOUSE_ID, SWITCH_ID = tmp.SWITCH_ID, DOORWAY = tmp.DOORWAY,FLOOR = tmp.FLOOR, MAC_ADDRESS = tmp.MAC_ADDRESS, IP_ADDRESS = tmp.IP_ADDRESS, DEV_NAME = tmp.DEV_NAME, DEV_TYPE = tmp.DEV_TYPE, SWITCH_MODEL = tmp.SWITCH_MODEL, STATUS = tmp.STATUS, DATE_CREATE = tmp.DATE_CREATE, SERIAL_NUMBER = tmp.SERIAL_NUMBER, DATE_CHANGE = tmp.DATE_CHANGE, DEV_FULL_NAME = tmp.DEV_FULL_NAME, MON_TYPE = tmp.MON_TYPE, REPORT_DATE = tmp.REPORT_DATE FROM  tmp WHERE " . $selectedCity.".".$selectedCity."_switches_working.switch_id = tmp.SWITCH_ID;UPDATE ". $selectedCity.".".$selectedCity."_switches_working SET switches_geom = null  where switch_id in(select switches.switch_id from ". $selectedCity.".".$selectedCity."_switches_working switches  right join ". $selectedCity.".".$selectedCity."_buildings buildings on (switches.house_id= buildings.cubic_house_id) where ST_Contains(st_buffer(buildings.building_geom,1), switches.switches_geom) = false)  OR switch_id IN(select switches.switch_id from ".$selectedCity.".".$selectedCity."_switches_working switches right join ".$selectedCity.".".$selectedCity."_buildings buildings on(switches.house_id=buildings.cubic_house_id) right join ".$selectedCity.".".$selectedCity."_entrances entrances on (switches.house_id||'p'||switches.DOORWAY = entrances.cubic_entrance_id) where switches.switch_id is not null and st_equals(switches.switches_geom,entrances.geom) = false);";
+  	echo $query.'<hr>';
+    $postgresSwitches -> dbConnect($query, false, true);
+
+    ///all switches tables update(normal tables previous were incorrect)
+
+	$queryModificator = array(
+  'var' => 'id serial, CITY varchar(100), ADDRESS  varchar(100), HOUSE_ID  varchar(100), SWITCH_ID varchar(100), street varchar(100), DOORWAY varchar(100), FLOOR varchar(100), MAC_ADDRESS varchar(100), IP_ADDRESS varchar(100),DEV_NAME  varchar(100), DEV_TYPE  varchar(100), SWITCH_MODEL  varchar(100), STATUS  varchar(100), DATE_CREATE  varchar(100), SERIAL_NUMBER varchar(100), DATE_CHANGE varchar(100), DEV_FULL_NAME text, MON_TYPE  varchar(100), REPORT_DATE  varchar(100)', 
+  'val'=> 'CITY,ADDRESS,HOUSE_ID,SWITCH_ID,DOORWAY,FLOOR,MAC_ADDRESS,IP_ADDRESS,DEV_NAME,DEV_TYPE,SWITCH_MODEL,STATUS,DATE_CREATE,SERIAL_NUMBER,DATE_CHANGE,DEV_FULL_NAME,MON_TYPE,REPORT_DATE',
+  'delimiter' =>"','" , 
+  'encoding'=>"'utf-8'");
+  	$tableType = "_switches_all";
+ 	 $fileExtention =".csv";
+	$linkStorage ="'/var/www/QGIS-Web-Client-master/site/csv/cubic/".$tableType."/".$selectedCity.$tableType.$fileExtention."'";
+
+  	$query ="CREATE TEMP TABLE tmp( ".$queryModificator['var']."); select copy_for_testuser('tmp( ".$queryModificator['val']." )', ".$linkStorage.", ".$queryModificator['delimiter'].", ".$queryModificator['encoding'].") ; CREATE TEMP TABLE alien_cubic_switch_id AS SELECT DISTINCT SWITCH_ID FROM tmp WHERE SWITCH_ID IS NOT NULL ;DELETE FROM ".$selectedCity.".".$selectedCity."_switches_all WHERE switch_id NOT IN(SELECT SWITCH_ID FROM alien_cubic_switch_id) ; UPDATE ".$selectedCity.".".$selectedCity."_switches_all SET CITY = tmp.CITY, ADDRESS = tmp.ADDRESS, HOUSE_ID = tmp.HOUSE_ID, SWITCH_ID = tmp.SWITCH_ID, DOORWAY = tmp.DOORWAY,FLOOR = tmp.FLOOR, MAC_ADDRESS = tmp.MAC_ADDRESS, IP_ADDRESS = tmp.IP_ADDRESS, DEV_NAME = tmp.DEV_NAME, DEV_TYPE = tmp.DEV_TYPE, SWITCH_MODEL = tmp.SWITCH_MODEL, STATUS = tmp.STATUS, DATE_CREATE = tmp.DATE_CREATE, SERIAL_NUMBER = tmp.SERIAL_NUMBER, DATE_CHANGE = tmp.DATE_CHANGE, DEV_FULL_NAME = tmp.DEV_FULL_NAME, MON_TYPE = tmp.MON_TYPE, REPORT_DATE = tmp.REPORT_DATE FROM  tmp WHERE " . $selectedCity.".".$selectedCity."_switches_all.switch_id = tmp.SWITCH_ID;UPDATE ". $selectedCity.".".$selectedCity."_switches_all SET switches_geom = null  where switch_id in(select switches.switch_id from ". $selectedCity.".".$selectedCity."_switches_all switches  right join ". $selectedCity.".".$selectedCity."_buildings buildings on (switches.house_id= buildings.cubic_house_id) where ST_Contains(st_buffer(buildings.building_geom,1), switches.switches_geom) = false)  OR switch_id IN(select switches.switch_id from ".$selectedCity.".".$selectedCity."_switches_all switches right join ".$selectedCity.".".$selectedCity."_buildings buildings on(switches.house_id=buildings.cubic_house_id) right join ".$selectedCity.".".$selectedCity."_entrances entrances on (switches.house_id||'p'||switches.DOORWAY = entrances.cubic_entrance_id) where switches.switch_id is not null and st_equals(switches.switches_geom,entrances.geom) = false);";
+    echo $query.'<hr>';
+    $postgresSwitches -> dbConnect($query, false, true);
+    $query ="UPDATE ".$selectedCity.".".$selectedCity."_switches_working SET street = ".$selectedCity."_buildings.cubic_street, cubic_house_num = ".$selectedCity."_buildings.cubic_house from ".$selectedCity.".".$selectedCity."_buildings where ".$selectedCity."_buildings.cubic_house_id = ".$selectedCity."_switches_working.house_id;";
+    echo $query.'<hr>';
+    $postgresSwitches -> dbConnect($query, false, true);
+    //main switch geometry update for working table ----------------------------------------------
+	
+	$query ="UPDATE ".$selectedCity.".".$selectedCity."_switches_working SET switches_geom = CASE WHEN summ.geom IS NOT NULL THEN summ.geom WHEN summ.geom IS NULL THEN summ.building_geom_thirdpoint  END FROM (select switches.switch_id, switches.switches_geom, switches.house_id, switches.DOORWAY, buildings.building_geom_thirdpoint, entrances.cubic_entrance_id, entrances.geom, st_equals(switches.switches_geom,entrances.geom)  from ".$selectedCity.".".$selectedCity."_switches_working switches right join ".$selectedCity.".".$selectedCity."_buildings buildings on(switches.house_id=buildings.cubic_house_id) left join ".$selectedCity.".".$selectedCity."_entrances entrances on (switches.house_id||'p'||switches.DOORWAY = entrances.cubic_entrance_id) where switches.switch_id is not null) summ Where summ.switch_id = ".$selectedCity.".".$selectedCity."_switches_working.switch_id ;"; //and ".$selectedCity.".".$selectedCity."_switches.switches_geom is NULL
+	//echo $query.'<hr>';
+	$postgresSwitches -> dbConnect($query, false, true);
+	$query ="UPDATE ".$selectedCity.".".$selectedCity."_switches_all SET street = ".$selectedCity."_buildings.cubic_street, cubic_house_num = ".$selectedCity."_buildings.cubic_house from ".$selectedCity.".".$selectedCity."_buildings where ".$selectedCity."_buildings.cubic_house_id = ".$selectedCity."_switches_all.house_id;";
+    echo $query.'<hr>';
+    $postgresSwitches -> dbConnect($query, false, true);
+	//main switch geometry update for all table ----------------------------------------------
+	
+	$query ="UPDATE ".$selectedCity.".".$selectedCity."_switches_all SET switches_geom = CASE WHEN summ.geom IS NOT NULL THEN summ.geom WHEN summ.geom IS NULL THEN summ.building_geom_thirdpoint  END FROM (select switches.switch_id, switches.switches_geom, switches.house_id, switches.DOORWAY, buildings.building_geom_thirdpoint, entrances.cubic_entrance_id, entrances.geom, st_equals(switches.switches_geom,entrances.geom)  from ".$selectedCity.".".$selectedCity."_switches_all switches right join ".$selectedCity.".".$selectedCity."_buildings buildings on(switches.house_id=buildings.cubic_house_id) left join ".$selectedCity.".".$selectedCity."_entrances entrances on (switches.house_id||'p'||switches.DOORWAY = entrances.cubic_entrance_id) where switches.switch_id is not null) summ Where summ.switch_id = ".$selectedCity.".".$selectedCity."_switches_all.switch_id ;"; //and ".$selectedCity.".".$selectedCity."_switches.switches_geom is NULL
+	echo $query.'<hr>';
+	$postgresSwitches -> dbConnect($query, false, true);
+
+	//--copy from switches topology table---------------------------------
+	$query ="UPDATE ".$selectedCity.".".$selectedCity."_switches_working SET switch_is_control = ".$selectedCity."_switches.cubic_switch_is_control, switch_is_opt82 = ".$selectedCity."_switches.cubic_switch_is_opt82, switch_contract_cnt = ".$selectedCity."_switches.cubic_switch_contract_cnt, cubic_switch_contract_active_cnt = ".$selectedCity."_switches.cubic_switch_contract_active_cnt, cubic_switch_location = ".$selectedCity."_switches.cubic_switch_location, switch_role = ".$selectedCity."_switches.cubic_switch_role  from ".$selectedCity.".".$selectedCity."_switches where ".$selectedCity."_switches_working.switch_id = ".$selectedCity."_switches.cubic_switch_id;"; 
+	echo $query.'<hr>';
+	$postgresSwitches -> dbConnect($query, false, true);
+	$query ="UPDATE ".$selectedCity.".".$selectedCity."_switches_all SET switch_is_control = ".$selectedCity."_switches.cubic_switch_is_control, switch_is_opt82 = ".$selectedCity."_switches.cubic_switch_is_opt82, switch_contract_cnt = ".$selectedCity."_switches.cubic_switch_contract_cnt, cubic_switch_contract_active_cnt = ".$selectedCity."_switches.cubic_switch_contract_active_cnt, cubic_switch_location = ".$selectedCity."_switches.cubic_switch_location, switch_role = ".$selectedCity."_switches.cubic_switch_role from ".$selectedCity.".".$selectedCity."_switches where ".$selectedCity."_switches_all.switch_id = ".$selectedCity."_switches.cubic_switch_id;"; 
+	echo $query.'<hr>';
+	$postgresSwitches -> dbConnect($query, false, true);
+	//-----------work links--------------------------------------------------------
+	$query ="UPDATE ".$selectedCity.".".$selectedCity."_switches SET work_link ='http://work.volia.net/w2/eth/switch_info/act.current.php?ip='||cubic_ip_address||'&company=".$cities[cityVocabulary($cities, 1, $selectedCity)][0]."' WHERE cubic_ip_address IS NOT NULL;UPDATE ".$selectedCity.".".$selectedCity."_switches_working SET work_link ='http://work.volia.net/w2/eth/switch_info/act.current.php?ip='||ip_address||'&company=".$cities[cityVocabulary($cities, 1, $selectedCity)][0]."' WHERE ip_address IS NOT NULL;UPDATE ".$selectedCity.".".$selectedCity."_switches_all SET work_link ='http://work.volia.net/w2/eth/switch_info/act.current.php?ip='||ip_address||'&company=".$cities[cityVocabulary($cities, 1, $selectedCity)][0]."' WHERE ip_address IS NOT NULL;";
+
+	echo $query.'<hr>';
+	$postgresSwitches -> dbConnect($query, false, true);
 	//user equipment edition ;)
 		//--user equipment update (hybrids/modems)-----------------------------------------------------------------
 	/////modems tables update
