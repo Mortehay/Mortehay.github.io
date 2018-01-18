@@ -319,7 +319,7 @@ let vocabulary ={
 	//etherTopologyUpdate:['№','Вулиця', '№будинку',  '№під&acute;їзду', '№Поверху', 'Розташування', 'house_id', 'id комутатора', 'id мат. комутатора','mac_address', 'ip_address', 'serial_number', 'hostname', 'sw_model',  'sw_inv_state', 'дата установки', 'дата зміни'],
 	etherTopologyUpdate:['№','Місто', 'Адреса','house id','switch id', '№під&acute;їзду', '№Поверху', 'mac_address', 'ip_address', 'dev_name', 'dev_type', 'sw_model',  'status', 'дата установки', 'serial_number', 'дата зміни','mon_type','report_date'],
 	ctvToplogyAddFlats:['№',  'Вулиця', '№будинку', 'id вузла', 'Найменування вузла', 'Адреса ПГС', 'Адреса мат.вузла', 'id мат.вузла', 'Дата установки', 'notes','Відповідальний', 'Тип мережі', '"Кубік" HOUSE_ID','Квартири'],
-	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsx','xls','dwg','pdf','png','дата_файлу pdf'],
+	ctvTopologyCouplerView:['№', 'Місто', 'Коментар', 'Адреса ПГС', 'Найменування вузла', 'id вузла', 'Вулиця', '№будинку', 'Найменування мат.вузла', 'id мат.вузла', 'Вулиця мат.вузла', '№будинку мат.вузла','Архів','Схема зварювань','xlsx','xls','dwg','pdf','png','дата_файлу create','дата_файлу (час)create','дата_файлу edit','дата_файлу (час)edit'],
 	userTable:['№','E-mail','Доступ','pass','доступні карти','доступні файли','Тип користувача','Редагування'],
 	sendFeedback:['№','e-mail','Тема','Запит','Статус','Час відкриття запиту','Час закриття запиту'],
 	qgisProjectFiles:['№','Назва файлу','дата_файлу','Скачати','Редагувати'],
@@ -464,13 +464,27 @@ function statistcsDraw(data){
 
 //-------------------------------------------------------------------------------------------------------------------
 //closer span :)
-function closeSpan(index){
-	$('.'+index).prepend('<span class="closeSpan"></span>');
-	$('.closeSpan').on('click', function(){
-		console.log('click');
-		$(this).parent().remove();
+function closeSpan(index, botIndex = false){
+	
+	if(botIndex){
+		$('#'+botIndex).after('<div class="fixedCloseSpan"><span class="closeSpan"></span></div>');
+		$('.'+index).prepend('<span class="closeSpan"></span>');
+		$('.closeSpan').on('click', function(){
+			console.log('click');
+			$('.'+index).remove();
+			$('.closeSpan').remove();
+			$('#showFileDate').remove();
+		})
 		$('#showFileDate').remove();
-	})
+	} else {
+		$('.'+index).prepend('<span class="closeSpan"></span>');
+		$('.closeSpan').on('click', function(){
+			console.log('click');
+			$(this).parent().remove();
+			$('#showFileDate').remove();
+		})
+	}
+	
 }
 
 //------ function displays data as table - it can be linkt to diifferent tag class----------------------
@@ -779,7 +793,7 @@ $.fn.phpRequest = function(params) {
 						} else {
 							if( (params.displayStyle == 'table')  ) {
 								displayTableData('displayResult'+attributId, 'container', data, vocabulary[attributId]);
-								closeSpan('displayResult'+attributId);
+								closeSpan('displayResult'+attributId, 'back-to-top');
 								$('button.mapWindow').openNewMapWindow(params);
 								if ($('.filePresentDate')[0]){
 									$('<div id="showFileDate">&#9716;</div>').insertBefore('#back-to-top');
@@ -884,7 +898,9 @@ $.fn.pageUpScroll = function(documentHeight){
 		if( $('body').scrollTop() > documentHeight){
 			$('#back-to-top').addClass('show');
 			if($('.filePresentDate')[0]){$('#showFileDate').addClass('show');}
-		} else { try {$('#back-to-top').removeClass('show'); $('#showFileDate').removeClass('show')} catch(err) { console.log(err); }}
+		} else { try {
+			$('#back-to-top').removeClass('show'); $('#showFileDate').removeClass('show')
+		} catch(err) { console.log(err); }}
 	});
 	$('#back-to-top').on('click', function(e){
 		$('#back-to-top').removeClass('show');

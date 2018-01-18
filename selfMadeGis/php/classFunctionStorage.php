@@ -936,11 +936,15 @@ function groupSelect($cubic_name){
   } else {$group_value['xlsFile'] =  '-'; }
   if (file_exists($dwgFile)) {
     $group_value['dwgFile'] =  '+';
-  } else {$group_value['dwgFile'] =  '-'; }
+  } else {$group_value['dwgFile'] =  '-';}
   if (file_exists($pdfFile)) {
     $group_value['pdfFile'] =  '+';
-    $group_value['pdfFileModDate'] =  gmdate("Y-m-d",stat($pdfFile)['mtime']);
-  } else {$group_value['pdfFile'] =  '-'; $group_value['pdfFileModDate'] = '-'; }
+    $group_value['pdfFileCreDate'] =  gmdate("Y-m-d",filemtime($dwgFile));
+    $group_value['pdfFileCreDateFull'] =  gmdate("l H:i",filemtime($dwgFile));
+    $group_value['pdfFileModDate'] =  gmdate("Y-m-d",filectime($pdfFile));
+    //$group_value['pdfFileModDateFull'] =  gmdate("Y-m-d l H:i:s",stat($pdfFile)['mtime']);
+    $group_value['pdfFileModDateFull'] =  gmdate("l H:i",filectime($pdfFile));
+  } else {$group_value['pdfFile'] =  '-'; $group_value['pdfFileModDate'] = '-'; $group_value['pdfFileModDateFull'] = '-';$group_value['pdfFileCreDate'] = '-'; $group_value['pdfFileCreDateFull'] = '-';}
   if (file_exists($imgFile)) {
     $group_value['imgFile'] =  '+';
   } else {$group_value['imgFile'] =  '-'; }
