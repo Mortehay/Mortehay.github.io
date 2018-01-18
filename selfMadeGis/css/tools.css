@@ -377,10 +377,3 @@ tr:hover{
 #showFileDate.show {
     opacity: 1;
 }
-.fixedCloseSpan{
-	position: fixed;
-	z-index: 9999;
-	transition: opacity 0.2s ease-out;
-    bottom: 40px;
-    right: 15px;
-}
