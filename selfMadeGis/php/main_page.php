@@ -92,9 +92,10 @@ $_SESSION['user_logged_in'] = true;
       ?>
       <?php
       //echo '<hr>'.$_SESSION['e_mail'].'<hr>';
-        echo'<script type="text/javascript">let restriction = JSON.stringify({restriction:"'.$restriction.'", e_mail:"'.$_SESSION['e_mail'].'"}); let cityArray = '.json_encode($city_array).';localStorage.setItem("tempRestriction", restriction);localStorage.setItem("tempCityArray", cityArray);</script>';
+        echo'<script type="text/javascript">let restriction = JSON.stringify({restriction:"'.$restriction.'", e_mail:"'.$_SESSION['e_mail'].'", user_type:"'.$_SESSION['user_type'].'"}); let cityArray = '.json_encode($city_array).';localStorage.setItem("tempRestriction", restriction);localStorage.setItem("tempCityArray", cityArray);</script>';
       ?>
     <div id="back-to-top" title="Back to top">&uarr;</div>
+    <div id="helper" class="helper"><a href="<?php echo 'https://'.$_SERVER['SERVER_ADDR'].'/qgis-ck/tmp/help/';?>"  target="_blank"><img src="../img/help_me.png" alt="../img/patrick.png"></a></div>
     <script type="text/javascript" src="../js/accordion.js"></script>
     <script type="text/javascript" src="../js/whois.js"></script>
     <script type="text/javascript" src="../js/topologyUpdate.js"></script>

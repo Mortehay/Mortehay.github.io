@@ -10,14 +10,14 @@ $query = "SELECT distinct equipment_state FROM ".$selectedCity.".".$selectedCity
 $queryArrayKeys = array('equipment_state');
 $cityEquipmentStates = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
 $arr_response['response']['states'] = $cityEquipmentStates; 
-$query = "SELECT distinct equipment_name,equipment_state FROM ".$selectedCity.".".$selectedCity."_equipment_statistics WHERE equipment_name is not null ;";
+$query = 'select row_number() over (order by equipment_state) as "group",equipment_name as group_name, equipment_state as group_tech from '.$selectedCity.'.'.$selectedCity.'_equipment_statistics group by equipment_name, equipment_state order by equipment_state, equipment_name';
 //echo $query;
-$queryArrayKeys = array('equipment_name','equipment_state');
+$queryArrayKeys = array('group','group_name','group_tech');
 $cityEquipmentNames = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
 $arr_response['response']['names'] = $cityEquipmentNames; 
-$query = "SELECT equipment_name, equipment_state, equipment_count, update_time::date FROM ".$selectedCity.".".$selectedCity."_equipment_statistics WHERE equipment_name is not null ;";
+$query = 'select p_t.group, p_t.group_name, p_t.group_tech, a_l.equipment_count as y, a_l.update_time::date as x from '.$selectedCity.'.'.$selectedCity.'_equipment_statistics a_l left join (select row_number() over (order by equipment_state) as "group",equipment_name as group_name, equipment_state as group_tech from '.$selectedCity.'.'.$selectedCity.'_equipment_statistics group by equipment_name, equipment_state order by equipment_state, equipment_name) p_t on(p_t.group_name = a_l.equipment_name );';
 //echo $query;
-$queryArrayKeys = array('equipment_name', 'equipment_state', 'equipment_count', 'update_time');
+$queryArrayKeys = array('group', 'group_name', 'group_tech', 'y','x');
 $cityEquipmentValues = $newDBrequest -> dbConnect($query, $queryArrayKeys, true);
 $arr_response['response']['values'] = $cityEquipmentValues; 
 

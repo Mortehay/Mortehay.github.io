@@ -194,8 +194,8 @@ class SaveAttributes:
             # define our method    
         def replace_all(text, dic):
             text = text.encode('windows-1251') if text != None else ''
-            for i, j in dic.iteritems():
-                text = text.replace(i, j)
+            #for i, j in dic.iteritems():
+            #    text = text.replace(i, j)
             return text
         layers = self.iface.legendInterface().layers()
         layer_list = []

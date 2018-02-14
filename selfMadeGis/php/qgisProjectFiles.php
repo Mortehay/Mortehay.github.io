@@ -14,6 +14,11 @@
 	$file_links = postgres_to_php_array($_SESSION['user_file_links']);
 
 	$conSettings = new dbConnSetClass;
+	if($_SERVER['SERVER_ADDR'] !='127.0.0.1' && $_SERVER['SERVER_ADDR'] ) {
+		$outerIp = $_SERVER['SERVER_ADDR'];
+	} else {
+		$outerIp = $conSettings->getProp('outerIp');
+	}
 	//echo '<hr>usertype---'.$user_type.'<hr>';
 	//echo '<hr>editor---'.str_replace('user=', '', $conSettings->getProp('dbConnSet')['user']).'<hr>';
 	//echo '<hr>reader---'.str_replace('user=', '', $conSettings->getProp('dbConnSetReader')['user']).'<hr>';
@@ -23,7 +28,7 @@
 		//$fileEdit -> textExchange('simplepassword',str_replace('password=', '', $conSettings->getProp('dbConnSetReader')['password']),$qgisProjectFilesDir.$filename);
 		copy($qgisProjectFilesDir.$filename, $qgisProjectLocalFilesDir.$filename);
 		$fileEdit -> textExchange('simplepassword',str_replace('password=', '', $conSettings->getProp('dbConnSetReader')['password']),$qgisProjectLocalFilesDir.$filename);
-		$fileEdit -> textExchange(str_replace('host=', '', $conSettings->getProp('dbConnSet')['host']) ,$conSettings->getProp('outerIp'),$qgisProjectLocalFilesDir.$filename);
+		$fileEdit -> textExchange(str_replace('host=', '', $conSettings->getProp('dbConnSet')['host']) ,$outerIp,$qgisProjectLocalFilesDir.$filename);
 		if($user_type == 'reader'){
 			//echo str_replace('user=', '', $conSettings->getProp('dbConnSet')['user']).' ---- '.str_replace('user=', '', $conSettings->getProp('dbConnSetReader')['user']).'<hr>';
 			//$fileEdit -> textExchange('simplepassword',str_replace('password=', '', $conSettings->getProp('dbConnSetReader')['password']),$qgisProjectLocalFilesDir.$filename);
@@ -45,7 +50,7 @@
 					$arr = array(
 			            'project_file_name' => $filename,
 			            'project_file_date' => gmdate("Y-m-d h:i:s \G\M\T",stat($qgisProjectFilesDir.$filename)['mtime']),
-			            'project_file_link' => 'https://'.$conSettings->getProp('outerIp').'/qgis-ck/tmp/projects-local/'.$filename
+			            'project_file_link' => 'https://'.$outerIp.'/qgis-ck/tmp/projects-local/'.$filename
 			            //'project_file_dchema_state' => ''
 			         ); 
 		        	array_push($arr_response['response'], $arr );

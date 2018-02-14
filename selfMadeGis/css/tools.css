@@ -377,3 +377,27 @@ tr:hover{
 #showFileDate.show {
     opacity: 1;
 }
+.fixedCloseSpan{
+	position: fixed;
+	z-index: 9999;
+	transition: opacity 0.2s ease-out;
+    bottom: 40px;
+    right: 15px;
+}
+.helper{
+	position: fixed;
+	z-index: 9999;
+	transition: opacity 0.2s ease-out;
+    top: 10px;
+    left: 10px;
+}
+.helper img{
+	width: 50px;
+}
+.helper:hover{
+	background: #da6cf5;
+	border-radius: 60%;
+}
+.helper :active {
+	bottom:-1px;
+}

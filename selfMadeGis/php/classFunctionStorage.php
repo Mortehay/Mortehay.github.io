@@ -84,7 +84,7 @@ class dbConnSetClass{
       $_SESSION['user_file_links'] =$arr_response[0]['file_links'];
       $_SESSION['user_type'] = $arr_response[0]['user_type'];
 
-      $folderTypes = array('/cc/','/air/','/she/','/topology/');
+      $folderTypes = array('/cc/','/air/','/she/','/topology/','/help/');
       self::htaccessFilesGeneration($folderTypes, 'allow');
       //store other stuff in the session like user settings and data
       header("location: main_page.php?restriction=".$arr_response[0]['restriction']."&e_mail=".$e_mail); // Redirecting To Other Page
@@ -105,29 +105,53 @@ class dbConnSetClass{
     //print_r($sumObjectsArray);
     $arr_response = array('response' => array());
     
+    $query = "select 'city' as city, array_agg(sel.ip_address) from (select distinct ip_address from public.login where now()::date = login_time::date) sel group by city;";
+
+    $queryArrayKeys = array('city', 'ips');
+    
+    $sumObjectsArrayHelp = self::dbConnect($query, $queryArrayKeys, true);
+
+    foreach ($folderTypes as $folderType) {
+      if($folderType == '/help/') {
+
+        self::htaccessTextGeneration($sumObjectsArrayHelp,$allowedIps,$folderType);
+      } else {
+        self::htaccessTextGeneration($sumObjectsArray,$allowedIps,$folderType);
+      }
+               
+      
+    }
+  }
+  public function htaccessTextGeneration($sumObjectsArray,$allowedIps,$folderType){
 
     foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
-      foreach ($folderTypes as $folderType) {
+      if($folderType == '/help/') {
+        $folderLink = '/var/www/QGIS-Web-Client-master/site/tmp'.$folderType;
+      } else {
         $folderLink = '/var/www/QGIS-Web-Client-master/site/tmp/archive/'.$sumObjectsArray[$sumObjectsArrayKey]['city'].$folderType;
+        //echo '<hr>'.$folderLink;
+      }
+      $ipsList ='';
+        //$folderLink = '/var/www/QGIS-Web-Client-master/site/tmp/archive/'.$sumObjectsArray[$sumObjectsArrayKey]['city'].$folderType;
         if(file_exists($folderLink)){
           //echo '<hr>';
           //echo $folderLink.'<br>';
           //print_r(postgres_to_php_array($sumObjectsArray[$sumObjectsArrayKey]['ips']));
           if($allowedIps == 'deny'){
-            $allowedIps ="Deny from all\n";
+            $ipsList ="Deny from all\n";
           } else if($allowedIps == 'allow')  {
-            $allowedIps ="Deny from all\n";
+            $ipsList ="Deny from all\n";
             foreach (postgres_to_php_array($sumObjectsArray[$sumObjectsArrayKey]['ips']) as $allowedIp) {
-              $allowedIps .="Allow from ".$allowedIp. "\n";
+              $ipsList .="Allow from ".$allowedIp. "\n";
             }
           }
-          
+          //echo '<br>'.$ipsList.'<hr>';
           $accessFileTemplate = "RewriteEngine On
             RewriteBase /
             Options +Indexes
             Options +FollowSymLinks
             IndexOptions Charset=UTF8
-            $allowedIps
+            $ipsList
             <Files ~ '^.*\.([Hh][Tt][Aa])'>
               order allow,deny\n
               deny from all\n
@@ -146,11 +170,9 @@ class dbConnSetClass{
           fwrite($accessFile, $accessFileTemplate);
           fclose($accessFile);
         }
-      }
-      
-      
     }
-  }
+  } 
+
 }
 //////mail sender/////////////////////////////////////////////////////////////////////////////////////////
 class mailSender{
@@ -345,27 +367,32 @@ class mailSender{
 class fileUpload {
   private $restriction = 'none';
   public function dirCreate($city, $target_file, $file_name,$fileType){
+    $newDirPath = false;
     if($fileType == 'csv'){ $newDirPath = '/var/www/QGIS-Web-Client-master/site/csv/archive/'.$city.'/';}
     if($fileType == 'gpx'){ $newDirPath = '/var/www/QGIS-Web-Client-master/site/gpx/archive/'.$city.'/';}
     if($fileType == 'kml'){ $newDirPath = '/var/www/QGIS-Web-Client-master/site/kml/archive/'.$city.'/';}           
     if($fileType == 'qgs'){ $newDirPath = '/var/www/QGIS-Web-Client-master/projects/';}
-    if($fileType == 'qfts'){ $newDirPath = '/var/www/QGIS-Web-Client-master/searchfiles/';}  
-    if (!file_exists($newDirPath )) {
+    if($fileType == 'qfts'){ $newDirPath = '/var/www/QGIS-Web-Client-master/searchfiles/';} 
+    if((in_array($fileType, array('zip','rar'))) && (strpos(strtolower($file_name),'help_')!== false) && (in_array($city, array('', null, 'null','NULL')))){$newDirPath = '/var/www/QGIS-Web-Client-master/site/tmp/help/';} 
+    if ($newDirPath) {
+      if (!file_exists($newDirPath )) {
       $oldmask = umask(0);
           mkdir($newDirPath , 0777, true);
           umask($oldmask);
+      }
+      chmod($target_file, 0666);
+      copy($target_file, $newDirPath . $file_name);
+      $conSettings = new dbConnSetClass;
+      if($fileType == 'qgs'){
+        self::textExchange($conSettings->getProp('outerIp'),str_replace('host=', '', $conSettings->getProp('dbConnSet')['host']),$newDirPath . $file_name);
+        self::textExchange('C:/темп/',$conSettings->getProp('shareAddress'),$newDirPath . $file_name);
+        self::textExchange('C:/quickfinder/',$conSettings->getProp('shareAddress'),$newDirPath . $file_name);
+      }
+      
+      //echo $dirPath;
+      $newFilePath = $newDirPath.$file_name;
+      
     }
-    chmod($target_file, 0666);
-    copy($target_file, $newDirPath . $file_name);
-    $conSettings = new dbConnSetClass;
-    if($fileType == 'qgs'){
-      self::textExchange($conSettings->getProp('outerIp'),str_replace('host=', '', $conSettings->getProp('dbConnSet')['host']),$newDirPath . $file_name);
-      self::textExchange('C:/темп/',$conSettings->getProp('shareAddress'),$newDirPath . $file_name);
-      self::textExchange('C:/quickfinder/',$conSettings->getProp('shareAddress'),$newDirPath . $file_name);
-    }
-    
-    //echo $dirPath;
-    $newFilePath = $newDirPath.$file_name;
     return $newFilePath;
   }
   public function textExchange($oldText,$newText,$targeFile){
@@ -698,42 +725,46 @@ class fileUpload {
               }
               
 
-             //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
-          } else {
-              echo "Sorry, there was an error uploading your file.";
-              //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
-          }
-        } else if(strtolower($fileType) == 'zip' or strtolower($fileType) == 'rar'){
-          if (move_uploaded_file($_FILES[$button_id]['tmp_name'], $target_file)) {
-              echo "The file ". basename( $_FILES[$button_id]['name']). " has been uploaded.";
-              chmod($target_file, 0666);
-              $postgres = new dbConnSetClass;
-              $query = "select nspname from pg_catalog.pg_namespace where nspname not like '%pg_%' and nspname not in('information_schema', '_city_hlam', 'topology','public');";
-              $queryArrayKeys = array('nspname');
-              //echo $query;
-              $cities = array();
-              $sumObjectsArray = $postgres -> dbConnect($query, $queryArrayKeys, true);
-              foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
-                array_push($cities, $objectArray['nspname']);
-              }
-              $tableTypes = array('ctv','topology', 'switches','cable','channels','air');
-
-              //print_r($cities);print_r($tableTypes);
-              self::unArchive('/tmp/',  basename( $_FILES[$button_id]['name']), $fileType , $cities, $tableTypes);
-              //self::dirCreate($selectedCity, $target_file, $file_name, $fileType);
-              //$query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
-              //$file_logger -> dbConnect($query, false, true);
-
              header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
           } else {
               echo "Sorry, there was an error uploading your file.";
               //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
           }
-        } else {
-          echo 'your file have restricted type please try qgs or csv';
-          //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
-        }
+        } else if(in_array(strtolower($fileType), array('zip','rar'))){
+          if (move_uploaded_file($_FILES[$button_id]['tmp_name'], $target_file)) {
+              echo "The file ". basename( $_FILES[$button_id]['name']). " has been uploaded.";
+              chmod($target_file, 0666);
+              if(strpos(strtolower($file_name),'help_')!== false) {
+                self::dirCreate('', $target_file, $file_name,$fileType);
+              } else {
+                $postgres = new dbConnSetClass;
+                $query = "select nspname from pg_catalog.pg_namespace where nspname not like '%pg_%' and nspname not in('information_schema', '_city_hlam', 'topology','public');";
+                $queryArrayKeys = array('nspname');
+                //echo $query;
+                $cities = array();
+                $sumObjectsArray = $postgres -> dbConnect($query, $queryArrayKeys, true);
+                foreach ($sumObjectsArray as $sumObjectsArrayKey => $objectArray) {
+                  array_push($cities, $objectArray['nspname']);
+                }
+                $tableTypes = array('ctv','topology', 'switches','cable','channels','air');
 
+                //print_r($cities);print_r($tableTypes);
+                self::unArchive('/tmp/',  basename( $_FILES[$button_id]['name']), $fileType , $cities, $tableTypes);
+                //self::dirCreate($selectedCity, $target_file, $file_name, $fileType);
+                //$query = "INSERT INTO public.file_upload(user_name, file_name, file_type ,time_upload) VALUES ('".$login_user."','".$file_name."','".$fileType."',now());";
+                //$file_logger -> dbConnect($query, false, true);
+              }
+              
+
+             header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+           } else {
+              echo "Sorry, there was an error uploading your file.";
+              //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
+           }
+        } else {
+          echo 'your file have restricted type please try zip or rar with name like "help_..."';
+          //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page*/
+        }
       } else {
           echo 'Sorry, your file is too big';
           //header("location: main_page.php?restriction=".$restriction."&e_mail=".$login_user); // Redirecting To Other Page
@@ -936,11 +967,15 @@ function groupSelect($cubic_name){
   } else {$group_value['xlsFile'] =  '-'; }
   if (file_exists($dwgFile)) {
     $group_value['dwgFile'] =  '+';
-  } else {$group_value['dwgFile'] =  '-'; }
+  } else {$group_value['dwgFile'] =  '-';}
   if (file_exists($pdfFile)) {
     $group_value['pdfFile'] =  '+';
-    $group_value['pdfFileModDate'] =  gmdate("Y-m-d",stat($pdfFile)['mtime']);
-  } else {$group_value['pdfFile'] =  '-'; $group_value['pdfFileModDate'] = '-'; }
+    $group_value['pdfFileCreDate'] =  gmdate("Y-m-d",filemtime($dwgFile));
+    $group_value['pdfFileCreDateFull'] =  gmdate("l H:i",filemtime($dwgFile));
+    $group_value['pdfFileModDate'] =  gmdate("Y-m-d",filectime($pdfFile));
+    //$group_value['pdfFileModDateFull'] =  gmdate("Y-m-d l H:i:s",stat($pdfFile)['mtime']);
+    $group_value['pdfFileModDateFull'] =  gmdate("l H:i",filectime($pdfFile));
+  } else {$group_value['pdfFile'] =  '-'; $group_value['pdfFileModDate'] = '-'; $group_value['pdfFileModDateFull'] = '-';$group_value['pdfFileCreDate'] = '-'; $group_value['pdfFileCreDateFull'] = '-';}
   if (file_exists($imgFile)) {
     $group_value['imgFile'] =  '+';
   } else {$group_value['imgFile'] =  '-'; }
